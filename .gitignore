@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+# Build artifacts
+robot/build/**
+
+# Gradle generated files
+robot/.gradle/**/*.lock
+robot/.gradle/**/*.bin
+robot/.gradle/6.0.1/*/*.bin
