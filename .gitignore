@@ -38,3 +38,5 @@ robot/build/**
 robot/.gradle/**/*.lock
 robot/.gradle/**/*.bin
 robot/.gradle/6.0.1/*/*.bin
+
+.DS_Store
