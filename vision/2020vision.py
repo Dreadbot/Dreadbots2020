@@ -1,24 +1,24 @@
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
-import os
+import os, math
 
-cap = cv2.VideoCapture(0)
-
-
+#Get feed from camera/img
+cap = cv2.VideoCapture(1)
+cap.set(cv2.CAP_PROP_EXPOSURE,-10)
 
 
 #Vals for inRange function, targeting green
-hue = [0, 255]
-sat = [150, 255]
-lum = [200, 255]
+hue = [50, 255]
+sat = [90, 255]
+lum = [250, 255]
 
 #Thresholds for Canny edge detection
 low_thresh = 50
-high_thresh = 150
+high_thresh = 200
 
 #Iterations for the Erode function
-erode_iters = 1
+erode_iters = 0
 
 #Counting loops
 counter = 0
@@ -26,9 +26,9 @@ counter = 0
 #Params for finding lines
 rho = 1
 theta = np.pi / 180
-threshold = 150
-min_line_length = 300
-max_line_gap = 100
+threshold = 10
+min_line_length = 50
+max_line_gap = 20
 
 #Just color lists so that the lines can alternate colors
 loopclrs = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 0, 255), (255, 255, 255)]
@@ -37,10 +37,15 @@ def findCenter(p1, p2):
     avg = (p1 + p2) / 2
     return avg
 
+def calculateDist(x1, y1, x2, y2):
+    return math.sqrt((x2-x1)**2 + (y2-y1)**2)
+
 while(True):
     t_error = False
     i_error = False
     ret, img = cap.read()
+    # img = cv2.imread('targets/target1.jpg', 3)
+    
     #img = cv2.medianBlur(img,5)
 
     #Create and clear xs and ys lists
@@ -67,11 +72,21 @@ while(True):
             
             #Draw lines on image
         for i in range(0, len(lines)):
-            cur_line_center = (int(findCenter(lines[i][0][0], lines[i][0][2])), int(findCenter(lines[i][0][1], lines[i][0][3])))
+            x1 = lines[i][0][0]
+            y1 = lines[i][0][1]
+            x2 = lines[i][0][2]
+            y2 = lines[i][0][3]
+
+            cur_line_center = (int(findCenter(x1, x2)), int(findCenter(y1, y2)))
+
+            # print(calculateDist(x1, y1, x2, y2))
 
             #Drawing functions
-            cv2.line(img, (lines[i][0][0], lines[i][0][1]), (lines[i][0][2], lines[i][0][3]), loopclrs[i], 1)
+            cv2.line(img, (x1, y1), (x2, y2), loopclrs[i], 5)
+
             cv2.circle(img, cur_line_center, 1, (0,0,255))
+            
+            #Final operation to find the center of the target
             
 
     except TypeError:
@@ -87,7 +102,7 @@ while(True):
     cv2.imshow('Thresh image', img)
 
     #Start prints
-    os.system('clear')
+    os.system('cls') #Cls for windows, clear for anything else
     counter += 1
     print("Loop #: ", counter)
 
@@ -99,6 +114,8 @@ while(True):
 
     for i in range(0, len(lines)):
         print("Line #", i, " : ", lines[i][0])
+    
+    print(len(lines))
     
     #End of loop operations
 
