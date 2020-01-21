@@ -11,6 +11,8 @@
 
 #include <frc/smartdashboard/SmartDashboard.h>
 
+#define DREADBOT_AUTONOMOUS_TRAJECTORY_PROOF_OF_CONCEPT_TEST
+
 void Robot::RobotInit() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
@@ -49,6 +51,14 @@ void Robot::AutonomousInit() {
   } else {
     // Default Auto goes here
   }
+
+#ifdef DREADBOT_AUTONOMOUS_TRAJECTORY_PROOF_OF_CONCEPT_TEST
+
+  //Generate a Trajectory and Print it to the RoboRIO Console.
+  trajectory_generator_utility = new TrajectoryGenerationUtility();
+
+#endif
+
 }
 
 void Robot::AutonomousPeriodic() {
