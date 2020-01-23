@@ -15,6 +15,14 @@ void Robot::RobotInit() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
+
+  joystick_1 = new frc::Joystick(0);
+
+  spark_drive = new SparkDrive(new rev::CANSparkMax(10, rev::CANSparkMax::MotorType::kBrushless), 
+    new rev::CANSparkMax(1, rev::CANSparkMax::MotorType::kBrushless), 
+    new rev::CANSparkMax(2, rev::CANSparkMax::MotorType::kBrushless), 
+    new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless)
+  );
 }
 
 /**
@@ -61,7 +69,9 @@ void Robot::AutonomousPeriodic() {
 
 void Robot::TeleopInit() {}
 
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+  spark_drive->TankDrive(joystick_1->GetRawAxis(z_axis), joystick_1->GetRawAxis(y_axis), joystick_1->GetRawButton(right_bumper), joystick_1->GetRawButton(left_bumper));
+}
 
 void Robot::TestPeriodic() {}
 
