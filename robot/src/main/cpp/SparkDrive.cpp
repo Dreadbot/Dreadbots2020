@@ -44,20 +44,17 @@ SparkDrive::SparkDrive(rev::CANSparkMax *l_front_, rev::CANSparkMax *r_front_, r
   r_back_PID.SetOutputRange(-1, 1);
 }
 
-void SparkDrive::TankDrive(double yAxis, double rotAxis, bool turboButton, bool turtleButton)
+void SparkDrive::TankDrive(double y_axis, double rot_axis, bool turbo_button, bool turtle_button)
 {
   // Account for Joystick Deadband
-  yAxis = (fabs(yAxis) < kJoystickDeadband) ? 0 : yAxis;
-  rotAxis = (fabs(rotAxis) < kJoystickDeadband) ? 0 : rotAxis;
-
-  // Flipping Variables to change behavior for rotation influence.
-  rot_speed = (fabs(rotAxis) > 0.0) ? -rot_speed : rot_speed;
+  y_axis = (fabs(y_axis) < kJoystickDeadband) ? 0 : y_axis;
+  rot_axis = (fabs(rot_axis) < kJoystickDeadband) ? 0 : rot_axis;
 
   // Configure Speed
-  if(turboButton)
+  if(turbo_button)
   {
     current_speed = kTurboSpeed;
-  } else if(turtleButton)
+  } else if(turtle_button)
   {
     current_speed = kTurtleSpeed;
   } else 
@@ -67,29 +64,34 @@ void SparkDrive::TankDrive(double yAxis, double rotAxis, bool turboButton, bool 
 
   // Multiply Intended Velocity by a cap speed.
   // (See main.include.Robot.h)
-  y_speed = yAxis * current_speed;
-  rot_speed = rotAxis * current_speed;
+  y_speed = y_axis * current_speed;
+  rot_speed = -2 * rot_axis * current_speed;
 
   // Calculating Final Speed
   // by Adding the Rotation Factor
-  left_final_speed = y_speed + -rot_speed;
+  left_final_speed = -y_speed + rot_speed;
   right_final_speed = y_speed + rot_speed;
 
-  if(left_final_speed > 1){
-    left_final_speed = 1;
+  if(left_final_speed > 1.0){
+    left_final_speed = 1.0;
   }
-  if(left_final_speed < -1){
-    left_final_speed = -1;
+  if(left_final_speed < -1.0){
+    left_final_speed = -1.0;
   }
-  if(right_final_speed > 1){
-    right_final_speed = 1;
+  if(right_final_speed > 1.0){
+    right_final_speed = 1.0;
   }
-  if(right_final_speed < -1){
-    right_final_speed = -1;
+  if(right_final_speed < -1.0){
+    right_final_speed = -1.0;
   }
 
-  // Set Motor Values
-  std::cout << "left_final_speed: " << left_final_speed << " right_final_speed: " << right_final_speed << std::endl;
+  // Set Motor Values & Motor Diagnostics
+  if(fabs(left_final_speed) > 0.0)
+  {
+    std::cout << "y_speed: " << y_speed << " rot_speed: " << rot_speed << std::endl;
+    std::cout << "left_final_speed: " << left_final_speed << " right_final_speed: " << right_final_speed << std::endl;
+  }
+
   l_front->Set(left_final_speed);
   l_back->Set(left_final_speed);
   r_front->Set(right_final_speed);

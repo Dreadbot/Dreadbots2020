@@ -18,10 +18,10 @@ void Robot::RobotInit() {
 
   joystick_1 = new frc::Joystick(0);
 
-  spark_drive = new SparkDrive(new rev::CANSparkMax(10, rev::CANSparkMax::MotorType::kBrushless), 
-    new rev::CANSparkMax(1, rev::CANSparkMax::MotorType::kBrushless), 
-    new rev::CANSparkMax(2, rev::CANSparkMax::MotorType::kBrushless), 
-    new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless)
+  spark_drive = new SparkDrive(new rev::CANSparkMax(1, rev::CANSparkMax::MotorType::kBrushless), 
+    new rev::CANSparkMax(10, rev::CANSparkMax::MotorType::kBrushless), 
+    new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless), 
+    new rev::CANSparkMax(2, rev::CANSparkMax::MotorType::kBrushless)
   );
 }
 
@@ -70,7 +70,7 @@ void Robot::AutonomousPeriodic() {
 void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic() {
-  spark_drive->TankDrive(joystick_1->GetRawAxis(z_axis), joystick_1->GetRawAxis(y_axis), joystick_1->GetRawButton(right_bumper), joystick_1->GetRawButton(left_bumper));
+  spark_drive->TankDrive(-joystick_1->GetRawAxis(y_axis), joystick_1->GetRawAxis(z_axis), joystick_1->GetRawButton(right_bumper), joystick_1->GetRawButton(left_bumper));
 }
 
 void Robot::TestPeriodic() {}
