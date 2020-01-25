@@ -14,3 +14,10 @@ enum JoystickInputs
   left_bumper = 5, right_bumper = 6, left_trigger = 7, right_trigger = 8,
   back_button = 9, start_button = 10, l_trigger = 11, r_trigger = 12
 };
+
+const int kPrimaryDriverJoystickID = 0;
+
+const int kUltraLeftFrontMotorID = 1;
+const int kUltraRightFrontMotorID = 10;
+const int kUltraLeftBackMotorID = 3;
+const int kUltraRightBackMotorID = 2;
