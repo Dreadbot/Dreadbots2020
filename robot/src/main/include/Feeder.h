@@ -5,4 +5,4 @@ class Feeder
     public:
         Feeder();
     private:
-}
+};
