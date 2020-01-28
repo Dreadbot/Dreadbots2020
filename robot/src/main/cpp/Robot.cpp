@@ -17,12 +17,13 @@ void Robot::RobotInit() {
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
+  intake = new Intake();
 
-  spark_drive = new SparkDrive(new rev::CANSparkMax(kUltraLeftFrontMotorID, rev::CANSparkMax::MotorType::kBrushless), 
-    new rev::CANSparkMax(kUltraRightFrontMotorID, rev::CANSparkMax::MotorType::kBrushless), 
-    new rev::CANSparkMax(kUltraLeftBackMotorID, rev::CANSparkMax::MotorType::kBrushless), 
-    new rev::CANSparkMax(kUltraRightBackMotorID, rev::CANSparkMax::MotorType::kBrushless)
-  );
+  //spark_drive = new SparkDrive(new rev::CANSparkMax(kUltraLeftFrontMotorID, rev::CANSparkMax::MotorType::kBrushless), 
+    //new rev::CANSparkMax(kUltraRightFrontMotorID, rev::CANSparkMax::MotorType::kBrushless), 
+    //new rev::CANSparkMax(kUltraLeftBackMotorID, rev::CANSparkMax::MotorType::kBrushless), 
+    //new rev::CANSparkMax(kUltraRightBackMotorID, rev::CANSparkMax::MotorType::kBrushless)
+  //);
 }
 
 /**
@@ -71,7 +72,14 @@ void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic() {
   // Call SparkDrive::TankDrive() using the motors given.
-  spark_drive->TankDrive(-joystick_1->GetRawAxis(y_axis), joystick_1->GetRawAxis(z_axis), joystick_1->GetRawButton(right_bumper), joystick_1->GetRawButton(left_bumper));
+  //spark_drive->TankDrive(-joystick_1->GetRawAxis(y_axis), joystick_1->GetRawAxis(z_axis), joystick_1->GetRawButton(right_bumper), joystick_1->GetRawButton(left_bumper));
+  if (joystick_1->GetRawButtonPressed(1)) {
+    intake->Start();
+  }
+    if (joystick_1->GetRawButtonPressed(2)) {
+    intake->Stop();
+  }
+  
 }
 
 void Robot::TestPeriodic() {}

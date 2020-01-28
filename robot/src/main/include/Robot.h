@@ -18,6 +18,7 @@
 
 #include "SparkDrive.h"
 
+#include "Intake.h"
 class Robot : public frc::TimedRobot {
  public:
   void RobotInit() override;
@@ -39,4 +40,7 @@ class Robot : public frc::TimedRobot {
 
   // DRIVE
   SparkDrive* spark_drive;
+
+  // Intake mechanism
+  Intake* intake;
 };
