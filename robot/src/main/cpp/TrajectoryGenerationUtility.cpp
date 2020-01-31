@@ -6,7 +6,7 @@ TrajectoryGenerationUtility::TrajectoryGenerationUtility()
 void TrajectoryGenerationUtility::GenerateTestTrajectory()
 {
   // Starting Pose2d (X-Axis Position, Y-Axis Position, Rotation in Degrees)
-  const frc::Pose2d starting_position{0_ft, 0_ft, frc::Rotation2d(0_deg)};j
+  const frc::Pose2d starting_position{0_ft, 0_ft, frc::Rotation2d(0_deg)};
 
   // Ending Pose2d (X-Axis Position, Y-Axis Position, Rotation in Degrees)
   const frc::Pose2d ending_position{2_ft, 2_ft, frc::Rotation2d(90_deg)};
