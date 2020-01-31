@@ -20,6 +20,7 @@
 #include "TrajectoryGenerationUtility.h"
 
 #include "Intake.h"
+
 class Robot : public frc::TimedRobot {
  public:
   void RobotInit() override;

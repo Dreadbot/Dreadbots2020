@@ -9,6 +9,9 @@
 
 #include <rev/CANSparkMax.h>
 
+#include <frc/kinematics/DifferentialDriveKinematics.h>
+#include <frc/kinematics/DifferentialDriveOdometry.h>
+
 class SparkDrive
 {
  public:
@@ -40,6 +43,7 @@ class SparkDrive
   */
   void TankDrive(double y_axis, double rot_axis, bool turbo_button, bool turtle_button);
 
+
  private:
   // Motor Encoder Objects
   rev::CANEncoder l_front_encoder;
@@ -58,6 +62,10 @@ class SparkDrive
   rev::CANSparkMax* r_front;
   rev::CANSparkMax* l_back;
   rev::CANSparkMax* r_back;
+
+  // Trajectory Utilities
+  frc::DifferentialDriveKinematics* differential_drive_kinematics;
+  frc::DifferentialDriveOdometry* differential_drive_odometry;
 
   // Speed Variables
   double const kTurtleSpeed = 0.2;
