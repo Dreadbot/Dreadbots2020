@@ -17,6 +17,7 @@
 #include "RobotUtilities.h"
 
 #include "SparkDrive.h"
+#include "TeleopFunctions.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -35,8 +36,13 @@ class Robot : public frc::TimedRobot {
   std::string m_autoSelected;
 
   // INPUTS
-  frc::Joystick* joystick_1;
+  frc::Joystick *joystick_1;
 
   // DRIVE
   SparkDrive* spark_drive;
+  TeleopFunctions *teleopFunctions;
+  Shooter *shooter;
+
+   //BUTTONS
+  int const shooterButton = 1;
 };
