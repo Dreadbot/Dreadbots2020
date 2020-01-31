@@ -13,7 +13,7 @@ SparkDrive::SparkDrive(rev::CANSparkMax *l_front_, rev::CANSparkMax *r_front_, r
 {
   // The reason these variables are initialized here 
   // and not in the initialization list is purely for
-  // ordering. These are initialized first, before
+  // ordering. These are initialized first, 
   // The objects within the initilization list, since
   // the objects in the list depend on the motor 
   // controllers.

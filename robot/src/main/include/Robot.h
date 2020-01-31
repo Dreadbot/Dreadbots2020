@@ -18,6 +18,9 @@
 
 #include "SparkDrive.h"
 #include "TeleopFunctions.h"
+#include "TrajectoryGenerationUtility.h"
+
+#include "Intake.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -35,14 +38,22 @@ class Robot : public frc::TimedRobot {
   const std::string kAutoNameCustom = "My Auto";
   std::string m_autoSelected;
 
+  // Autonomous Functions
+  TrajectoryGenerationUtility* trajectory_generation_utility;
+
   // INPUTS
   frc::Joystick *joystick_1;
 
   // DRIVE
   SparkDrive* spark_drive;
+
   TeleopFunctions *teleopFunctions;
   Shooter *shooter;
 
    //BUTTONS
   int const shooterButton = 1;
+
+  // Intake mechanism
+  Intake* intake;
+
 };
