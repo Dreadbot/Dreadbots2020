@@ -17,6 +17,7 @@
 #include "RobotUtilities.h"
 
 #include "SparkDrive.h"
+#include "TrajectoryGenerationUtility.h"
 
 #include "Intake.h"
 class Robot : public frc::TimedRobot {
@@ -34,6 +35,9 @@ class Robot : public frc::TimedRobot {
   const std::string kAutoNameDefault = "Default";
   const std::string kAutoNameCustom = "My Auto";
   std::string m_autoSelected;
+
+  // Autonomous Functions
+  TrajectoryGenerationUtility* trajectory_generation_utility;
 
   // INPUTS
   frc::Joystick* joystick_1;
