@@ -90,8 +90,9 @@ class SparkDrive
   void SparkDriveAutonomousPeriodic();
 
  private:
-  //AHRS
-  AHRS *gyro;
+  // Gyroscope Objects
+  AHRS* gyro;
+  
   // Motor Encoder Objects
   rev::CANEncoder l_front_encoder;
   rev::CANEncoder r_front_encoder;
