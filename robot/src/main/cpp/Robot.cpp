@@ -22,7 +22,7 @@ void Robot::RobotInit() {
   teleopFunctions = new TeleopFunctions(joystick_1, shooter);
   //Button assignments
   int shooterButton = 1;
-  intake = new Intake();
+  intake = new Intake(); //Uses SparkMax motor 3 
 
   trajectory_generation_utility = new TrajectoryGenerationUtility();
   trajectory_generation_utility->GenerateTestTrajectory();
@@ -80,17 +80,19 @@ void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic() {
   // Call SparkDrive::TankDrive() using the motors given.
-
   //spark_drive->TankDrive(-joystick_1->GetRawAxis(y_axis), joystick_1->GetRawAxis(z_axis), joystick_1->GetRawButton(right_bumper), joystick_1->GetRawButton(left_bumper));
-  teleopFunctions->ShooterFunction();
-   //shooter->Shoot(0.00);
  
- // spark_drive = new SparkDrive(new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless)
-   }
+ teleopFunctions->ShooterFunction();
 
-  spark_drive->TankDrive(-joystick_1->GetRawAxis(y_axis), joystick_1->GetRawAxis(z_axis), joystick_1->GetRawButton(right_bumper), joystick_1->GetRawButton(left_bumper));
+  // need to create sparkdrive above for this code 
+ // spark_drive = new SparkDrive(new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless)
+   
+  //std::cout << "Teleop Tick" << std::endl;
+
+  //test of intake motor code
   if (joystick_1->GetRawButtonPressed(1)) {
-    intake->Start();
+    //intake->Start();
+    intake->SetSpeed(100);
   }
     if (joystick_1->GetRawButtonPressed(2)) {
     intake->Stop();
