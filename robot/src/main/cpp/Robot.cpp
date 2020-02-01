@@ -18,7 +18,7 @@ void Robot::RobotInit() {
 
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
   shooter = new Shooter();
-  printf("robotcpp joystick_addr = %d \n",joystick_1);
+  //printf("robotcpp joystick_addr = %d \n",joystick_1);
   teleopFunctions = new TeleopFunctions(joystick_1, shooter);
   //Button assignments
   int shooterButton = 1;
