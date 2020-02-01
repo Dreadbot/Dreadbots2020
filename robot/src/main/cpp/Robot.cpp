@@ -18,7 +18,7 @@ void Robot::RobotInit() {
 
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
   shooter = new Shooter();
-  printf("robotcpp joystick_addr = %d \n",joystick_1);
+  //printf("robotcpp joystick_addr = %d \n",joystick_1);
   teleopFunctions = new TeleopFunctions(joystick_1, shooter);
   //Button assignments
   int shooterButton = 1;
@@ -86,7 +86,6 @@ void Robot::TeleopPeriodic() {
    //shooter->Shoot(0.00);
  
  // spark_drive = new SparkDrive(new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless)
-   }
 
   spark_drive->TankDrive(-joystick_1->GetRawAxis(y_axis), joystick_1->GetRawAxis(z_axis), joystick_1->GetRawButton(right_bumper), joystick_1->GetRawButton(left_bumper));
   if (joystick_1->GetRawButtonPressed(1)) {
