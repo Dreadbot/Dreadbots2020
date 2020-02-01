@@ -11,6 +11,7 @@
 
 #include <frc/kinematics/DifferentialDriveKinematics.h>
 #include <frc/kinematics/DifferentialDriveOdometry.h>
+#include <AHRS.h>
 
 class SparkDrive
 {
@@ -45,6 +46,8 @@ class SparkDrive
 
 
  private:
+  //AHRS
+  AHRS *gyro;
   // Motor Encoder Objects
   rev::CANEncoder l_front_encoder;
   rev::CANEncoder r_front_encoder;
