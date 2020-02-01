@@ -17,7 +17,7 @@ void Robot::RobotInit() {
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
-  shooter = new Shooter();
+  shooter = new Shooter(3,3);//Should have different numbers if your board supports it during testing
   //printf("robotcpp joystick_addr = %d \n",joystick_1);
   teleopFunctions = new TeleopFunctions(joystick_1, shooter);
   //Button assignments
@@ -82,14 +82,25 @@ void Robot::TeleopPeriodic() {
   // Call SparkDrive::TankDrive() using the motors given.
   //spark_drive->TankDrive(-joystick_1->GetRawAxis(y_axis), joystick_1->GetRawAxis(z_axis), joystick_1->GetRawButton(right_bumper), joystick_1->GetRawButton(left_bumper));
  
- teleopFunctions->ShooterFunction();
+ //teleopFunctions->ShooterFunction();
 
   // need to create sparkdrive above for this code 
  // spark_drive = new SparkDrive(new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless)
    
-  //std::cout << "Teleop Tick" << std::endl;
+  std::cout << "Teleop Tick" << std::endl;
+  
+  
+    if (joystick_1->GetRawButtonPressed(3)) {
+    //intake->Start();
+    shooter->AimHeight(10);
+  }
+    if (joystick_1->GetRawButtonPressed(4)) {
+    shooter->AimHeight(0);
+    }
 
+    
   //test of intake motor code
+  
   if (joystick_1->GetRawButtonPressed(1)) {
     //intake->Start();
     intake->SetSpeed(100);
@@ -97,6 +108,7 @@ void Robot::TeleopPeriodic() {
     if (joystick_1->GetRawButtonPressed(2)) {
     intake->Stop();
   }
+  
   
 }
 

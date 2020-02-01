@@ -11,10 +11,15 @@
 class Shooter
 {
     public:
-        Shooter();
+        Shooter(int shootermotorid,int aimmotorid);
         void Shoot(double shooterSpeed);
+        void AimHeight(double positionTicks); 
     private:
     rev::CANSparkMax *shooterMotor;
     rev::CANPIDController *shooterPid;
     double speed;
+
+    rev::CANSparkMax *aimMotor; 
+    rev::CANPIDController *aimPid;
+    double aimPosition;
 };
