@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 
 #pragma once
+#include "frc::util::color.h"
 
 enum JoystickInputs 
 { 
@@ -14,6 +15,11 @@ enum JoystickInputs
   left_bumper = 5, right_bumper = 6, left_trigger = 7, right_trigger = 8,
   back_button = 9, start_button = 10, l_trigger = 11, r_trigger = 12
 };
+
+const frc::Color kBlueTarget = frc::Color(0.143, 0.427, 0.429);
+const frc::Color kGreenTarget = frc::Color(0.197, 0.561, 0.240);
+const frc::Color kRedTarget = frc::Color(0.561, 0.232, 0.114);
+const frc::Color kYellowTarget = frc::Color(0.361, 0.524, 0.113);
 
 const int kPrimaryDriverJoystickID = 0;
 
