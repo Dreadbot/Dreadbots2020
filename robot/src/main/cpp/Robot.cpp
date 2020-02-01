@@ -21,17 +21,21 @@ void Robot::RobotInit() {
   //printf("robotcpp joystick_addr = %d \n",joystick_1);
   teleopFunctions = new TeleopFunctions(joystick_1, shooter);
   //Button assignments
-  int shooterButton = 1;
+
+  // Unused Variable
+  // int shooterButton = 1;
   intake = new Intake(); //Uses SparkMax motor 3 
 
+  // Trajectory Test (prints to RioLog)
   trajectory_generation_utility = new TrajectoryGenerationUtility();
   trajectory_generation_utility->GenerateTestTrajectory();
 
-  //spark_drive = new SparkDrive(new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless);
-    //new rev::CANSparkMax(kUltraRightFrontMotorID, rev::CANSparkMax::MotorType::kBrushless), 
-    //new rev::CANSparkMax(kUltraLeftBackMotorID, rev::CANSparkMax::MotorType::kBrushless), 
-    //new rev::CANSparkMax(kUltraRightBackMotorID, rev::CANSparkMax::MotorType::kBrushless)
-  //);
+  // Initialize SparkDrive Object using the UltraLord Drivetrain Configuration.
+  spark_drive = new SparkDrive(new rev::CANSparkMax(kUltraLeftFrontMotorID, rev::CANSparkMax::MotorType::kBrushless),
+    new rev::CANSparkMax(kUltraRightFrontMotorID, rev::CANSparkMax::MotorType::kBrushless), 
+    new rev::CANSparkMax(kUltraLeftBackMotorID, rev::CANSparkMax::MotorType::kBrushless), 
+    new rev::CANSparkMax(kUltraRightBackMotorID, rev::CANSparkMax::MotorType::kBrushless)
+  );
 }
 
 /**
@@ -79,9 +83,6 @@ void Robot::AutonomousPeriodic() {
 void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic() {
-  // Call SparkDrive::TankDrive() using the motors given.
-  //spark_drive->TankDrive(-joystick_1->GetRawAxis(y_axis), joystick_1->GetRawAxis(z_axis), joystick_1->GetRawButton(right_bumper), joystick_1->GetRawButton(left_bumper));
- 
  //teleopFunctions->ShooterFunction();
 
   // need to create sparkdrive above for this code 
@@ -109,7 +110,13 @@ void Robot::TeleopPeriodic() {
     intake->Stop();
   }
   
-  
+  // Call SparkDrive::TankDrive() using the drivetrain motors
+  spark_drive->TankDrive(
+    joystick_1->GetRawAxis(y_axis), 
+    joystick_1->GetRawAxis(z_axis), 
+    joystick_1->GetRawButton(right_bumper), 
+    joystick_1->GetRawButton(left_bumper)
+  );
 }
 
 void Robot::TestPeriodic() {}

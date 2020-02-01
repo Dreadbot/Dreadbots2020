@@ -17,7 +17,7 @@ enum JoystickInputs
 
 const int kPrimaryDriverJoystickID = 0;
 
-const int kUltraLeftFrontMotorID = 1;
-const int kUltraRightFrontMotorID = 10;
-const int kUltraLeftBackMotorID = 3;
-const int kUltraRightBackMotorID = 2;
+const int kUltraLeftFrontMotorID = 10;
+const int kUltraRightFrontMotorID = 1;
+const int kUltraLeftBackMotorID = 2;
+const int kUltraRightBackMotorID = 3;

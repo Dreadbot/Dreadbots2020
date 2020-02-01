@@ -1,7 +1,7 @@
 #include <Shooter.h>
 
-Shooter::Shooter(int shootermotorid,int aimmotorid){
-    
+Shooter::Shooter(int shootermotorid, int aimmotorid) 
+{
     shooterMotor = new rev::CANSparkMax(shootermotorid, rev::CANSparkMax::MotorType::kBrushless);
     shooterPid = new rev::CANPIDController(shooterMotor->GetPIDController());
     //Needs to be calibrated
