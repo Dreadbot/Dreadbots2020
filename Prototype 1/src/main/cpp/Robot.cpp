@@ -30,7 +30,7 @@
                                     .:ldxkdollc:,.  .o00000000Odl;'.                                
                                       .;:cc:,..     .l000Oxo:,.                                     
                                                      ;ol;'.                                         
-                                                                                 */
+                                                                                  */
 #include "Robot.h"
 
 #include <iostream>
