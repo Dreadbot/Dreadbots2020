@@ -15,6 +15,8 @@
 #include <frc/kinematics/DifferentialDriveWheelSpeeds.h>
 #include <frc/geometry/Pose2d.h>
 
+#include <units/units.h>
+
 #include <AHRS.h>
 
 class SparkDrive
@@ -49,6 +51,11 @@ class SparkDrive
   void TankDrive(double y_axis, double rot_axis, bool turbo_button, bool turtle_button);
 
   /**
+   * Utility Function for Getting the current angle of the gyroscope as a Rotation 2d.
+   */
+  double GetGyroscopeHeading();
+
+  /**
    * Utility Function for Getting DifferentialDriveWheelSpeeds object 
    * from encoder velocities and other constants
    * 
@@ -69,7 +76,7 @@ class SparkDrive
    * 
    * @return The Robot's Current Pose2d
    */
-  frc::Pose2d* GetRobotPose2dPosition();
+  frc::Pose2d GetRobotPose2dPosition();
 
   /**
    * Sets the current SparkMAX power level in volts
@@ -114,6 +121,8 @@ class SparkDrive
   // Trajectory Utilities
   frc::DifferentialDriveKinematics* differential_drive_kinematics;
   frc::DifferentialDriveOdometry* differential_drive_odometry;
+
+  frc::Pose2d robot_current_position;
 
   const double kGearRatio = 0.77;
   const double kWheelRadiusMeters = 1.00;

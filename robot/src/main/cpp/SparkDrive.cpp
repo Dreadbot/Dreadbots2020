@@ -113,6 +113,11 @@ void SparkDrive::TankDrive(double y_axis, double rot_axis, bool turbo_button, bo
   r_back->Set(right_final_speed);
 }
 
+double SparkDrive::GetGyroscopeHeading()
+{
+  return gyro->GetAngle();
+}
+
 frc::DifferentialDriveWheelSpeeds* SparkDrive::GetDifferentialDriveWheelSpeeds()
 {
   return new frc::DifferentialDriveWheelSpeeds
@@ -120,4 +125,32 @@ frc::DifferentialDriveWheelSpeeds* SparkDrive::GetDifferentialDriveWheelSpeeds()
     (units::meters_per_second_t) (l_front_encoder.GetVelocity() / kGearRatio * 2 * M_PI * kWheelRadiusMeters / 60),
     (units::meters_per_second_t) (r_front_encoder.GetVelocity() / kGearRatio * 2 * M_PI * kWheelRadiusMeters / 60)
   };
+}
+
+frc::DifferentialDriveKinematics* SparkDrive::GetDifferentialDriveKinematics()
+{
+  return differential_drive_kinematics;
+}
+
+frc::Pose2d SparkDrive::GetRobotPose2dPosition()
+{
+  return robot_current_position;
+}
+
+void SparkDrive::SetOutputVolts(double left_volts, double right_volts)
+{
+  l_front->Set(left_volts / 12);
+  l_back->Set(left_volts / 12);
+  r_front->Set(right_volts / 12);
+  r_back->Set(right_volts / 12);
+}
+
+void SparkDrive::ResetRobotPosition()
+{
+  differential_drive_odometry->ResetPosition(frc::Pose2d(), frc::Rotation2d(units::degree_t(GetGyroscopeHeading())));
+}
+
+void SparkDrive::SparkDriveAutonomousPeriodic()
+{
+  robot_current_position = differential_drive_odometry->Update(frc::Rotation2d(units::degree_t(GetGyroscopeHeading())), GetDifferentialDriveWheelSpeeds()->left * 0.02_s, GetDifferentialDriveWheelSpeeds()->right * 0.02_s);
 }
