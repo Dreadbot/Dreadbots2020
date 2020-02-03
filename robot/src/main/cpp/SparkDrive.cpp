@@ -106,22 +106,18 @@ void SparkDrive::TankDrive(double y_axis, double rot_axis, bool turbo_button, bo
   right_final_speed = (right_final_speed > 1.0) ? 1.0 : right_final_speed;
   right_final_speed = (right_final_speed < -1.0) ? -1.0 : right_final_speed;
 
-  // if(left_final_speed > 1.0){
-  //   left_final_speed = 1.0;
-  // }
-  // if(left_final_speed < -1.0){
-  //   left_final_speed = -1.0;
-  // }
-  // if(right_final_speed > 1.0){
-  //   right_final_speed = 1.0;
-  // }
-  // if(right_final_speed < -1.0){
-  //   right_final_speed = -1.0;
-  // }
-
   // Set Motor Speeds to the final speeds calculated.
   l_front->Set(left_final_speed);
   l_back->Set(left_final_speed);
   r_front->Set(right_final_speed);
   r_back->Set(right_final_speed);
+}
+
+frc::DifferentialDriveWheelSpeeds* SparkDrive::GetDifferentialDriveWheelSpeeds()
+{
+  return new frc::DifferentialDriveWheelSpeeds
+  {
+    (units::meters_per_second_t) (l_front_encoder.GetVelocity() / kGearRatio * 2 * M_PI * kWheelRadiusMeters / 60),
+    (units::meters_per_second_t) (r_front_encoder.GetVelocity() / kGearRatio * 2 * M_PI * kWheelRadiusMeters / 60)
+  };
 }

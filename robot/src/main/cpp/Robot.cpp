@@ -43,21 +43,25 @@ void Robot::RobotInit() {
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
-  shooter = new Shooter();
+  shooter = new Shooter(3,3);//Should have different numbers if your board supports it during testing
   //printf("robotcpp joystick_addr = %d \n",joystick_1);
   teleopFunctions = new TeleopFunctions(joystick_1, shooter);
   //Button assignments
-  int shooterButton = 1;
-  intake = new Intake();
 
+  // Unused Variable
+  // int shooterButton = 1;
+  intake = new Intake(); //Uses SparkMax motor 3 
+
+  // Trajectory Test (prints to RioLog)
   trajectory_generation_utility = new TrajectoryGenerationUtility();
   trajectory_generation_utility->GenerateTestTrajectory();
 
-  //spark_drive = new SparkDrive(new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless);
-    //new rev::CANSparkMax(kUltraRightFrontMotorID, rev::CANSparkMax::MotorType::kBrushless), 
-    //new rev::CANSparkMax(kUltraLeftBackMotorID, rev::CANSparkMax::MotorType::kBrushless), 
-    //new rev::CANSparkMax(kUltraRightBackMotorID, rev::CANSparkMax::MotorType::kBrushless)
-  //);
+  // Initialize SparkDrive Object using the UltraLord Drivetrain Configuration.
+  spark_drive = new SparkDrive(new rev::CANSparkMax(kUltraLeftFrontMotorID, rev::CANSparkMax::MotorType::kBrushless),
+    new rev::CANSparkMax(kUltraRightFrontMotorID, rev::CANSparkMax::MotorType::kBrushless), 
+    new rev::CANSparkMax(kUltraLeftBackMotorID, rev::CANSparkMax::MotorType::kBrushless), 
+    new rev::CANSparkMax(kUltraRightBackMotorID, rev::CANSparkMax::MotorType::kBrushless)
+  );
 }
 
 /**
@@ -105,22 +109,40 @@ void Robot::AutonomousPeriodic() {
 void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic() {
-  // Call SparkDrive::TankDrive() using the motors given.
+ //teleopFunctions->ShooterFunction();
 
-  //spark_drive->TankDrive(-joystick_1->GetRawAxis(y_axis), joystick_1->GetRawAxis(z_axis), joystick_1->GetRawButton(right_bumper), joystick_1->GetRawButton(left_bumper));
-  teleopFunctions->ShooterFunction();
-   //shooter->Shoot(0.00);
- 
+  // need to create sparkdrive above for this code 
  // spark_drive = new SparkDrive(new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless)
+   
+  std::cout << "Teleop Tick" << std::endl;
+  
+  
+    if (joystick_1->GetRawButtonPressed(3)) {
+    //intake->Start();
+    shooter->AimHeight(10);
+  }
+    if (joystick_1->GetRawButtonPressed(4)) {
+    shooter->AimHeight(0);
+    }
 
-  spark_drive->TankDrive(-joystick_1->GetRawAxis(y_axis), joystick_1->GetRawAxis(z_axis), joystick_1->GetRawButton(right_bumper), joystick_1->GetRawButton(left_bumper));
+    
+  //test of intake motor code
+  
   if (joystick_1->GetRawButtonPressed(1)) {
-    intake->Start();
+    //intake->Start();
+    intake->SetSpeed(100);
   }
     if (joystick_1->GetRawButtonPressed(2)) {
     intake->Stop();
   }
   
+  // Call SparkDrive::TankDrive() using the drivetrain motors
+  spark_drive->TankDrive(
+    joystick_1->GetRawAxis(y_axis), 
+    joystick_1->GetRawAxis(z_axis), 
+    joystick_1->GetRawButton(right_bumper), 
+    joystick_1->GetRawButton(left_bumper)
+  );
 }
 
 void Robot::TestPeriodic() {}
