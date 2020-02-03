@@ -2,7 +2,6 @@
 
 #include "rev/ColorSensorV3.h"
 #include "rev/ColorMatch.h"
-#include <frc/WPILib.h>
 #include "frc/I2C.h"
 #include "frc/util/color.h"
 #include "ctre/Phoenix.h"
