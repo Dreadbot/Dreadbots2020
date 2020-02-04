@@ -1,4 +1,4 @@
-#pragma once
+    #pragma once
 
 #include "rev/ColorSensorV3.h"
 #include "rev/ColorMatch.h"
@@ -7,7 +7,15 @@
 #include "ctre/Phoenix.h"
 #include "RobotUtilities.h"
 
-class ColorWheel
+class ColorWheel{
+    public:
+     ColorWheel();
+     void RotateToNumber(WPI_TalonSRX *motor, frc::Joystick *joystick, rev::ColorSensorV3 *sensor);
+    private:
+
+};
+
+/*class ColorWheel
 {
     public:
         ColorWheel(WPI_TalonSRX *colorMotor);
@@ -18,7 +26,4 @@ class ColorWheel
         rev::ColorSensorV3 *m_colorSensor;
         rev::ColorMatch *m_colorMatch;
         double confidence;
-
-       
-     
-};
+};*/
