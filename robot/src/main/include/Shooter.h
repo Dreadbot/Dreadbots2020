@@ -12,7 +12,8 @@ class Shooter
     public:
         Shooter(int shootermotorid,int aimmotorid);
         void Shoot(double shooterSpeed);
-        void AimHeight(double positionTicks); 
+        void AimHeight(double positionTicks);
+        void SetAimHeightPid(double pid); 
     private:
     rev::CANSparkMax *shooterMotor;
     rev::CANPIDController *shooterPid;

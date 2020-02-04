@@ -42,6 +42,7 @@ void Robot::RobotInit() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
+  frc::SmartDashboard::PutNumber("Aimpid",0.1);
 
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
   shooter = new Shooter(3,3);//Should have different numbers if your board supports it during testing
@@ -117,7 +118,9 @@ void Robot::TeleopPeriodic() {
    
   std::cout << "Teleop Tick" << std::endl;
   
-  
+  double Pid = frc::SmartDashboard::GetNumber("Aimpid",0.1);
+  //shooter->SetAimHeightPid(Pid);
+  //std::cout << "pidvalue = " << Pid <<std::endl;
     if (joystick_1->GetRawButtonPressed(3)) {
     //intake->Start();
     shooter->AimHeight(10);
