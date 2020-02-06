@@ -11,6 +11,7 @@ class ColorWheel{
     public:
      ColorWheel();
      void RotateToNumber(WPI_TalonSRX *motor, frc::Joystick *joystick, rev::ColorSensorV3 *sensor);
+     void RotateToColor(WPI_TalonSRX *motor, frc::Joystick *joystick, rev::ColorSensorV3 *sensor, frc::Color *targetcolor);
     private:
 
 };
