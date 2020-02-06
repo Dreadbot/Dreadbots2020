@@ -11,7 +11,10 @@ WheelState spinState = WheelState::NotSpinning;
 
 frc::Color ColorState;
 
+
 int NumSpins = 0;
+
+bool OnRed = false;
 
 ColorWheel::ColorWheel(){
   //Add color match code here
@@ -30,16 +33,20 @@ void ColorWheel::RotateToNumber(WPI_TalonSRX *motor, frc::Joystick *joystick, re
         spinState = WheelState::Spinning;
     }
     if (spinState == WheelState::Spinning)
-    {
+    {   
+        ColorState = sensor->GetColor();
         if (joystick->GetRawButton(1) || NumSpins>6)
         {
             motor->Set(ControlMode::PercentOutput,0.0);
             spinState = WheelState::NotSpinning;
             return;
         }
-        if (sensor->GetColor()== kRedTarget){
+        if (sensor->GetColor()== kRedTarget && OnRed == false){
             NumSpins = NumSpins+1;
-
+            OnRed = true;
+        }
+        else if (!(sensor->GetColor()== kRedTarget)) {
+            OnRed = false;
         }
     }
 }
