@@ -41,19 +41,19 @@ class Robot : public frc::TimedRobot {
   // Autonomous Functions
   TrajectoryGenerationUtility* trajectory_generation_utility;
 
-  // INPUTS
+  // Input Objects
   frc::Joystick *joystick_1;
 
-  // DRIVE
+  // Drive Objects
   SparkDrive* spark_drive;
 
-  TeleopFunctions *teleopFunctions;
+  // Trajectory Testing Variables
+  double const kIterationSecondsRatio = 0.02;
+
+  double iterative_clock = 0.0;
+
+  // Teleop Objects
+  TeleopFunctions *teleop_functions;
   Shooter *shooter;
-
-   //BUTTONS
-  int const shooterButton = 1;
-
-  // Intake mechanism
   Intake* intake;
-
 };

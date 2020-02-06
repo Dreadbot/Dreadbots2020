@@ -29,12 +29,12 @@ class SparkDrive
    * and those motors are used for any drive method within the class. Within
    * the block, the motor PID Settings are set up and are configurable.
    * 
-   * @param l_front_ The Left Front motor on the 4-wheel tank drive.
-   * @param r_front_ The Right Front motor on the 4-wheel tank drive.
-   * @param l_back_ The Left Back motor on the 4-wheel tank drive.
-   * @param r_back_ The Right Back motor on the 4-wheel tank drive.
+   * @param left_front_ The Left Front motor on the 4-wheel tank drive.
+   * @param right_front_ The Right Front motor on the 4-wheel tank drive.
+   * @param left_back_ The Left Back motor on the 4-wheel tank drive.
+   * @param right_back_ The Right Back motor on the 4-wheel tank drive.
   */
-  SparkDrive(rev::CANSparkMax *l_front_, rev::CANSparkMax *r_front_, rev::CANSparkMax *l_back_, rev::CANSparkMax *r_back_);
+  SparkDrive(rev::CANSparkMax *left_front_, rev::CANSparkMax *right_front_, rev::CANSparkMax *left_back_, rev::CANSparkMax *right_back_);
 
   /**
    * Dreadbot Tank Drive Function
@@ -76,7 +76,7 @@ class SparkDrive
    * 
    * @return The Robot's Current Pose2d
    */
-  frc::Pose2d GetRobotPose2dPosition();
+  frc::Pose2d GetRobotPose2dPosition() const;
 
   /**
    * Sets the current SparkMAX power level in volts
@@ -96,27 +96,118 @@ class SparkDrive
    */
   void SparkDriveAutonomousPeriodic();
 
+  /**
+   * Getter for the AHRS Gyroscope on the RoboRIO
+   * 
+   * @return The AHRS Gyroscope Object
+   */
+  AHRS* GetGyroscope();
+
+  /**
+   * Getter for the Left Front Encoder Object
+   * 
+   * @return The Left Front Encoder Object
+   */
+  rev::CANEncoder GetLeftFrontEncoder();
+
+  /**
+   * Getter for the Right Front Encoder Object
+   * 
+   * @return The Right Front Encoder Object
+   */
+  rev::CANEncoder GetRightFrontEncoder();
+
+  /**
+   * Getter for the Left Back Encoder Object
+   * 
+   * @return The Left Back Encoder Object
+   */
+  rev::CANEncoder GetLeftBackEncoder();
+  
+  /**
+   * Getter for the Right Back Encoder Object
+   * 
+   * @return The Right Back Encoder Object
+   */
+  rev::CANEncoder GetRightBackEncoder();
+
+  /**
+   * Getter for the Left Front PID Controller Object
+   * 
+   * @return The Left Front PID Controller Object
+   */
+  rev::CANPIDController GetLeftFrontPIDController();
+  
+  /**
+   * Getter for the Right Front PID Controller Object
+   * 
+   * @return The Right Front PID Controller Object
+   */
+  rev::CANPIDController GetRightFrontPIDController();
+  
+  /**
+   * Getter for the Left Back PID Controller Object
+   * 
+   * @return The Left Back PID Controller Object
+   */
+  rev::CANPIDController GetLeftBackPIDController();
+  
+  /**
+   * Getter for the Right Back PID Controller Object
+   * 
+   * @return The Right Back PID Controller Object
+   */
+  rev::CANPIDController GetRightBackPIDController();
+
+  /**
+   * Getter for the Left Front Motor Encoder Object
+   * 
+   * @return The Left Front Motor Encoder Object
+   */
+  rev::CANSparkMax* GetLeftFrontMotorEncoder();
+  
+  /**
+   * Getter for the Right Front Motor Encoder Object
+   * 
+   * @return The Right Front Motor Encoder Object
+   */
+  rev::CANSparkMax* GetRightFrontMotorEncoder();
+  
+  /**
+   * Getter for the Left Back Motor Encoder Object
+   * 
+   * @return The Left Back Motor Encoder Object
+   */
+  rev::CANSparkMax* GetLeftBackMotorEncoder();
+  
+  /**
+   * Getter for the Right Back Motor Encoder Object
+   * 
+   * @return The Right Back Motor Encoder Object
+   */
+  rev::CANSparkMax* GetRightBackMotorEncoder();
+
  private:
   // Gyroscope Objects
   AHRS* gyro;
   
   // Motor Encoder Objects
-  rev::CANEncoder l_front_encoder;
-  rev::CANEncoder r_front_encoder;
-  rev::CANEncoder l_back_encoder;
-  rev::CANEncoder r_back_encoder;
+  rev::CANEncoder left_front_encoder;
+  rev::CANEncoder right_front_encoder;
+  rev::CANEncoder left_back_encoder;
+  rev::CANEncoder right_back_encoder;
 
   // Motor PID Controller Objects
-  rev::CANPIDController l_front_PID;
-  rev::CANPIDController r_front_PID;
-  rev::CANPIDController l_back_PID;
-  rev::CANPIDController r_back_PID;
+  rev::CANPIDController left_front_PID;
+  rev::CANPIDController right_front_PID;
+  rev::CANPIDController left_back_PID;
+  rev::CANPIDController right_back_PID;
   
   // Motor Controller Objects
-  rev::CANSparkMax* l_front;
-  rev::CANSparkMax* r_front;
-  rev::CANSparkMax* l_back;
-  rev::CANSparkMax* r_back;
+  rev::CANSparkMax* left_front;
+  rev::CANSparkMax* right_front;
+  rev::CANSparkMax* left_back;
+  rev::CANSparkMax* right_back;
 
   // Trajectory Utilities
   frc::DifferentialDriveKinematics* differential_drive_kinematics;

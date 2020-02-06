@@ -47,16 +47,12 @@ void Robot::RobotInit() {
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
   shooter = new Shooter(3,3);//Should have different numbers if your board supports it during testing
   //printf("robotcpp joystick_addr = %d \n",joystick_1);
-  teleopFunctions = new TeleopFunctions(joystick_1, shooter);
+  teleop_functions = new TeleopFunctions(joystick_1, shooter);
   //Button assignments
 
-  // Unused Variable
-  // int shooterButton = 1;
   intake = new Intake(); //Uses SparkMax motor 3 
 
   // Trajectory Test (prints to RioLog)
-  trajectory_generation_utility = new TrajectoryGenerationUtility();
-  trajectory_generation_utility->GenerateTestTrajectory();
 
   // Initialize SparkDrive Object using the UltraLord Drivetrain Configuration.
   spark_drive = new SparkDrive(new rev::CANSparkMax(kUltraLeftFrontMotorID, rev::CANSparkMax::MotorType::kBrushless),
@@ -64,6 +60,9 @@ void Robot::RobotInit() {
     new rev::CANSparkMax(kUltraLeftBackMotorID, rev::CANSparkMax::MotorType::kBrushless), 
     new rev::CANSparkMax(kUltraRightBackMotorID, rev::CANSparkMax::MotorType::kBrushless)
   );
+
+  trajectory_generation_utility = new TrajectoryGenerationUtility();
+  trajectory_generation_utility->GenerateTestTrajectory(spark_drive);
 }
 
 /**
@@ -106,43 +105,39 @@ void Robot::AutonomousPeriodic() {
   } else {
     // Default Auto goes here
   }
+
+  iterative_clock += 1.0;
+
+  units::time::second_t time_at_iteration = units::time::second_t(iterative_clock * kIterationSecondsRatio);
 }
 
 void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic() {
- //teleopFunctions->ShooterFunction();
-
-  // need to create sparkdrive above for this code 
- // spark_drive = new SparkDrive(new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless)
-   
+  //teleopFunctions->ShooterFunction();
   std::cout << "Teleop Tick" << std::endl;
   
-  double Pid = frc::SmartDashboard::GetNumber("Aimpid",0.1);
-  //shooter->SetAimHeightPid(Pid);
-  //std::cout << "pidvalue = " << Pid <<std::endl;
-    if (joystick_1->GetRawButtonPressed(3)) {
+  if (joystick_1->GetRawButtonPressed(b_button)) {
     //intake->Start();
     shooter->AimHeight(10);
   }
-    if (joystick_1->GetRawButtonPressed(4)) {
+  if (joystick_1->GetRawButtonPressed(y_button)) {
     shooter->AimHeight(0);
-    }
+  }
 
     
-  //test of intake motor code
-  
-  if (joystick_1->GetRawButtonPressed(1)) {
+  //Testing Intake Motor Code
+  if (joystick_1->GetRawButtonPressed(x_button)) {
     //intake->Start();
     intake->SetSpeed(100);
   }
-    if (joystick_1->GetRawButtonPressed(2)) {
+  if (joystick_1->GetRawButtonPressed(a_button)) {
     intake->Stop();
   }
   
   // Call SparkDrive::TankDrive() using the drivetrain motors
   spark_drive->TankDrive(
-    joystick_1->GetRawAxis(y_axis), 
+    -joystick_1->GetRawAxis(y_axis), 
     joystick_1->GetRawAxis(z_axis), 
     joystick_1->GetRawButton(right_bumper), 
     joystick_1->GetRawButton(left_bumper)

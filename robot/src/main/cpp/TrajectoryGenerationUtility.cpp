@@ -3,7 +3,7 @@
 TrajectoryGenerationUtility::TrajectoryGenerationUtility()
 {}
 
-void TrajectoryGenerationUtility::GenerateTestTrajectory()
+void TrajectoryGenerationUtility::GenerateTestTrajectory(SparkDrive* dreadbot_sparkdrive)
 {
   // Starting Pose2d (X-Axis Position, Y-Axis Position, Rotation in Degrees)
   const frc::Pose2d starting_position{0_ft, 0_ft, frc::Rotation2d(0_deg)};
@@ -20,10 +20,36 @@ void TrajectoryGenerationUtility::GenerateTestTrajectory()
 
   // Generate the trajectory using the starting points, intermediate points,
   // ending point, and configration.
-  auto trajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+  trajectory = frc::TrajectoryGenerator::GenerateTrajectory(
     starting_position, interior_waypoints, ending_position, config
   );
 
   // For testing purposes, serialize the trajectory and print it to the RIOLog.
   std::cout << frc::TrajectoryUtil::SerializeTrajectory(trajectory) << std::endl;
+
+  // Define the Trajectory Tracker
+  ramsete_controller = new frc::RamseteController(0.2, 7.0);
+
+  for(double delta_time = 0.00; delta_time < 1.00; delta_time += 0.02)
+  {
+    chassis_speeds = ramsete_controller->Calculate(dreadbot_sparkdrive->GetRobotPose2dPosition(), trajectory.Sample(units::time::second_t(delta_time)));
+
+    std::cout << chassis_speeds.vx << std::endl;
+    std::cout << chassis_speeds.omega << std::endl;
+  }
+}
+
+frc::Trajectory TrajectoryGenerationUtility::GetTrajectory()
+{
+  return this->trajectory;
+}
+
+frc::RamseteController* TrajectoryGenerationUtility::GetRamseteController()
+{
+  return this->ramsete_controller;
+}
+
+frc::ChassisSpeeds TrajectoryGenerationUtility::GetChassisSpeeds()
+{
+  return this->chassis_speeds;
 }
