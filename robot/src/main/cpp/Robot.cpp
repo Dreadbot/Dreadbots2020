@@ -11,6 +11,7 @@
 
 #include <frc/smartdashboard/SmartDashboard.h>
 
+
 void Robot::RobotInit() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
@@ -23,7 +24,7 @@ void Robot::RobotInit() {
   //Button assignments
   int shooterButton = 1;
   intake = new Intake(); //Uses SparkMax motor 3 
-
+  test = new Diagnostic(joystick_1);
   trajectory_generation_utility = new TrajectoryGenerationUtility();
   trajectory_generation_utility->GenerateTestTrajectory();
 
@@ -86,9 +87,15 @@ void Robot::TeleopPeriodic() {
 
   // need to create sparkdrive above for this code 
  // spark_drive = new SparkDrive(new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless)
-   
-  std::cout << "Teleop Tick" << std::endl;
-  
+   double joystickaxisY = joystick_1->GetRawAxis(1); 
+   if(fabs(joystickaxisY)  <= 0.025){
+     intake->Stop();
+   }
+   else{
+     intake->SetSpeed(joystickaxisY * 5000 );
+   }
+  std::cout << "Teleop Tick"  << std::endl;
+  std::cout << joystickaxisY << std::endl;
   
     if (joystick_1->GetRawButtonPressed(3)) {
     //intake->Start();
@@ -101,19 +108,28 @@ void Robot::TeleopPeriodic() {
     
   //test of intake motor code
   
-  if (joystick_1->GetRawButtonPressed(1)) {
-    //intake->Start();
-    intake->SetSpeed(100);
-  }
-    if (joystick_1->GetRawButtonPressed(2)) {
-    intake->Stop();
-  }
+  // if (joystick_1->GetRawButton(1)) {
+  //   //intake->Start();
+  //   intake->SetSpeed(100);
+  // }
+  // else{
+  //   intake->SetSpeed(0);
+  // }
+
+    //if (joystick_1->GetRawButtonPressed(2)) {
+    //intake->Stop();
+  //}
   
+
+
+  
+
   
 }
 
-void Robot::TestPeriodic() {}
-
+void Robot::TestPeriodic() {
+  test->run();
+}
 #ifndef RUNNING_FRC_TESTS
 int main() { return frc::StartRobot<Robot>(); }
 #endif

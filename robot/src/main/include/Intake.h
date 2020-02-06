@@ -10,4 +10,5 @@ class Intake
     private:
         rev::CANSparkMax *intake_motor;
         rev::CANPIDController *intakePid;
+        bool running;
 };

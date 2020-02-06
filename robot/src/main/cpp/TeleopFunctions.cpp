@@ -11,7 +11,11 @@ void TeleopFunctions::ShooterFunction(){
         if(js1->GetRawButton(shooterButton)){
          //Hard coding power rn
          shooter->Shoot(0.2);
+        }
+        else{
+             shooter->Shoot(0.00);
+         }
          
          
-     }
+    
 }

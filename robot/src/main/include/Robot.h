@@ -21,6 +21,7 @@
 #include "TrajectoryGenerationUtility.h"
 
 #include "Intake.h"
+#include "Diagnostic.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -52,8 +53,10 @@ class Robot : public frc::TimedRobot {
 
    //BUTTONS
   int const shooterButton = 1;
+  
 
   // Intake mechanism
   Intake* intake;
+  Diagnostic* test;
 
 };
