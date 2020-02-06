@@ -19,6 +19,8 @@ class TrajectoryGenerationUtility
   frc::RamseteController* GetRamseteController();
 
   frc::ChassisSpeeds GetChassisSpeeds();
+
+  void SetChassisSpeeds(frc::ChassisSpeeds chassis_speeds);
  private:
   frc::Trajectory trajectory;
 

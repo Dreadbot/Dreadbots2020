@@ -8,6 +8,7 @@
 #pragma once
 
 #include <rev/CANSparkMax.h>
+#include <rev/ControlType.h>
 
 #include <frc/controller/SimpleMotorFeedforward.h>
 #include <frc/kinematics/DifferentialDriveKinematics.h>
@@ -160,32 +161,32 @@ class SparkDrive
   rev::CANPIDController GetRightBackPIDController();
 
   /**
-   * Getter for the Left Front Motor Encoder Object
+   * Getter for the Left Front Motor Controller Object
    * 
-   * @return The Left Front Motor Encoder Object
+   * @return The Left Front Motor Controller Object
    */
-  rev::CANSparkMax* GetLeftFrontMotorEncoder();
+  rev::CANSparkMax* GetLeftFrontMotorController();
   
   /**
-   * Getter for the Right Front Motor Encoder Object
+   * Getter for the Right Front Motor Controller Object
    * 
-   * @return The Right Front Motor Encoder Object
+   * @return The Right Front Motor Controller Object
    */
-  rev::CANSparkMax* GetRightFrontMotorEncoder();
+  rev::CANSparkMax* GetRightFrontMotorController();
   
   /**
-   * Getter for the Left Back Motor Encoder Object
+   * Getter for the Left Back Motor Controller Object
    * 
-   * @return The Left Back Motor Encoder Object
+   * @return The Left Back Motor Controller Object
    */
-  rev::CANSparkMax* GetLeftBackMotorEncoder();
+  rev::CANSparkMax* GetLeftBackMotorController();
   
   /**
-   * Getter for the Right Back Motor Encoder Object
+   * Getter for the Right Back Motor Controller Object
    * 
-   * @return The Right Back Motor Encoder Object
+   * @return The Right Back Motor Controller Object
    */
-  rev::CANSparkMax* GetRightBackMotorEncoder();
+  rev::CANSparkMax* GetRightBackMotorController();
 
  private:
   // Gyroscope Objects

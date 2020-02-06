@@ -164,3 +164,58 @@ rev::CANEncoder SparkDrive::GetLeftFrontEncoder()
 {
   return this->left_front_encoder;
 }
+
+rev::CANEncoder SparkDrive::GetRightFrontEncoder()
+{
+  return this->right_front_encoder;
+}
+
+rev::CANEncoder SparkDrive::GetLeftBackEncoder()
+{
+  return this->left_back_encoder;
+}
+
+rev::CANEncoder SparkDrive::GetRightBackEncoder()
+{
+  return this->right_back_encoder;
+}
+
+rev::CANPIDController SparkDrive::GetLeftFrontPIDController()
+{
+  return this->left_front_PID;
+}
+
+rev::CANPIDController SparkDrive::GetRightFrontPIDController()
+{
+  return this->right_front_PID;
+}
+
+rev::CANPIDController SparkDrive::GetLeftBackPIDController()
+{
+  return this->left_back_PID;
+}
+
+rev::CANPIDController SparkDrive::GetRightBackPIDController()
+{
+  return this->right_back_PID;
+}
+
+rev::CANSparkMax* SparkDrive::GetLeftFrontMotorController()
+{
+  return this->left_front;
+}
+
+rev::CANSparkMax* SparkDrive::GetRightFrontMotorController()
+{
+  return this->right_front;
+}
+
+rev::CANSparkMax* SparkDrive::GetLeftBackMotorController()
+{
+  return this->left_back;
+}
+
+rev::CANSparkMax* SparkDrive::GetRightBackMotorController()
+{
+  return this->right_front;
+}

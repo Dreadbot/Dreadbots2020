@@ -106,9 +106,21 @@ void Robot::AutonomousPeriodic() {
     // Default Auto goes here
   }
 
-  iterative_clock += 1.0;
+  iterative_clock += kIterationSecondsRatio;
 
-  units::time::second_t time_at_iteration = units::time::second_t(iterative_clock * kIterationSecondsRatio);
+  units::time::second_t time_at_iteration = units::time::second_t(iterative_clock);
+
+  trajectory_generation_utility->SetChassisSpeeds(
+    trajectory_generation_utility->GetRamseteController()->Calculate(
+      spark_drive->GetRobotPose2dPosition(), 
+      trajectory_generation_utility->GetTrajectory().Sample(time_at_iteration)
+    )
+  );
+
+  spark_drive->GetLeftFrontPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
+  spark_drive->GetRightFrontPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
+  spark_drive->GetLeftBackPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
+  spark_drive->GetRightBackPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
 }
 
 void Robot::TeleopInit() {}

@@ -53,3 +53,8 @@ frc::ChassisSpeeds TrajectoryGenerationUtility::GetChassisSpeeds()
 {
   return this->chassis_speeds;
 }
+
+void TrajectoryGenerationUtility::SetChassisSpeeds(frc::ChassisSpeeds chassis_speeds_)
+{
+  chassis_speeds = chassis_speeds_;
+}
