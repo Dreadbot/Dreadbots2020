@@ -58,6 +58,8 @@ SparkDrive::SparkDrive(rev::CANSparkMax *left_front_, rev::CANSparkMax *right_fr
   right_back_PID.SetIZone(0.1);
   right_back_PID.SetFF(0);
   right_back_PID.SetOutputRange(-1, 1);
+
+  gyro = new AHRS(SPI::Port::kMXP);
 }
 
 void SparkDrive::TankDrive(double y_axis, double rot_axis, bool turbo_button, bool turtle_button)
@@ -94,8 +96,60 @@ void SparkDrive::TankDrive(double y_axis, double rot_axis, bool turbo_button, bo
   // Calculating Final Speed by adding both the
   // Forward/Backward speed (y_speed) and Rotation
   // Speeds (rot_speed)
-  left_final_speed = -y_speed + rot_speed;
-  right_final_speed = y_speed + rot_speed;
+  left_final_speed = -y_speed - rot_speed;
+  right_final_speed = y_speed - rot_speed;
+
+  // Setting the final speed to a max of 100%
+  // To prevent any errors if we reach the limit.
+  // Essentially, if out of bounds, set it to the
+  // most extreme bounds to prevent errors.
+  left_final_speed = (left_final_speed > 1.0) ? 1.0 : left_final_speed;
+  left_final_speed = (left_final_speed < -1.0) ? -1.0 : left_final_speed;
+  right_final_speed = (right_final_speed > 1.0) ? 1.0 : right_final_speed;
+  right_final_speed = (right_final_speed < -1.0) ? -1.0 : right_final_speed;
+
+  // Set Motor Speeds to the final speeds calculated.
+  left_front->Set(left_final_speed);
+  left_back->Set(left_final_speed);
+  right_front->Set(right_final_speed);
+  right_back->Set(right_final_speed);
+}
+
+void SparkDrive::TankDrive(double y_axis, double rot_axis, bool turbo_button, bool turtle_button, double joystick_deadband){
+   // Remove any possibility of Joystick Deadband.
+  // Essentially, if the joystick input is within
+  // the range of the considered deadband
+  // Consider the input as 0.0
+  y_axis = (fabs(y_axis) < joystick_deadband) ? 0 : y_axis;
+  rot_axis = (fabs(rot_axis) < joystick_deadband) ? 0 : rot_axis;
+
+  // Set the speed mode from turbo_button and turtle_button.
+  // In the case that both turtle mode and turbo mode are
+  // both enabled, turbo mode overrides turtle. 
+  // (This can absolutely be changed if needed)
+  if(turbo_button)
+  {
+    current_speed = kTurboSpeed;
+  } else if(turtle_button)
+  {
+    current_speed = kTurtleSpeed;
+  } else 
+  {
+    current_speed = kNormalSpeed;
+  }
+
+  // Multiply the axes by the current speed setting
+  // the -2 for rotation speed is simply because it
+  // takes more force to turn due to friction, so we
+  // use twice the speed.
+  y_speed = y_axis * current_speed;
+  rot_speed = -2 * rot_axis * current_speed;
+
+  // Calculating Final Speed by adding both the
+  // Forward/Backward speed (y_speed) and Rotation
+  // Speeds (rot_speed)
+  left_final_speed = -y_speed - rot_speed;
+  right_final_speed = y_speed - rot_speed;
 
   // Setting the final speed to a max of 100%
   // To prevent any errors if we reach the limit.
@@ -117,7 +171,6 @@ double SparkDrive::GetGyroscopeHeading()
 {
   return gyro->GetAngle();
 }
-
 frc::DifferentialDriveWheelSpeeds* SparkDrive::GetDifferentialDriveWheelSpeeds()
 {
   return new frc::DifferentialDriveWheelSpeeds

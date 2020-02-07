@@ -47,7 +47,6 @@ void Robot::RobotInit() {
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
   shooter = new Shooter(3,3);//Should have different numbers if your board supports it during testing
   //printf("robotcpp joystick_addr = %d \n",joystick_1);
-  teleop_functions = new TeleopFunctions(joystick_1, shooter);
   //Button assignments
 
   intake = new Intake(); //Uses SparkMax motor 3 
@@ -63,6 +62,7 @@ void Robot::RobotInit() {
 
   trajectory_generation_utility = new TrajectoryGenerationUtility();
   trajectory_generation_utility->GenerateTestTrajectory(spark_drive);
+  teleop_functions = new TeleopFunctions(joystick_1, shooter, spark_drive);
 }
 
 /**
@@ -96,7 +96,7 @@ void Robot::AutonomousInit() {
     // Custom Auto goes here
   } else {
     // Default Auto goes here
-  }
+  } 
 }
 
 void Robot::AutonomousPeriodic() {
@@ -123,7 +123,9 @@ void Robot::AutonomousPeriodic() {
   spark_drive->GetRightBackPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
 }
 
-void Robot::TeleopInit() {}
+void Robot::TeleopInit() {
+  spark_drive->gyro->ZeroYaw();
+}
 
 void Robot::TeleopPeriodic() {
   //teleopFunctions->ShooterFunction();
@@ -154,6 +156,11 @@ void Robot::TeleopPeriodic() {
     joystick_1->GetRawButton(right_bumper), 
     joystick_1->GetRawButton(left_bumper)
   );
+
+  if(!teleop_functions->GetTurnStatus() || joystick_1->GetRawButton(a_button)){
+    teleop_functions->TurnToAngle(30.0, .002);
+  }
+  frc::SmartDashboard::PutNumber("Current Angle", spark_drive->gyro->GetYaw());
 }
 
 void Robot::TestPeriodic() {}

@@ -25,7 +25,7 @@ void TrajectoryGenerationUtility::GenerateTestTrajectory(SparkDrive* dreadbot_sp
   );
 
   // For testing purposes, serialize the trajectory and print it to the RIOLog.
-  std::cout << frc::TrajectoryUtil::SerializeTrajectory(trajectory) << std::endl;
+  //std::cout << frc::TrajectoryUtil::SerializeTrajectory(trajectory) << std::endl;
 
   // Define the Trajectory Tracker
   ramsete_controller = new frc::RamseteController(0.2, 7.0);

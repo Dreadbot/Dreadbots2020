@@ -52,6 +52,23 @@ class SparkDrive
   void TankDrive(double y_axis, double rot_axis, bool turbo_button, bool turtle_button);
 
   /**
+   *Overload of Dreadbot Tank Drive Function
+   * 
+   * Takes a forward/backward factor input, a rotation factor input,
+   * turbo and turtle button to change speeds, and a joystick deadband value,
+   * and calculates 4 motor controller speed inputs.
+   * Overloaded TankDrive in order to control joystick deadband when needed, 
+   * such as for autonomous uses of the function
+   * 
+   * y_axis Forward/Backward facing axis of type double with a range from -1.0 to 1.0
+   * @param rot_axis Rotation speed factor of type double with a range of -1.0 to 1.0
+   * @param turbo_button Whether or not to use turbo mode, or twice the speed of normal.
+   * @param turtle_button Whether or not to use turbo mode, or half the speed of normal.
+   * @param joystick_deadband Define the range in which the values of y_axis and rot_axis are considerd zero, from 0.0 to 1.0
+  */
+  void TankDrive(double y_axis, double rot_axis, bool turbo_button, bool turtle_button, double joystick_deadband);
+
+  /**
    * Utility Function for Getting the current angle of the gyroscope as a Rotation 2d.
    */
   double GetGyroscopeHeading();
@@ -188,9 +205,9 @@ class SparkDrive
    */
   rev::CANSparkMax* GetRightBackMotorController();
 
- private:
   // Gyroscope Objects
   AHRS* gyro;
+ private:
   
   // Motor Encoder Objects
   rev::CANEncoder left_front_encoder;
