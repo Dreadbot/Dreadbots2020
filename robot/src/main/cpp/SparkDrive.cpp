@@ -171,6 +171,7 @@ double SparkDrive::GetGyroscopeHeading()
 {
   return gyro->GetAngle();
 }
+
 frc::DifferentialDriveWheelSpeeds* SparkDrive::GetDifferentialDriveWheelSpeeds()
 {
   return new frc::DifferentialDriveWheelSpeeds

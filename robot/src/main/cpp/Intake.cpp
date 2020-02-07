@@ -22,5 +22,8 @@ void Intake::Stop(){
     running = false;
 }
 void Intake::SetSpeed(double speed) {
-    m_pidController->SetReference(speed, rev::ControlType::kVelocity); 
+    if(!running){
+        m_pidController->SetReference(speed, rev::ControlType::kVelocity); 
+        running = true;
+    }
 } 

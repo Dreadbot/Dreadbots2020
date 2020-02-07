@@ -48,12 +48,15 @@ void Robot::RobotInit() {
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
   shooter = new Shooter(3,3);//Should have different numbers if your board supports it during testing
   //printf("robotcpp joystick_addr = %d \n",joystick_1);
+  teleop_functions = new TeleopFunctions(joystick_1, shooter, spark_drive);
   //Button assignments
 
   intake = new Intake(); //Uses SparkMax motor 3 
   test = new Diagnostic(joystick_1);
   trajectory_generation_utility = new TrajectoryGenerationUtility();
   trajectory_generation_utility->GenerateTestTrajectory(spark_drive);
+
+  // Trajectory Test (prints to RioLog)
 
   // Initialize SparkDrive Object using the UltraLord Drivetrain Configuration.
   spark_drive = new SparkDrive(new rev::CANSparkMax(kUltraLeftFrontMotorID, rev::CANSparkMax::MotorType::kBrushless),
@@ -147,7 +150,11 @@ void Robot::TeleopPeriodic() {
   std::cout << "Teleop Tick"  << std::endl;
   std::cout << joystickaxisY << std::endl;
   
-    if (joystick_1->GetRawButtonPressed(3)) {
+  
+  //teleopFunctions->ShooterFunction();
+  std::cout << "Teleop Tick" << std::endl;
+  
+  if (joystick_1->GetRawButtonPressed(b_button)) {
     //intake->Start();
     shooter->AimHeight(10);
   }
