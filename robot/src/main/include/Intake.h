@@ -1,5 +1,6 @@
 #pragma once
 #include <rev/CANSparkMax.h>
+#include <rev/CANPIDController.h>
 class Intake
 {
     public:
@@ -9,6 +10,6 @@ class Intake
         void SetSpeed(double speed);
     private:
         rev::CANSparkMax *intake_motor;
-        rev::CANPIDController *intakePid;
-        bool running;
+        rev::CANPIDController *m_pidController;
+        bool running = false;
 };

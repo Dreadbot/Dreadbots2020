@@ -2,14 +2,15 @@
 
 Intake::Intake(){ 
     intake_motor = new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless);
-    *intakePid = intake_motor->GetPIDController();
-    //intakePid = new rev::CANPIDController(intake_motor->GetPIDController());
-    intakePid->SetP(6e-5);
-    intakePid->SetI(1e-6);
-    intakePid->SetD(0.3);
-    intakePid->SetIZone(0);  
-    intakePid->SetFF(0.000015);
-    intakePid->SetOutputRange(-1.0, 1.0);
+    m_pidController = new rev::CANPIDController(intake_motor->GetPIDController());
+    m_pidController->SetP(6e-5);
+    m_pidController->SetI(1e-6);
+    m_pidController->SetD(0.3);
+    m_pidController->SetIZone(0);  
+    m_pidController->SetFF(0.000015);
+    m_pidController->SetOutputRange(-1.0, 1.0);
+    m_pidController = new rev::CANPIDController(intake_motor->GetPIDController());
+
 }
 
 void Intake::Start(){
@@ -21,8 +22,5 @@ void Intake::Stop(){
     running = false;
 }
 void Intake::SetSpeed(double speed) {
-    if(!running){
-        intakePid->SetReference(speed, rev::ControlType::kVelocity); 
-        running = true;
-    }
+    m_pidController->SetReference(speed, rev::ControlType::kVelocity); 
 } 

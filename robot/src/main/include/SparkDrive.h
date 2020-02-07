@@ -8,12 +8,15 @@
 #pragma once
 
 #include <rev/CANSparkMax.h>
+#include <rev/ControlType.h>
 
 #include <frc/controller/SimpleMotorFeedforward.h>
 #include <frc/kinematics/DifferentialDriveKinematics.h>
 #include <frc/kinematics/DifferentialDriveOdometry.h>
 #include <frc/kinematics/DifferentialDriveWheelSpeeds.h>
 #include <frc/geometry/Pose2d.h>
+
+#include <units/units.h>
 
 #include <AHRS.h>
 
@@ -27,12 +30,12 @@ class SparkDrive
    * and those motors are used for any drive method within the class. Within
    * the block, the motor PID Settings are set up and are configurable.
    * 
-   * @param l_front_ The Left Front motor on the 4-wheel tank drive.
-   * @param r_front_ The Right Front motor on the 4-wheel tank drive.
-   * @param l_back_ The Left Back motor on the 4-wheel tank drive.
-   * @param r_back_ The Right Back motor on the 4-wheel tank drive.
+   * @param left_front_ The Left Front motor on the 4-wheel tank drive.
+   * @param right_front_ The Right Front motor on the 4-wheel tank drive.
+   * @param left_back_ The Left Back motor on the 4-wheel tank drive.
+   * @param right_back_ The Right Back motor on the 4-wheel tank drive.
   */
-  SparkDrive(rev::CANSparkMax *l_front_, rev::CANSparkMax *r_front_, rev::CANSparkMax *l_back_, rev::CANSparkMax *r_back_);
+  SparkDrive(rev::CANSparkMax *left_front_, rev::CANSparkMax *right_front_, rev::CANSparkMax *left_back_, rev::CANSparkMax *right_back_);
 
   /**
    * Dreadbot Tank Drive Function
@@ -47,6 +50,28 @@ class SparkDrive
    * @param turtle_button Whether or not to use turbo mode, or half the speed of normal.
   */
   void TankDrive(double y_axis, double rot_axis, bool turbo_button, bool turtle_button);
+
+  /**
+   *Overload of Dreadbot Tank Drive Function
+   * 
+   * Takes a forward/backward factor input, a rotation factor input,
+   * turbo and turtle button to change speeds, and a joystick deadband value,
+   * and calculates 4 motor controller speed inputs.
+   * Overloaded TankDrive in order to control joystick deadband when needed, 
+   * such as for autonomous uses of the function
+   * 
+   * y_axis Forward/Backward facing axis of type double with a range from -1.0 to 1.0
+   * @param rot_axis Rotation speed factor of type double with a range of -1.0 to 1.0
+   * @param turbo_button Whether or not to use turbo mode, or twice the speed of normal.
+   * @param turtle_button Whether or not to use turbo mode, or half the speed of normal.
+   * @param joystick_deadband Define the range in which the values of y_axis and rot_axis are considerd zero, from 0.0 to 1.0
+  */
+  void TankDrive(double y_axis, double rot_axis, bool turbo_button, bool turtle_button, double joystick_deadband);
+
+  /**
+   * Utility Function for Getting the current angle of the gyroscope as a Rotation 2d.
+   */
+  double GetGyroscopeHeading();
 
   /**
    * Utility Function for Getting DifferentialDriveWheelSpeeds object 
@@ -69,7 +94,7 @@ class SparkDrive
    * 
    * @return The Robot's Current Pose2d
    */
-  frc::Pose2d* GetRobotPose2dPosition();
+  frc::Pose2d GetRobotPose2dPosition() const;
 
   /**
    * Sets the current SparkMAX power level in volts
@@ -89,31 +114,124 @@ class SparkDrive
    */
   void SparkDriveAutonomousPeriodic();
 
- private:
+  /**
+   * Getter for the AHRS Gyroscope on the RoboRIO
+   * 
+   * @return The AHRS Gyroscope Object
+   */
+  AHRS* GetGyroscope();
+
+  /**
+   * Getter for the Left Front Encoder Object
+   * 
+   * @return The Left Front Encoder Object
+   */
+  rev::CANEncoder GetLeftFrontEncoder();
+
+  /**
+   * Getter for the Right Front Encoder Object
+   * 
+   * @return The Right Front Encoder Object
+   */
+  rev::CANEncoder GetRightFrontEncoder();
+
+  /**
+   * Getter for the Left Back Encoder Object
+   * 
+   * @return The Left Back Encoder Object
+   */
+  rev::CANEncoder GetLeftBackEncoder();
+  
+  /**
+   * Getter for the Right Back Encoder Object
+   * 
+   * @return The Right Back Encoder Object
+   */
+  rev::CANEncoder GetRightBackEncoder();
+
+  /**
+   * Getter for the Left Front PID Controller Object
+   * 
+   * @return The Left Front PID Controller Object
+   */
+  rev::CANPIDController GetLeftFrontPIDController();
+  
+  /**
+   * Getter for the Right Front PID Controller Object
+   * 
+   * @return The Right Front PID Controller Object
+   */
+  rev::CANPIDController GetRightFrontPIDController();
+  
+  /**
+   * Getter for the Left Back PID Controller Object
+   * 
+   * @return The Left Back PID Controller Object
+   */
+  rev::CANPIDController GetLeftBackPIDController();
+  
+  /**
+   * Getter for the Right Back PID Controller Object
+   * 
+   * @return The Right Back PID Controller Object
+   */
+  rev::CANPIDController GetRightBackPIDController();
+
+  /**
+   * Getter for the Left Front Motor Controller Object
+   * 
+   * @return The Left Front Motor Controller Object
+   */
+  rev::CANSparkMax* GetLeftFrontMotorController();
+  
+  /**
+   * Getter for the Right Front Motor Controller Object
+   * 
+   * @return The Right Front Motor Controller Object
+   */
+  rev::CANSparkMax* GetRightFrontMotorController();
+  
+  /**
+   * Getter for the Left Back Motor Controller Object
+   * 
+   * @return The Left Back Motor Controller Object
+   */
+  rev::CANSparkMax* GetLeftBackMotorController();
+  
+  /**
+   * Getter for the Right Back Motor Controller Object
+   * 
+   * @return The Right Back Motor Controller Object
+   */
+  rev::CANSparkMax* GetRightBackMotorController();
+
   // Gyroscope Objects
   AHRS* gyro;
+ private:
   
   // Motor Encoder Objects
-  rev::CANEncoder l_front_encoder;
-  rev::CANEncoder r_front_encoder;
-  rev::CANEncoder l_back_encoder;
-  rev::CANEncoder r_back_encoder;
+  rev::CANEncoder left_front_encoder;
+  rev::CANEncoder right_front_encoder;
+  rev::CANEncoder left_back_encoder;
+  rev::CANEncoder right_back_encoder;
 
   // Motor PID Controller Objects
-  rev::CANPIDController l_front_PID;
-  rev::CANPIDController r_front_PID;
-  rev::CANPIDController l_back_PID;
-  rev::CANPIDController r_back_PID;
+  rev::CANPIDController left_front_PID;
+  rev::CANPIDController right_front_PID;
+  rev::CANPIDController left_back_PID;
+  rev::CANPIDController right_back_PID;
   
   // Motor Controller Objects
-  rev::CANSparkMax* l_front;
-  rev::CANSparkMax* r_front;
-  rev::CANSparkMax* l_back;
-  rev::CANSparkMax* r_back;
+  rev::CANSparkMax* left_front;
+  rev::CANSparkMax* right_front;
+  rev::CANSparkMax* left_back;
+  rev::CANSparkMax* right_back;
 
   // Trajectory Utilities
   frc::DifferentialDriveKinematics* differential_drive_kinematics;
   frc::DifferentialDriveOdometry* differential_drive_odometry;
+
+  frc::Pose2d robot_current_position;
 
   const double kGearRatio = 0.77;
   const double kWheelRadiusMeters = 1.00;
