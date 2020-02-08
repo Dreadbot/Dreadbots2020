@@ -10,6 +10,7 @@
 #include <rev/CANSparkMax.h>
 #include <rev/ControlType.h>
 
+#include <frc/controller/PIDController.h>
 #include <frc/controller/SimpleMotorFeedforward.h>
 #include <frc/kinematics/DifferentialDriveKinematics.h>
 #include <frc/kinematics/DifferentialDriveOdometry.h>
@@ -87,7 +88,7 @@ class SparkDrive
    * @param left_volts The Left side of the robot motors' power in volts
    * @param right_volts The Right side of the robot motors' power in volts
    */
-  void SetOutputVolts(double left_volts, double right_volts);
+  void SetOutputVolts(units::voltage::volt_t left_volts, units::voltage::volt_t right_volts);
 
   /**
    * Zeroes the current position of the robot to the current position.
@@ -220,6 +221,20 @@ class SparkDrive
    */
   frc::Pose2d GetRobotPose2dPosition() const;
 
+  /**
+   * Utility Function for Getting the Left Ramsete PID Controller.
+   * 
+   * @return The Left Ramsete PID Controller
+   */ 
+  frc2::PIDController* GetLeftRamsetePIDController();
+
+  /**
+   * Utility Function for Getting the Right Ramsete PID Controller.
+   * 
+   * @return The Right Ramsete PID Controller
+   */ 
+  frc2::PIDController* GetRightRamsetePIDController();
+
  private:
   // Gyroscope Objects
   AHRS* gyro;
@@ -247,6 +262,16 @@ class SparkDrive
   frc::DifferentialDriveOdometry* differential_drive_odometry;
 
   frc::SimpleMotorFeedforward<units::meters> simple_motor_feedforward;
+  
+  // Yes, NEOs have built in encoders, but these
+  // are specifically for the trajectory following
+  // path and will help correct for minor errors.
+  //
+  // This is because trajectory tracking is considered
+  // to be a DifferentialDrive setup, where we have tank
+  // drive (4 motors) instead of differential (2 motors)
+  frc2::PIDController* left_PID_controller;
+  frc2::PIDController* right_PID_controller;
 
   frc::Pose2d robot_current_position;
 

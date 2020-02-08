@@ -213,12 +213,12 @@ frc::Pose2d SparkDrive::GetRobotPose2dPosition() const
   return robot_current_position;
 }
 
-void SparkDrive::SetOutputVolts(double left_volts, double right_volts)
+void SparkDrive::SetOutputVolts(units::voltage::volt_t left_volts, units::voltage::volt_t right_volts)
 {
-  left_front->Set(left_volts / 12);
-  left_back->Set(left_volts / 12);
-  right_front->Set(right_volts / 12);
-  right_back->Set(right_volts / 12);
+  left_front->Set(left_volts.to<double>() / 12);
+  left_back->Set(left_volts.to<double>() / 12);
+  right_front->Set(left_volts.to<double>() / 12);
+  right_back->Set(left_volts.to<double>() / 12);
 }
 
 void SparkDrive::ResetRobotPosition()
@@ -297,4 +297,19 @@ rev::CANSparkMax* SparkDrive::GetLeftBackMotorController()
 rev::CANSparkMax* SparkDrive::GetRightBackMotorController()
 {
   return this->right_front;
+}
+
+frc::SimpleMotorFeedforward<units::meter> SparkDrive::GetSimpleMotorFeedforward()
+{
+  return this->simple_motor_feedforward;
+}
+
+frc2::PIDController* SparkDrive::GetLeftRamsetePIDController()
+{
+  return this->left_PID_controller;
+}
+
+frc2::PIDController* SparkDrive::GetRightRamsetePIDController()
+{
+  return this->right_PID_controller;
 }
