@@ -13,7 +13,7 @@ void TeleopFunctions::TurnToAngle(double targetAngle, double proportion){
     }
 
     //Find the difference between the current angle and the target angle, multiply by a set value, and use that to find the rate
-    double error = ((double) m_sparkDrive->gyro->GetYaw()) - targetAngle; std::cout << "Error: " << error;
+    double error = ((double) m_sparkDrive->GetGyroscope()->GetYaw()) - targetAngle; std::cout << "Error: " << error;
     current_rotation_rate = error * proportion;
     
     //Set the lower bound of the rotation speed so it is not less than the power necessary to turn the robot
@@ -31,7 +31,7 @@ void TeleopFunctions::TurnToAngle(double targetAngle, double proportion){
     //declare the turn finished and reset the gyro
     if(fabs(error) < slop && TURN_BUTTON_TIMEOUT > timeToAdjust){
         turn_complete = true;
-        m_sparkDrive->gyro->ZeroYaw();
+        m_sparkDrive->GetGyroscope()->ZeroYaw();
     }
     //If the turn has made it within the allowable error constant, increment the count
     if (fabs(error) < slop)

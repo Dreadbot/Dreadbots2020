@@ -20,6 +20,14 @@
 
 #include <AHRS.h>
 
+using Velocity =
+    units::compound_unit<units::meters, units::inverse<units::seconds>>;
+using Acceleration =
+    units::compound_unit<Velocity, units::inverse<units::seconds>>;
+using kv_unit = units::compound_unit<units::volts, units::inverse<Velocity>>;
+using ka_unit =
+    units::compound_unit<units::volts, units::inverse<Acceleration>>;
+
 class SparkDrive
 {
  public:
@@ -72,29 +80,6 @@ class SparkDrive
    * Utility Function for Getting the current angle of the gyroscope as a Rotation 2d.
    */
   double GetGyroscopeHeading();
-
-  /**
-   * Utility Function for Getting DifferentialDriveWheelSpeeds object 
-   * from encoder velocities and other constants
-   * 
-   * @return The DifferentialDriveWheelSpeeds pointer object for calculations.
-   */
-  frc::DifferentialDriveWheelSpeeds* GetDifferentialDriveWheelSpeeds();
-
-  /**
-   * Utility Function for Getting the Differential Drive Kinematics Object
-   * 
-   * @return The DifferentialDriveKinematics Pointer Object.
-   */
-  frc::DifferentialDriveKinematics* GetDifferentialDriveKinematics();
-
-  /**
-   * Utility Function fro Getting the Current position of the robot, relative
-   * to its last reset position
-   * 
-   * @return The Robot's Current Pose2d
-   */
-  frc::Pose2d GetRobotPose2dPosition() const;
 
   /**
    * Sets the current SparkMAX power level in volts
@@ -205,10 +190,40 @@ class SparkDrive
    */
   rev::CANSparkMax* GetRightBackMotorController();
 
+  /**
+   * Utility Function for Getting DifferentialDriveWheelSpeeds object 
+   * from encoder velocities and other constants
+   * 
+   * @return The DifferentialDriveWheelSpeeds pointer object for calculations.
+   */
+  frc::DifferentialDriveWheelSpeeds* GetDifferentialDriveWheelSpeeds();
+
+  /**
+   * Utility Function for Getting the Differential Drive Kinematics Object
+   * 
+   * @return The DifferentialDriveKinematics Pointer Object.
+   */
+  frc::DifferentialDriveKinematics* GetDifferentialDriveKinematics();
+
+  /**
+   * Utility Function for Getting the Simple Motor Feedforward Object
+   * 
+   * @return The Simple Motor Feedforward Object
+   */
+  frc::SimpleMotorFeedforward<units::meters> GetSimpleMotorFeedforward();
+
+  /**
+   * Utility Function for Getting the Current position of the robot, relative
+   * to its last reset position
+   * 
+   * @return The Robot's Current Pose2d
+   */
+  frc::Pose2d GetRobotPose2dPosition() const;
+
+ private:
   // Gyroscope Objects
   AHRS* gyro;
- private:
-  
+
   // Motor Encoder Objects
   rev::CANEncoder left_front_encoder;
   rev::CANEncoder right_front_encoder;
@@ -231,10 +246,18 @@ class SparkDrive
   frc::DifferentialDriveKinematics* differential_drive_kinematics;
   frc::DifferentialDriveOdometry* differential_drive_odometry;
 
+  frc::SimpleMotorFeedforward<units::meters> simple_motor_feedforward;
+
   frc::Pose2d robot_current_position;
 
+  // Wheel Constants
   const double kGearRatio = 0.77;
   const double kWheelRadiusMeters = 1.00;
+
+  // Feedforward Constants
+  const units::volt_t kStaticGain = units::volt_t(0.3);
+  const units::unit_t<kv_unit> kVoltsPerSecondPerDistance = units::unit_t<kv_unit>(1.96, 1);
+  const units::unit_t<ka_unit> kVoltSecondsSquaredPerDistance = units::unit_t<ka_unit>(0.06, 1);
 
   // Speed Variables
   double const kTurtleSpeed = 0.2;

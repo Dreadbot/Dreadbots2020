@@ -28,7 +28,7 @@ void TrajectoryGenerationUtility::GenerateTestTrajectory(SparkDrive* dreadbot_sp
   //std::cout << frc::TrajectoryUtil::SerializeTrajectory(trajectory) << std::endl;
 
   // Define the Trajectory Tracker
-  ramsete_controller = new frc::RamseteController(0.2, 7.0);
+  ramsete_controller = new frc::RamseteController(2, 0.7);
 
   for(double delta_time = 0.00; delta_time < 1.00; delta_time += 0.02)
   {

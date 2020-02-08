@@ -7,9 +7,18 @@
 
 #include "SparkDrive.h"
 
-SparkDrive::SparkDrive(rev::CANSparkMax *left_front_, rev::CANSparkMax *right_front_, rev::CANSparkMax *left_back_, rev::CANSparkMax *right_back_)
-: left_front_encoder(left_front_->GetEncoder()), right_front_encoder(right_front_->GetEncoder()), left_back_encoder(left_back_->GetEncoder()), right_back_encoder(right_back_->GetEncoder()), 
-  left_front_PID(left_front_->GetPIDController()), right_front_PID(right_front_->GetPIDController()), left_back_PID(left_back_->GetPIDController()), right_back_PID(right_back_->GetPIDController())
+SparkDrive::SparkDrive(rev::CANSparkMax *left_front_, 
+  rev::CANSparkMax *right_front_, 
+  rev::CANSparkMax *left_back_, 
+  rev::CANSparkMax *right_back_)
+: left_front_encoder( left_front_->GetEncoder() ), 
+  right_front_encoder( right_front_->GetEncoder() ), 
+  left_back_encoder( left_back_->GetEncoder() ), 
+  right_back_encoder( right_back_->GetEncoder() ), 
+  left_front_PID( left_front_->GetPIDController() ), 
+  right_front_PID( right_front_->GetPIDController() ), 
+  left_back_PID( left_back_->GetPIDController() ), 
+  right_back_PID( right_back_->GetPIDController() )
 {
   // The reason these variables are initialized here 
   // and not in the initialization list is purely for
@@ -22,6 +31,9 @@ SparkDrive::SparkDrive(rev::CANSparkMax *left_front_, rev::CANSparkMax *right_fr
   left_back = left_back_;
   right_back = right_back_;
   
+  // Gyroscope Definition
+  gyro = new AHRS(frc::SPI::Port::kMXP);
+
   // PID Settings
   //
   // TODO: These will probably need tuning at a 
@@ -59,10 +71,14 @@ SparkDrive::SparkDrive(rev::CANSparkMax *left_front_, rev::CANSparkMax *right_fr
   right_back_PID.SetFF(0);
   right_back_PID.SetOutputRange(-1, 1);
 
-  gyro = new AHRS(SPI::Port::kMXP);
+  simple_motor_feedforward = 
+    frc::SimpleMotorFeedforward<units::meters>(kStaticGain, kVoltsPerSecondPerDistance, kVoltSecondsSquaredPerDistance);
 }
 
-void SparkDrive::TankDrive(double y_axis, double rot_axis, bool turbo_button, bool turtle_button)
+void SparkDrive::TankDrive(double y_axis, 
+  double rot_axis, 
+  bool turbo_button, 
+  bool turtle_button)
 {
   // Remove any possibility of Joystick Deadband.
   // Essentially, if the joystick input is within
@@ -115,7 +131,12 @@ void SparkDrive::TankDrive(double y_axis, double rot_axis, bool turbo_button, bo
   right_back->Set(right_final_speed);
 }
 
-void SparkDrive::TankDrive(double y_axis, double rot_axis, bool turbo_button, bool turtle_button, double joystick_deadband){
+void SparkDrive::TankDrive(double y_axis, 
+  double rot_axis, 
+  bool turbo_button, 
+  bool turtle_button, 
+  double joystick_deadband)
+{
    // Remove any possibility of Joystick Deadband.
   // Essentially, if the joystick input is within
   // the range of the considered deadband

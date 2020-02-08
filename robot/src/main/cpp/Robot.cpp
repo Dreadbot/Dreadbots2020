@@ -101,7 +101,10 @@ void Robot::AutonomousInit() {
     // Custom Auto goes here
   } else {
     // Default Auto goes here
-  } 
+  }
+
+  // Trajectory Code
+  
 }
 
 void Robot::AutonomousPeriodic() {
@@ -122,6 +125,8 @@ void Robot::AutonomousPeriodic() {
     )
   );
 
+  std::cout << "Wheel Velocity: " << (double) (trajectory_generation_utility->GetChassisSpeeds().vx) << std::endl;
+
   spark_drive->GetLeftFrontPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
   spark_drive->GetRightFrontPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
   spark_drive->GetLeftBackPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
@@ -129,7 +134,7 @@ void Robot::AutonomousPeriodic() {
 }
 
 void Robot::TeleopInit() {
-  spark_drive->gyro->ZeroYaw();
+  spark_drive->GetGyroscope()->ZeroYaw();
 }
 
 void Robot::TeleopPeriodic() {
@@ -183,7 +188,7 @@ void Robot::TeleopPeriodic() {
   if(!teleop_functions->GetTurnStatus() || joystick_1->GetRawButton(a_button)){
     teleop_functions->TurnToAngle(30.0, .002);
   }
-  frc::SmartDashboard::PutNumber("Current Angle", spark_drive->gyro->GetYaw());
+  frc::SmartDashboard::PutNumber("Current Angle", spark_drive->GetGyroscope()->GetYaw());
 }
 
 void Robot::TestPeriodic() {
