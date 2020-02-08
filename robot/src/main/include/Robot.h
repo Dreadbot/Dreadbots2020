@@ -7,21 +7,21 @@
 
 #pragma once
 
+#include <iostream>
 #include <string>
 
+#include <frc/Joystick.h>
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
-#include <frc/Joystick.h>
-
+#include "Diagnostic.h"
+#include "Intake.h"
+#include "RamseteTimedFollower.h"
 #include "RobotUtilities.h"
-
 #include "SparkDrive.h"
 #include "TeleopFunctions.h"
 #include "TrajectoryGenerationUtility.h"
-
-#include "Intake.h"
-#include "Diagnostic.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -41,6 +41,8 @@ class Robot : public frc::TimedRobot {
 
   // Autonomous Functions
   TrajectoryGenerationUtility* trajectory_generation_utility;
+  
+  RamseteTimedFollower* ramsete_timed_follower;
 
   // Input Objects
   frc::Joystick *joystick_1;

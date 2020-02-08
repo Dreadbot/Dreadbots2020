@@ -34,11 +34,6 @@
 
 #include "Robot.h"
 
-#include <iostream>
-
-#include <frc/smartdashboard/SmartDashboard.h>
-
-
 void Robot::RobotInit() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
@@ -53,10 +48,8 @@ void Robot::RobotInit() {
 
   intake = new Intake(); //Uses SparkMax motor 3 
   test = new Diagnostic(joystick_1);
-  trajectory_generation_utility = new TrajectoryGenerationUtility();
-  trajectory_generation_utility->GenerateTestTrajectory(spark_drive);
 
-  // Trajectory Test (prints to RioLog)
+  trajectory_generation_utility = new TrajectoryGenerationUtility();
 
   // Initialize SparkDrive Object using the UltraLord Drivetrain Configuration.
   spark_drive = new SparkDrive(new rev::CANSparkMax(kUltraLeftFrontMotorID, rev::CANSparkMax::MotorType::kBrushless),
@@ -65,8 +58,10 @@ void Robot::RobotInit() {
     new rev::CANSparkMax(kUltraRightBackMotorID, rev::CANSparkMax::MotorType::kBrushless)
   );
 
-  trajectory_generation_utility = new TrajectoryGenerationUtility();
-  trajectory_generation_utility->GenerateTestTrajectory(spark_drive);
+  // Trajectory Test (prints to RioLog)
+  ramsete_timed_follower = new RamseteTimedFollower(spark_drive,
+    trajectory_generation_utility);
+
   teleop_functions = new TeleopFunctions(joystick_1, shooter, spark_drive);
 }
 

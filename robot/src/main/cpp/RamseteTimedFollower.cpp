@@ -1,13 +1,9 @@
 #include "RamseteTimedFollower.h"
 
 RamseteTimedFollower::RamseteTimedFollower(SparkDrive* spark_drive_,
-  TrajectoryGenerationUtility* trajectory_generation_utility_,
-  frc::RamseteController ramsete_controller_,
-  frc::DifferentialDriveKinematics differential_drive_kinematics_)
+  TrajectoryGenerationUtility* trajectory_generation_utility_)
     : spark_drive( spark_drive_ ), 
-      trajectory_generation_utility( trajectory_generation_utility_ ),
-      ramsete_controller( ramsete_controller_ ),
-      differential_drive_kinematics( differential_drive_kinematics_ )
+      trajectory_generation_utility( trajectory_generation_utility_ )
 {}
 
 void RamseteTimedFollower::Initialize()

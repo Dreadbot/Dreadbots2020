@@ -19,9 +19,7 @@ class RamseteTimedFollower
 {
  public:
   RamseteTimedFollower(SparkDrive* spark_drive_,
-    TrajectoryGenerationUtility* trajectory_generation_utility_,
-    frc::RamseteController ramsete_controller_,
-    frc::DifferentialDriveKinematics differential_drive_kinematics_);
+    TrajectoryGenerationUtility* trajectory_generation_utility_);
   
   void Initialize();
   void Calculate();
@@ -29,9 +27,6 @@ class RamseteTimedFollower
   SparkDrive* spark_drive;
 
   TrajectoryGenerationUtility* trajectory_generation_utility;
-
-  frc::RamseteController ramsete_controller;
-  frc::DifferentialDriveKinematics differential_drive_kinematics;
 
   units::second_t previous_time;
   frc::DifferentialDriveWheelSpeeds previous_speeds; 

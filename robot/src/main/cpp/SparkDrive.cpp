@@ -31,8 +31,10 @@ SparkDrive::SparkDrive(rev::CANSparkMax *left_front_,
   left_back = left_back_;
   right_back = right_back_;
   
-  // Gyroscope Definition
+  // Gyroscope Definition & 
+  // Reset the Gyroscope to a 0 position.
   gyro = new AHRS(frc::SPI::Port::kMXP);
+  gyro->Reset();
 
   // PID Settings
   //
@@ -71,8 +73,7 @@ SparkDrive::SparkDrive(rev::CANSparkMax *left_front_,
   right_back_PID.SetFF(0);
   right_back_PID.SetOutputRange(-1, 1);
 
-  simple_motor_feedforward = 
-    frc::SimpleMotorFeedforward<units::meters>(kStaticGain, kVoltsPerSecondPerDistance, kVoltSecondsSquaredPerDistance);
+  simple_motor_feedforward = frc::SimpleMotorFeedforward<units::meters>(kStaticGain, kVoltsPerSecondPerDistance, kVoltSecondsSquaredPerDistance);
 }
 
 void SparkDrive::TankDrive(double y_axis, 
@@ -227,7 +228,10 @@ void SparkDrive::ResetRobotPosition()
 
 void SparkDrive::SparkDriveAutonomousPeriodic()
 {
-  robot_current_position = differential_drive_odometry->Update(frc::Rotation2d(units::degree_t(GetGyroscopeHeading())), GetDifferentialDriveWheelSpeeds()->left * 0.02_s, GetDifferentialDriveWheelSpeeds()->right * 0.02_s);
+  robot_current_position = differential_drive_odometry->Update(
+    frc::Rotation2d(units::degree_t(GetGyroscopeHeading())), 
+    GetDifferentialDriveWheelSpeeds()->left * 0.02_s, 
+    GetDifferentialDriveWheelSpeeds()->right * 0.02_s);
 }
 
 AHRS* SparkDrive::GetGyroscope()
