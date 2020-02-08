@@ -67,9 +67,9 @@ void ColorWheel::RotateToColor(WPI_TalonSRX *motor, frc::Joystick *joystick, rev
     }
     if (spinState == WheelState::Spinning)
     {
-        if (!(sensor->GetColor()== targetcolor)){
+      //  if (!(sensor->GetColor() == targetcolor)){
 
-        }
+        //}
     }
    
 }
