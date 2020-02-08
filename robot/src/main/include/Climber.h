@@ -4,5 +4,7 @@ class Climber
 {
     public:
         Climber();
-    private:
-};
+#ifndef CLIMBER_H
+#define CLIMBER_H
+
+
