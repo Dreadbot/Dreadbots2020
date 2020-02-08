@@ -41,28 +41,27 @@ void Robot::RobotInit() {
   frc::SmartDashboard::PutNumber("Aimpid",0.1);
 
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
-  shooter = new Shooter(3,3);//Should have different numbers if your board supports it during testing
+//  shooter = new Shooter(3,3);//Should have different numbers if your board supports it during testing
   //printf("robotcpp joystick_addr = %d \n",joystick_1);
-  teleop_functions = new TeleopFunctions(joystick_1, shooter, spark_drive);
   //Button assignments
 
-  intake = new Intake(); //Uses SparkMax motor 3 
-  test = new Diagnostic(joystick_1);
+  intake = new Intake(1); //Uses SparkMax motor 3 
+//  test = new Diagnostic(joystick_1);
 
-  trajectory_generation_utility = new TrajectoryGenerationUtility();
+//  trajectory_generation_utility = new TrajectoryGenerationUtility();
 
   // Initialize SparkDrive Object using the UltraLord Drivetrain Configuration.
-  spark_drive = new SparkDrive(new rev::CANSparkMax(kUltraLeftFrontMotorID, rev::CANSparkMax::MotorType::kBrushless),
-    new rev::CANSparkMax(kUltraRightFrontMotorID, rev::CANSparkMax::MotorType::kBrushless), 
-    new rev::CANSparkMax(kUltraLeftBackMotorID, rev::CANSparkMax::MotorType::kBrushless), 
-    new rev::CANSparkMax(kUltraRightBackMotorID, rev::CANSparkMax::MotorType::kBrushless)
-  );
+  // spark_drive = new SparkDrive(new rev::CANSparkMax(kUltraLeftFrontMotorID, rev::CANSparkMax::MotorType::kBrushless),
+  //   new rev::CANSparkMax(kUltraRightFrontMotorID, rev::CANSparkMax::MotorType::kBrushless), 
+  //   new rev::CANSparkMax(kUltraLeftBackMotorID, rev::CANSparkMax::MotorType::kBrushless), 
+  //   new rev::CANSparkMax(kUltraRightBackMotorID, rev::CANSparkMax::MotorType::kBrushless)
+  // );
 
   // Trajectory Test (prints to RioLog)
-  ramsete_timed_follower = new RamseteTimedFollower(spark_drive,
-    trajectory_generation_utility);
+//  ramsete_timed_follower = new RamseteTimedFollower(spark_drive,
+//    trajectory_generation_utility);
 
-  teleop_functions = new TeleopFunctions(joystick_1, shooter, spark_drive);
+//  teleop_functions = new TeleopFunctions(joystick_1, shooter, spark_drive);
 }
 
 /**
@@ -103,33 +102,33 @@ void Robot::AutonomousInit() {
 }
 
 void Robot::AutonomousPeriodic() {
-  if (m_autoSelected == kAutoNameCustom) {
-    // Custom Auto goes here
-  } else {
-    // Default Auto goes here
-  }
+  // if (m_autoSelected == kAutoNameCustom) {
+  //   // Custom Auto goes here
+  // } else {
+  //   // Default Auto goes here
+  // }
 
-  iterative_clock += kIterationSecondsRatio;
+  // iterative_clock += kIterationSecondsRatio;
 
-  units::time::second_t time_at_iteration = units::time::second_t(iterative_clock);
+  // units::time::second_t time_at_iteration = units::time::second_t(iterative_clock);
 
-  trajectory_generation_utility->SetChassisSpeeds(
-    trajectory_generation_utility->GetRamseteController()->Calculate(
-      spark_drive->GetRobotPose2dPosition(), 
-      trajectory_generation_utility->GetTrajectory().Sample(time_at_iteration)
-    )
-  );
+  // trajectory_generation_utility->SetChassisSpeeds(
+  //   trajectory_generation_utility->GetRamseteController()->Calculate(
+  //     spark_drive->GetRobotPose2dPosition(), 
+  //     trajectory_generation_utility->GetTrajectory().Sample(time_at_iteration)
+  //   )
+  // );
 
-  std::cout << "Wheel Velocity: " << (double) (trajectory_generation_utility->GetChassisSpeeds().vx) << std::endl;
+  // std::cout << "Wheel Velocity: " << (double) (trajectory_generation_utility->GetChassisSpeeds().vx) << std::endl;
 
-  spark_drive->GetLeftFrontPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
-  spark_drive->GetRightFrontPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
-  spark_drive->GetLeftBackPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
-  spark_drive->GetRightBackPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
+  // spark_drive->GetLeftFrontPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
+  // spark_drive->GetRightFrontPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
+  // spark_drive->GetLeftBackPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
+  // spark_drive->GetRightBackPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
 }
 
 void Robot::TeleopInit() {
-  spark_drive->GetGyroscope()->ZeroYaw();
+//  spark_drive->GetGyroscope()->ZeroYaw();
 }
 
 void Robot::TeleopPeriodic() {
@@ -143,51 +142,51 @@ void Robot::TeleopPeriodic() {
    double joystickaxisY = joystick_1->GetRawAxis(1); 
    if(fabs(joystickaxisY)  <= 0.025){
      intake->Stop();
+   } else{
+     //intake->Start();
+     intake->SetSpeed( 5000 );
    }
-   else{
-     intake->SetSpeed(joystickaxisY * 5000 );
-   }
-  std::cout << "Teleop Tick"  << std::endl;
-  std::cout << joystickaxisY << std::endl;
+//  std::cout << "Teleop Tick"  << std::endl;
+//  std::cout << joystickaxisY << std::endl;
   
   
   //teleopFunctions->ShooterFunction();
-  std::cout << "Teleop Tick" << std::endl;
+  // std::cout << "Teleop Tick" << std::endl;
   
-  if (joystick_1->GetRawButtonPressed(b_button)) {
-    //intake->Start();
-    shooter->AimHeight(10);
-  }
-  if (joystick_1->GetRawButtonPressed(y_button)) {
-    shooter->AimHeight(0);
-  }
+  // if (joystick_1->GetRawButtonPressed(b_button)) {
+  //   //intake->Start();
+  //   shooter->AimHeight(10);
+  // }
+  // if (joystick_1->GetRawButtonPressed(y_button)) {
+  //   shooter->AimHeight(0);
+  // }
 
     
-  //Testing Intake Motor Code
-  if (joystick_1->GetRawButtonPressed(x_button)) {
-    //intake->Start();
-    intake->SetSpeed(100);
-  }
-  if (joystick_1->GetRawButtonPressed(a_button)) {
-    intake->Stop();
-  }
+  // //Testing Intake Motor Code
+  // if (joystick_1->GetRawButtonPressed(x_button)) {
+  //   //intake->Start();
+  //   intake->SetSpeed(100);
+  // }
+  // if (joystick_1->GetRawButtonPressed(a_button)) {
+  //   intake->Stop();
+  // }
   
-  // Call SparkDrive::TankDrive() using the drivetrain motors
-  spark_drive->TankDrive(
-    -joystick_1->GetRawAxis(y_axis), 
-    joystick_1->GetRawAxis(z_axis), 
-    joystick_1->GetRawButton(right_bumper), 
-    joystick_1->GetRawButton(left_bumper)
-  );
+  // // Call SparkDrive::TankDrive() using the drivetrain motors
+  // spark_drive->TankDrive(
+  //   -joystick_1->GetRawAxis(y_axis), 
+  //   joystick_1->GetRawAxis(z_axis), 
+  //   joystick_1->GetRawButton(right_bumper), 
+  //   joystick_1->GetRawButton(left_bumper)
+  // );
 
-  if(!teleop_functions->GetTurnStatus() || joystick_1->GetRawButton(a_button)){
-    teleop_functions->TurnToAngle(30.0, .002);
-  }
-  frc::SmartDashboard::PutNumber("Current Angle", spark_drive->GetGyroscope()->GetYaw());
+  // if(!teleop_functions->GetTurnStatus() || joystick_1->GetRawButton(a_button)){
+  //   teleop_functions->TurnToAngle(30.0, .002);
+  // }
+  // frc::SmartDashboard::PutNumber("Current Angle", spark_drive->GetGyroscope()->GetYaw());
 }
 
 void Robot::TestPeriodic() {
-  test->run();
+  //test->run();
 }
 #ifndef RUNNING_FRC_TESTS
 int main() { return frc::StartRobot<Robot>(); }

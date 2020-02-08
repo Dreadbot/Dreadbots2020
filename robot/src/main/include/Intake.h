@@ -4,7 +4,7 @@
 class Intake
 {
     public:
-        Intake();
+        Intake(int motorId);
         void Start();
         void Stop();
         void SetSpeed(double speed);

@@ -13,7 +13,6 @@ Shooter::Shooter(int shootermotorid, int aimmotorid)
     shooterPid->SetOutputRange(-1.0, 1.0);
     speed = 0.0; 
 
-
     aimMotor = new rev::CANSparkMax(aimmotorid, rev::CANSparkMax::MotorType::kBrushless);
     aimPid = new rev::CANPIDController(aimMotor->GetPIDController());
     //Needs to be calibrated
