@@ -18,10 +18,18 @@ bool OnRed = false;
 
 bool OnTargetColor = false;
 
+//Notes after some research Saturday: We probably want to use the ColorMatch class to detect color rather than the 
+//ColorSensor. See example code https://github.com/REVrobotics/Color-Sensor-v3-Examples/blob/master/C%2B%2B/Color%20Match/src/main/cpp/Robot.cpp
+static constexpr auto i2cPort = frc::I2C::Port::kOnboard;
+rev::ColorSensorV3 m_sensor(i2cPort);
+rev::ColorMatch m_colorMatch;
+
 ColorWheel::ColorWheel(){
-  //Add color match code here
+    
+  
 }
 
+//Update RotateToNumber to not take in the sensor and get current color from m_colorMatch
 void ColorWheel::RotateToNumber(WPI_TalonSRX *motor, frc::Joystick *joystick, rev::ColorSensorV3 *sensor){
     if (spinState == WheelState::NotSpinning && joystick->GetRawButton(1))
     {
