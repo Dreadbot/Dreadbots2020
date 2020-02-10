@@ -64,6 +64,8 @@ void Robot::RobotInit() {
     new rev::CANSparkMax(kUltraLeftBackMotorID, rev::CANSparkMax::MotorType::kBrushless), 
     new rev::CANSparkMax(kUltraRightBackMotorID, rev::CANSparkMax::MotorType::kBrushless)
   );
+
+  colorWheel = new ColorWheel();
 }
 
 /**
@@ -147,6 +149,7 @@ void Robot::TeleopPeriodic() {
     joystick_1->GetRawButton(right_bumper), 
     joystick_1->GetRawButton(left_bumper)
   );
+
 }
 
 void Robot::TestPeriodic() {}

@@ -21,6 +21,7 @@
 #include "TrajectoryGenerationUtility.h"
 
 #include "Intake.h"
+#include "ColorWheel.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -55,5 +56,9 @@ class Robot : public frc::TimedRobot {
 
   // Intake mechanism
   Intake* intake;
+
+  //Color wheel class
+  ColorWheel* colorWheel;
+
 
 };
