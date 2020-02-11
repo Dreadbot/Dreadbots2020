@@ -7,19 +7,19 @@ Intake::Intake(int motorId){
     m_pidController->SetI(1e-6);
     m_pidController->SetD(0.3);
     m_pidController->SetIZone(0);  
-    m_pidController->SetFF(.5);
-    m_pidController->SetOutputRange(-1.0, 1.0);
+    m_pidController->SetFF(0.0);
+    m_pidController->SetOutputRange(0.0, 1.0);
     m_pidController = new rev::CANPIDController(intake_motor->GetPIDController());
 
 }
 
 void Intake::Start(){
-    intake_motor->Set(-.5);
+    intake_motor->Set(-.9);
 }
 
 void Intake::Stop(){
-    std::cout << "SetSpeed(): OutputCurrent" << intake_motor->GetOutputCurrent() << std::endl;
-    std::cout << "SetSpeed(): Velocity: " <<  intake_motor->GetEncoder().GetVelocity() << std::endl;
+    std::cout << "Stop(): OutputCurrent" << intake_motor->GetOutputCurrent() << std::endl;
+    std::cout << "Stop(): Velocity: " <<  intake_motor->GetEncoder().GetVelocity() << std::endl;
     intake_motor->Set(0);
     running = false;
 }

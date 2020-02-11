@@ -45,7 +45,7 @@ void Robot::RobotInit() {
   //printf("robotcpp joystick_addr = %d \n",joystick_1);
   //Button assignments
 
-  intake = new Intake(1); //Uses SparkMax motor 3 
+  intake = new Intake(1); //Uses SparkMax motor 
 //  test = new Diagnostic(joystick_1);
 
 //  trajectory_generation_utility = new TrajectoryGenerationUtility();
@@ -140,6 +140,16 @@ void Robot::TeleopPeriodic() {
   // need to create sparkdrive above for this code 
  // spark_drive = new SparkDrive(new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless)
    double joystickaxisY = joystick_1->GetRawAxis(1); 
+
+   if (joystick_1->GetRawButtonPressed(1)) {
+     intake->SetSpeed(1000);
+   } else if (joystick_1->GetRawButtonPressed(2)) {
+     intake->SetSpeed(2000);
+   } else if (joystick_1->GetRawButtonPressed(3)) {
+     intake->SetSpeed(4000);
+   } else if (joystick_1->GetRawButtonPressed(4)) {
+     intake->SetSpeed(8000);
+   }
    if(fabs(joystickaxisY)  <= 0.025){
      intake->Stop();
    } else{
