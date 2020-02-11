@@ -1,14 +1,16 @@
 #include <Intake.h>
 
 Intake::Intake(int motorId){ 
+    //  double kP = 6e-5, kI = 1e-6, kD = 0, kIz = 0, kFF = 0.000015, kMaxOutput = 1.0, kMinOutput = -1.0;
+    // I Set Values in the robot.cpp
     intake_motor = new rev::CANSparkMax(motorId, rev::CANSparkMax::MotorType::kBrushless);
     m_pidController = new rev::CANPIDController(intake_motor->GetPIDController());
     m_pidController->SetP(6e-5);
     m_pidController->SetI(1e-6);
-    m_pidController->SetD(0.3);
+    m_pidController->SetD(0);
     m_pidController->SetIZone(0);  
-    m_pidController->SetFF(0.0);
-    m_pidController->SetOutputRange(0.0, 1.0);
+    m_pidController->SetFF(0.000015);
+    m_pidController->SetOutputRange(-1.0, 1.0);
     m_pidController = new rev::CANPIDController(intake_motor->GetPIDController());
 
 }
