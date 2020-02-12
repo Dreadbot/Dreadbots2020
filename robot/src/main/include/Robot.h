@@ -16,11 +16,6 @@
 
 #include "RobotUtilities.h"
 
-#include "SparkDrive.h"
-#include "TeleopFunctions.h"
-#include "TrajectoryGenerationUtility.h"
-
-#include "Intake.h"
 #include "ColorWheel.h"
 
 class Robot : public frc::TimedRobot {
@@ -34,31 +29,14 @@ class Robot : public frc::TimedRobot {
   void TestPeriodic() override;
 
  private:
-  frc::SendableChooser<std::string> m_chooser;
-  const std::string kAutoNameDefault = "Default";
-  const std::string kAutoNameCustom = "My Auto";
-  std::string m_autoSelected;
-
-  // Autonomous Functions
-  TrajectoryGenerationUtility* trajectory_generation_utility;
-
   // INPUTS
   frc::Joystick *joystick_1;
 
-  // DRIVE
-  SparkDrive* spark_drive;
-
-  TeleopFunctions *teleopFunctions;
-  Shooter *shooter;
-
    //BUTTONS
-  int const shooterButton = 1;
-
-  // Intake mechanism
-  Intake* intake;
+  int const colorWheelButton = 1;
 
   //Color wheel class
+  WPI_TalonSRX *colorWheelmotor;
   ColorWheel* colorWheel;
-
 
 };

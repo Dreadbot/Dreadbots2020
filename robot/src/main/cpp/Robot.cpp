@@ -39,32 +39,11 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
 void Robot::RobotInit() {
-  m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
-  m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
-  frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
-  frc::SmartDashboard::PutNumber("Aimpid",0.1);
+  //frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
+  //frc::SmartDashboard::PutNumber("Aimpid",0.1);
 
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
-  shooter = new Shooter(3,3);//Should have different numbers if your board supports it during testing
-  //printf("robotcpp joystick_addr = %d \n",joystick_1);
-  teleopFunctions = new TeleopFunctions(joystick_1, shooter);
-  //Button assignments
-
-  // Unused Variable
-  // int shooterButton = 1;
-  intake = new Intake(); //Uses SparkMax motor 3 
-
-  // Trajectory Test (prints to RioLog)
-  trajectory_generation_utility = new TrajectoryGenerationUtility();
-  trajectory_generation_utility->GenerateTestTrajectory();
-
-  // Initialize SparkDrive Object using the UltraLord Drivetrain Configuration.
-  spark_drive = new SparkDrive(new rev::CANSparkMax(kUltraLeftFrontMotorID, rev::CANSparkMax::MotorType::kBrushless),
-    new rev::CANSparkMax(kUltraRightFrontMotorID, rev::CANSparkMax::MotorType::kBrushless), 
-    new rev::CANSparkMax(kUltraLeftBackMotorID, rev::CANSparkMax::MotorType::kBrushless), 
-    new rev::CANSparkMax(kUltraRightBackMotorID, rev::CANSparkMax::MotorType::kBrushless)
-  );
-
+  colorWheelmotor = new WPI_TalonSRX(1);
   colorWheel = new ColorWheel();
 }
 
@@ -90,66 +69,18 @@ void Robot::RobotPeriodic() {}
  * make sure to add them to the chooser code above as well.
  */
 void Robot::AutonomousInit() {
-  m_autoSelected = m_chooser.GetSelected();
-  // m_autoSelected = SmartDashboard::GetString("Auto Selector",
-  //     kAutoNameDefault);
-  std::cout << "Auto selected: " << m_autoSelected << std::endl;
-
-  if (m_autoSelected == kAutoNameCustom) {
-    // Custom Auto goes here
-  } else {
-    // Default Auto goes here
-  }
-}
+ 
+ }
 
 void Robot::AutonomousPeriodic() {
-  if (m_autoSelected == kAutoNameCustom) {
-    // Custom Auto goes here
-  } else {
-    // Default Auto goes here
-  }
-}
+ 
+ }
 
 void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic() {
- //teleopFunctions->ShooterFunction();
-
-  // need to create sparkdrive above for this code 
- // spark_drive = new SparkDrive(new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless)
-   
-  std::cout << "Teleop Tick" << std::endl;
-  
-  double Pid = frc::SmartDashboard::GetNumber("Aimpid",0.1);
-  //shooter->SetAimHeightPid(Pid);
-  //std::cout << "pidvalue = " << Pid <<std::endl;
-    if (joystick_1->GetRawButtonPressed(3)) {
-    //intake->Start();
-    shooter->AimHeight(10);
-  }
-    if (joystick_1->GetRawButtonPressed(4)) {
-    shooter->AimHeight(0);
-    }
-
-    
-  //test of intake motor code
-  
-  if (joystick_1->GetRawButtonPressed(1)) {
-    //intake->Start();
-    intake->SetSpeed(100);
-  }
-    if (joystick_1->GetRawButtonPressed(2)) {
-    intake->Stop();
-  }
-  
-  // Call SparkDrive::TankDrive() using the drivetrain motors
-  spark_drive->TankDrive(
-    joystick_1->GetRawAxis(y_axis), 
-    joystick_1->GetRawAxis(z_axis), 
-    joystick_1->GetRawButton(right_bumper), 
-    joystick_1->GetRawButton(left_bumper)
-  );
-
+  //Call our color wheel class to execute code determining when to count rotations.
+  colorWheel->RotateToNumber(colorWheelmotor, joystick_1);
 }
 
 void Robot::TestPeriodic() {}
