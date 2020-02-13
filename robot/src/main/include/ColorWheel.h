@@ -1,11 +1,11 @@
-    #pragma once
+#pragma once
 
-#include "rev/ColorSensorV3.h"
-#include "rev/ColorMatch.h"
-#include "frc/I2C.h"
-#include "frc/util/color.h"
-#include "ctre/Phoenix.h"
-#include "RobotUtilities.h"
+#include <rev/ColorSensorV3.h>
+#include <rev/ColorMatch.h>
+#include <frc/I2C.h>
+#include <frc/util/color.h>
+#include <ctre/Phoenix.h>
+#include <RobotUtilities.h>
 
 class ColorWheel{
     public:
