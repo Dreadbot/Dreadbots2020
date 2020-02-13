@@ -22,6 +22,7 @@
 #include "SparkDrive.h"
 #include "TeleopFunctions.h"
 #include "TrajectoryGenerationUtility.h"
+#include "Manipulator.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -59,9 +60,17 @@ class Robot : public frc::TimedRobot {
   double iterative_clock = 0.0;
 
   // Teleop Objects
+    //Manipulator Objects
+    rev::CANSparkMax *intake_motor;
+    rev::CANSparkMax *shooter_motor;
+    rev::CANSparkMax *aim_motor;
+    rev::CANSparkMax *geneva_motor;
+    frc::Solenoid *punch;
+    Intake *intake;
+    Feeder *feeder;
+    Shooter *shooter;
+    Manipulator *manipulator;
   TeleopFunctions *teleop_functions;
-  Shooter *shooter;
-  Intake* intake;
   Diagnostic* test;
 
 };

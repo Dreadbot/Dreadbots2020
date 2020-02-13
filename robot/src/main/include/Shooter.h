@@ -10,16 +10,17 @@
 class Shooter
 {
     public:
-        Shooter(int shootermotorid,int aimmotorid);
+        Shooter(int shooter_motor_id, int aim_motor_id);
+        Shooter(rev::CANSparkMax *shooterMoter, rev::CANSparkMax *aimMotor);
         void Shoot(double shooterSpeed);
         void AimHeight(double positionTicks);
-        void SetAimHeightPid(double pid); 
+        void SetAimHeightP(double p); 
     private:
-    rev::CANSparkMax *shooterMotor;
-    rev::CANPIDController *shooterPid;
+    rev::CANSparkMax *m_shooterMotor;
+    rev::CANPIDController *m_shooterPid;
     double speed;
 
-    rev::CANSparkMax *aimMotor; 
-    rev::CANPIDController *aimPid;
+    rev::CANSparkMax *m_aimMotor; 
+    rev::CANPIDController *m_aimPid;
     double aimPosition;
 };

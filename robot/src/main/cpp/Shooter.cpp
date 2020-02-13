@@ -1,39 +1,61 @@
 #include <Shooter.h>
-
-Shooter::Shooter(int shootermotorid, int aimmotorid) 
-{
-    shooterMotor = new rev::CANSparkMax(shootermotorid, rev::CANSparkMax::MotorType::kBrushless);
-    shooterPid = new rev::CANPIDController(shooterMotor->GetPIDController());
+Shooter::Shooter(int shooter_motor_id, int aim_motor_id){
+    m_shooterMotor = new rev::CANSparkMax(shooter_motor_id, rev::CANSparkMax::MotorType::kBrushless);
+    m_shooterPid = new rev::CANPIDController(m_shooterMotor->GetPIDController());
     //Needs to be calibrated
-    shooterPid->SetP(6e-5);
-    shooterPid->SetI(1e-6);
-    shooterPid->SetD(0.3);
-    shooterPid->SetIZone(0);  
-    shooterPid->SetFF(0.000015);
-    shooterPid->SetOutputRange(-1.0, 1.0);
+    m_shooterPid->SetP(6e-5);
+    m_shooterPid->SetI(1e-6);
+    m_shooterPid->SetD(0.3);
+    m_shooterPid->SetIZone(0);  
+    m_shooterPid->SetFF(0.000015);
+    m_shooterPid->SetOutputRange(-1.0, 1.0);
     speed = 0.0; 
 
 
-    aimMotor = new rev::CANSparkMax(aimmotorid, rev::CANSparkMax::MotorType::kBrushless);
-    aimPid = new rev::CANPIDController(aimMotor->GetPIDController());
+    m_aimMotor = new rev::CANSparkMax(aim_motor_id, rev::CANSparkMax::MotorType::kBrushless);
+    m_aimPid = new rev::CANPIDController(m_aimMotor->GetPIDController());
     //Needs to be calibrated
-    aimPid->SetP(0); //6e-5
-    aimPid->SetI(0); //1e-6
-    aimPid->SetD(0);  //0.3
-    aimPid->SetIZone(0);  
-    aimPid->SetFF(0);  //000015
-    aimPid->SetOutputRange(-1.0, 1.0);
+    m_aimPid->SetP(0.1); //6e-5
+    m_aimPid->SetI(0); //1e-6
+    m_aimPid->SetD(0);  //0.3
+    m_aimPid->SetIZone(0);  
+    m_aimPid->SetFF(0);  //000015
+    m_aimPid->SetOutputRange(-1.0, 1.0);
+}
+Shooter::Shooter(rev::CANSparkMax *shooterMotor, rev::CANSparkMax *aimMotor) 
+{
+    m_shooterMotor = shooterMotor;
+    m_shooterPid = new rev::CANPIDController(m_shooterMotor->GetPIDController());
+    //Needs to be calibrated
+    m_shooterPid->SetP(6e-5);
+    m_shooterPid->SetI(1e-6);
+    m_shooterPid->SetD(0.3);
+    m_shooterPid->SetIZone(0);  
+    m_shooterPid->SetFF(0.000015);
+    m_shooterPid->SetOutputRange(-1.0, 1.0);
+    speed = 0.0; 
+
+
+    m_aimMotor = aimMotor;
+    m_aimPid = new rev::CANPIDController(m_aimMotor->GetPIDController());
+    //Needs to be calibrated
+    m_aimPid->SetP(0); //6e-5
+    m_aimPid->SetI(0); //1e-6
+    m_aimPid->SetD(0);  //0.3
+    m_aimPid->SetIZone(0);  
+    m_aimPid->SetFF(0);  //000015
+    m_aimPid->SetOutputRange(-1.0, 1.0);
  
 }
 
 void Shooter::Shoot(double shooterSpeed){
     speed = shooterSpeed;
-    shooterMotor->Set(speed);
+    m_shooterMotor->Set(speed);
 }
 void Shooter::AimHeight(double rotations) {
-    aimPid->SetReference(rotations, rev::ControlType::kPosition); 
+    m_aimPid->SetReference(rotations, rev::ControlType::kPosition); 
 }
 
-void Shooter::SetAimHeightPid(double pid){
-    aimPid->SetP(pid);
+void Shooter::SetAimHeightP(double p){
+    m_aimPid->SetP(p);
 }

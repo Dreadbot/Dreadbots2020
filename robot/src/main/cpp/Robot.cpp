@@ -41,12 +41,6 @@ void Robot::RobotInit() {
   frc::SmartDashboard::PutNumber("Aimpid",0.1);
 
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
-  shooter = new Shooter(3,3);//Should have different numbers if your board supports it during testing
-  //printf("robotcpp joystick_addr = %d \n",joystick_1);
-  teleop_functions = new TeleopFunctions(joystick_1, shooter, spark_drive);
-  //Button assignments
-
-  intake = new Intake(); //Uses SparkMax motor 3 
   test = new Diagnostic(joystick_1);
 
   trajectory_generation_utility = new TrajectoryGenerationUtility();
@@ -63,7 +57,21 @@ void Robot::RobotInit() {
     trajectory_generation_utility);
 
   teleop_functions = new TeleopFunctions(joystick_1, shooter, spark_drive);
-}
+
+  //Manipulator Objects
+  intake_motor = new rev::CANSparkMax(kIntakeMotorID, rev::CANSparkMax::MotorType::kBrushless);
+  shooter_motor = new rev::CANSparkMax(kFlyWheelMotorID, rev::CANSparkMax::MotorType::kBrushless);
+  aim_motor = new rev::CANSparkMax(kAimMotorID, rev::CANSparkMax::MotorType::kBrushless);
+  geneva_motor = new rev::CANSparkMax(kGenevaMotorID, rev::CANSparkMax::MotorType::kBrushless);
+  punch = new frc::Solenoid(kPunchSolenoidID);
+
+  intake = new Intake(intake_motor);
+  shooter = new Shooter(shooter_motor, aim_motor);
+  feeder = new Feeder(geneva_motor, punch);
+
+  manipulator = new Manipulator(intake, feeder, shooter);
+
+  }
 
 /**
  * This function is called every robot packet, no matter the mode. Use
@@ -120,7 +128,7 @@ void Robot::AutonomousPeriodic() {
     )
   );
 
-  std::cout << "Wheel Velocity: " << (double) (trajectory_generation_utility->GetChassisSpeeds().vx) << std::endl;
+  //std::cout << "Wheel Velocity: " << (double) (trajectory_generation_utility->GetChassisSpeeds().vx) << std::endl;
 
   spark_drive->GetLeftFrontPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
   spark_drive->GetRightFrontPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
@@ -182,9 +190,9 @@ void Robot::TeleopPeriodic() {
 
   if(!teleop_functions->GetTurnStatus() || joystick_1->GetRawButton(a_button)){
     teleop_functions->TurnToAngle(30.0, .002);
+    manipulator->PrepareShot(1000, 0);
   }
-  frc::SmartDashboard::PutNumber("Current Angle", spark_drive->GetGyroscope()->GetYaw());
-}
+ }
 
 void Robot::TestPeriodic() {
   test->run();

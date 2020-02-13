@@ -1,5 +1,5 @@
 #include <Climber.h>
-Climber::Climber()
+Climber::Climber(){}
 //does not work, this is all code pulled from the internet, and will not work unless we download the whole file. 
 /*{
     stop = false;

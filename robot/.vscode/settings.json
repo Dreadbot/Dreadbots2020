@@ -13,7 +13,6 @@
     "**/.settings": true,
     "**/.factorypath": true
   },
-  "C_Cpp.default.configurationProvider": "vscode-wpilib",
   "files.associations": {
     "cctype": "cpp",
     "cmath": "cpp",
