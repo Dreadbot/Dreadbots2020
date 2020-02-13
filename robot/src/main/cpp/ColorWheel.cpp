@@ -16,6 +16,8 @@ bool OnRed = false;
 
 bool OnTargetColor = false;
 
+double ColorConfidenceTarget = 0.9;
+
 //Notes after some research Saturday: We probably want to use the ColorMatch class to detect color rather than the 
 //ColorSensor. See example code https://github.com/REVrobotics/Color-Sensor-v3-Examples/blob/master/C%2B%2B/Color%20Match/src/main/cpp/Robot.cpp
 static constexpr auto i2cPort = frc::I2C::Port::kOnboard;
@@ -62,7 +64,7 @@ void ColorWheel::RotateToNumber(WPI_TalonSRX *motor, frc::Joystick *joystick){
 
         //do we need to check confidence number in this condition to see how confident the color matcher 
         //thinks the color is red? A value close to one means more confident. 
-        if (matchedColor == kRedTarget && OnRed == false){
+        if (matchedColor == kRedTarget && OnRed == false && colorConfidence >= ColorConfidenceTarget){
             NumSpins = NumSpins+1;
             OnRed = true;
         }
@@ -74,7 +76,9 @@ void ColorWheel::RotateToNumber(WPI_TalonSRX *motor, frc::Joystick *joystick){
 
 
 void ColorWheel::RotateToColor(WPI_TalonSRX *motor, frc::Joystick *joystick, frc::Color *targetcolor){
-    CurrentColor = m_colorSensor.GetColor();
+    double colorConfidence = 0.0;
+    frc::Color detectedColor = m_colorSensor.GetColor();
+    frc::Color matchedColor = m_colorMatcher.MatchClosestColor(detectedColor, colorConfidence); 
     if (spinState == WheelState::NotSpinning && joystick->GetRawButton(1))
     {
         spinState = WheelState::InitSpinning;
@@ -86,9 +90,10 @@ void ColorWheel::RotateToColor(WPI_TalonSRX *motor, frc::Joystick *joystick, frc
     }
     if (spinState == WheelState::Spinning)
     {
-      //  if (!(sensor->GetColor() == targetcolor)){
-
-        //}
+        if (matchedColor == targetcolor && colorConfidence >= ColorConfidenceTarget)){
+            spinState = WheelState::NotSpinning;
+            motor->Set(ControlMode::PercentOutput, 0.2);
+        }
     }
    
 }
