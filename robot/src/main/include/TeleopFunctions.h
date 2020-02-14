@@ -3,6 +3,8 @@
 #include "SparkDrive.h"
 #include <frc/Joystick.h>
 #include "RobotUtilities.h"
+#include <frc/smartdashboard/SendableChooser.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 class TeleopFunctions
 {
     public:
@@ -20,7 +22,7 @@ class TeleopFunctions
 
      //TurnToAngle vars
         double current_rotation_rate, proportion;
-        const double slop = 1.5, min_rotation_speed = .1;
+        const double slop = 1.5, min_rotation_speed = .27;
         int TURN_BUTTON_TIMEOUT;
         const int timeToAdjust = 10;
         bool turn_complete = true;

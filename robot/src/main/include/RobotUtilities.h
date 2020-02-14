@@ -35,10 +35,10 @@ const frc::Color kYellowTarget = frc::Color(0.361, 0.524, 0.113);
 
 const int kPrimaryDriverJoystickID = 0;
 
-const int kUltraLeftFrontMotorID = 1;
-const int kUltraRightFrontMotorID = 2;
-const int kUltraLeftBackMotorID = 3;
-const int kUltraRightBackMotorID = 4;
+const int kUltraLeftFrontMotorID = 10;
+const int kUltraRightFrontMotorID = 1;
+const int kUltraLeftBackMotorID = 2;
+const int kUltraRightBackMotorID = 3;
 
 const int kIntakeMotorID = 5;
 const int kGenevaMotorID = 6;

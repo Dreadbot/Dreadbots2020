@@ -66,6 +66,18 @@ class Robot : public frc::TimedRobot {
   
   double iterative_clock = 0.0;
 
+  //Rotate to angle variables
+  double selectedAngle = 0;
+
+  //ENABLED BOOLEANS
+  const bool kDriveEnabled = false;
+  const bool kClimbEnabled = false;
+  const bool kShooterEnabled = false;
+  const bool kRotateToAngleEnabled = true;
+  const bool kIntakeEnabled = false;
+  const bool kFeederEnabled = false;
+  const bool kTrajectoryEnabled = false;
+
   // Teleop Objects
     //Manipulator Objects
     rev::CANSparkMax *intake_motor;

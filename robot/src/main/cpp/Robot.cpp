@@ -45,7 +45,13 @@ void Robot::RobotInit() {
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
   test = new Diagnostic(joystick_1);
 
-  trajectory_generation_utility = new TrajectoryGenerationUtility();
+  if(kTrajectoryEnabled){
+    trajectory_generation_utility = new TrajectoryGenerationUtility();
+    // Trajectory Test (prints to RioLog)
+    ramsete_timed_follower = new RamseteTimedFollower(spark_drive,
+    trajectory_generation_utility);
+
+  }
 
   // Initialize SparkDrive Object using the UltraLord Drivetrain Configuration.
   spark_drive = new SparkDrive(new rev::CANSparkMax(kUltraLeftFrontMotorID, rev::CANSparkMax::MotorType::kBrushless),
@@ -54,24 +60,27 @@ void Robot::RobotInit() {
     new rev::CANSparkMax(kUltraRightBackMotorID, rev::CANSparkMax::MotorType::kBrushless)
   );
 
-  // Trajectory Test (prints to RioLog)
-  ramsete_timed_follower = new RamseteTimedFollower(spark_drive,
-    trajectory_generation_utility);
+
 
   teleop_functions = new TeleopFunctions(joystick_1, shooter, spark_drive);
 
-  //Manipulator Objects
-  intake_motor = new rev::CANSparkMax(kIntakeMotorID, rev::CANSparkMax::MotorType::kBrushless);
-  shooter_motor = new rev::CANSparkMax(kFlyWheelMotorID, rev::CANSparkMax::MotorType::kBrushless);
-  aim_motor = new rev::CANSparkMax(kAimMotorID, rev::CANSparkMax::MotorType::kBrushless);
-  geneva_motor = new rev::CANSparkMax(kGenevaMotorID, rev::CANSparkMax::MotorType::kBrushless);
-  punch = new frc::Solenoid(kPunchSolenoidID);
-
-  intake = new Intake(intake_motor);
-  shooter = new Shooter(shooter_motor, aim_motor);
-  feeder = new Feeder(geneva_motor, punch);
-
   manipulator = new Manipulator(intake, feeder, shooter);
+
+  //Manipulator Objects
+  if(kIntakeEnabled){
+    intake_motor = new rev::CANSparkMax(kIntakeMotorID, rev::CANSparkMax::MotorType::kBrushless);
+    intake = new Intake(intake_motor);
+  }
+  if(kShooterEnabled){
+    shooter_motor = new rev::CANSparkMax(kFlyWheelMotorID, rev::CANSparkMax::MotorType::kBrushless);
+    shooter = new Shooter(shooter_motor, aim_motor);
+  }
+  aim_motor = new rev::CANSparkMax(kAimMotorID, rev::CANSparkMax::MotorType::kBrushless);
+  if(kFeederEnabled){
+    geneva_motor = new rev::CANSparkMax(kGenevaMotorID, rev::CANSparkMax::MotorType::kBrushless);
+    punch = new frc::Solenoid(kPunchSolenoidID);
+    feeder = new Feeder(geneva_motor, punch);
+  }
 
   autonomous = new Autonomous(m_SparkDrive);
 
@@ -147,56 +156,63 @@ void Robot::TeleopInit() {
 }
 
 void Robot::TeleopPeriodic() {
-  // Call SparkDrive::TankDrive() using the motors given.
-  //spark_drive->TankDrive(-joystick_1->GetRawAxis(y_axis), joystick_1->GetRawAxis(z_axis), joystick_1->GetRawButton(right_bumper), joystick_1->GetRawButton(left_bumper));
- 
+  
+  if(kDriveEnabled){
+    // Call SparkDrive::TankDrive() using the motors given.
+    spark_drive->TankDrive(-joystick_1->GetRawAxis(y_axis), joystick_1->GetRawAxis(z_axis), joystick_1->GetRawButton(right_bumper), joystick_1->GetRawButton(left_bumper));
+  }
  //teleopFunctions->ShooterFunction();
 
   // need to create sparkdrive above for this code 
  // spark_drive = new SparkDrive(new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless)
    double joystickaxisY = joystick_1->GetRawAxis(1); 
-   if(fabs(joystickaxisY)  <= 0.025){
-     intake->Stop();
+   if(kIntakeEnabled){
+    if(fabs(joystickaxisY)  <= 0.025){
+       intake->Stop();
+    }
+    else{
+       intake->SetSpeed(joystickaxisY * 5000 );
+    }
+      //Testing Intake Motor Code
+    if (joystick_1->GetRawButtonPressed(x_button)) {
+      //intake->Start();
+      intake->SetSpeed(100);
+    }
+    if (joystick_1->GetRawButtonPressed(a_button)) {
+      intake->Stop();
+    }
    }
-   else{
-     intake->SetSpeed(joystickaxisY * 5000 );
-   }
-  std::cout << "Teleop Tick"  << std::endl;
-  std::cout << joystickaxisY << std::endl;
-  
-  
   //teleopFunctions->ShooterFunction();
-  std::cout << "Teleop Tick" << std::endl;
   
-  if (joystick_1->GetRawButtonPressed(b_button)) {
-    //intake->Start();
-    shooter->AimHeight(10);
+  if(kShooterEnabled){
+    if (joystick_1->GetRawButtonPressed(b_button)) {
+      //intake->Start();
+      shooter->AimHeight(10);
+    }
+    if (joystick_1->GetRawButtonPressed(y_button)) {
+      shooter->AimHeight(0);
+    }
   }
-  if (joystick_1->GetRawButtonPressed(y_button)) {
-    shooter->AimHeight(0);
-  }
-
     
-  //Testing Intake Motor Code
-  if (joystick_1->GetRawButtonPressed(x_button)) {
-    //intake->Start();
-    intake->SetSpeed(100);
-  }
-  if (joystick_1->GetRawButtonPressed(a_button)) {
-    intake->Stop();
-  }
   
-  // Call SparkDrive::TankDrive() using the drivetrain motors
-  spark_drive->TankDrive(
-    -joystick_1->GetRawAxis(y_axis), 
-    joystick_1->GetRawAxis(z_axis), 
-    joystick_1->GetRawButton(right_bumper), 
-    joystick_1->GetRawButton(left_bumper)
-  );
-
-  if(!teleop_functions->GetTurnStatus() || joystick_1->GetRawButton(a_button)){
-    teleop_functions->TurnToAngle(30.0, .002);
-    manipulator->PrepareShot(1000, 0);
+  if(kShooterEnabled){
+    // Call SparkDrive::TankDrive() using the drivetrain motors
+    spark_drive->TankDrive(
+      -joystick_1->GetRawAxis(y_axis), 
+      joystick_1->GetRawAxis(z_axis), 
+      joystick_1->GetRawButton(right_bumper), 
+      joystick_1->GetRawButton(left_bumper)
+    );
+  }
+  frc::SmartDashboard::PutNumber("Current Angle", spark_drive->GetGyroscope()->GetYaw());
+  if(kRotateToAngleEnabled){
+    if(teleop_functions->GetTurnStatus()){
+      selectedAngle = frc::SmartDashboard::GetNumber("selectedAngle", 0.0);
+    }
+    if(!teleop_functions->GetTurnStatus() || joystick_1->GetRawButton(a_button)){
+      teleop_functions->TurnToAngle(selectedAngle, .002);
+      //manipulator->PrepareShot(1000, 0);
+    }
   }
  }
 
