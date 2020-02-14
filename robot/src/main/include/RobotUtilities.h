@@ -16,6 +16,17 @@ enum JoystickInputs
   left_bumper = 5, right_bumper = 6, left_trigger = 7, right_trigger = 8,
   back_button = 9, start_button = 10, l_trigger = 11, r_trigger = 12
 };
+enum Joystick1Layout{
+    kForwardBackwardAxis = x_axis, kRotAxis = z_axis, kShootButton = a_button, kAutoAimButton = x_button,
+    kExtendClimbButton = right_trigger, kRetractClimbButton = left_trigger, kWinchButton = y_button,
+     kTurtleButton = left_bumper, kTurboButton = right_bumper 
+}; 
+enum Joystick2Layout{
+    kRetractColorWheelButton = a_button, kDeployColorWheelButton = y_button, kColorWheelColorControl = left_trigger, 
+    kColorWheelRotationControl = right_trigger, kIntakeAxis = y_axis, kRegressGenevaButton = left_bumper, 
+    kAdvanceGenevaButton = right_bumper, kIncreaseAimOffsetPOV = 90, kDecreaseAimOffsetPOV = 270,
+    kCameraSwitchButton = start_button
+};
 
 const frc::Color kBlueTarget = frc::Color(0.143, 0.427, 0.429);
 const frc::Color kGreenTarget = frc::Color(0.197, 0.561, 0.240);
