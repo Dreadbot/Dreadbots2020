@@ -36,7 +36,9 @@
 
 void Robot::RobotInit() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
-  m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
+  m_chooser.AddOption(AutoRightRight, AutoRightRight);
+  m_chooser.AddOption(AutoRightCenter, AutoRightCenter);
+  m_chooser.AddOption(AutoRightLeft, AutoRightLeft);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   frc::SmartDashboard::PutNumber("Aimpid",0.1);
 
@@ -71,6 +73,8 @@ void Robot::RobotInit() {
 
   manipulator = new Manipulator(intake, feeder, shooter);
 
+  autonomous = new Autonomous(m_SparkDrive);
+
   }
 
 /**
@@ -100,21 +104,23 @@ void Robot::AutonomousInit() {
   //     kAutoNameDefault);
   std::cout << "Auto selected: " << m_autoSelected << std::endl;
 
-  if (m_autoSelected == kAutoNameCustom) {
-    // Custom Auto goes here
-  } else {
-    // Default Auto goes here
-  }
-
   // Trajectory Code
   
 }
 
-void Robot::AutonomousPeriodic() {
-  if (m_autoSelected == kAutoNameCustom) {
-    // Custom Auto goes here
-  } else {
-    // Default Auto goes here
+void Robot::AutonomousPeriodic() 
+{
+  if (m_autoSelected == AutoRightRight)
+  {
+    autonomous->RightRight();
+  }
+  else if(m_autoSelected == AutoRightCenter)
+  {
+    
+  }
+  else if(m_autoSelected == AutoRightLeft)
+  {
+
   }
 
   iterative_clock += kIterationSecondsRatio;

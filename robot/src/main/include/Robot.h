@@ -23,6 +23,7 @@
 #include "TeleopFunctions.h"
 #include "TrajectoryGenerationUtility.h"
 #include "Manipulator.h"
+#include "Autonomous.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -37,7 +38,9 @@ class Robot : public frc::TimedRobot {
  private:
   frc::SendableChooser<std::string> m_chooser;
   const std::string kAutoNameDefault = "Default";
-  const std::string kAutoNameCustom = "My Auto";
+  const std::string AutoRightRight = "RightRight";
+  const std::string AutoRightCenter = "RightCenter";
+  const std::string AutoRightLeft = "RightLeft";
   std::string m_autoSelected;
 
   // Autonomous Functions
@@ -50,6 +53,10 @@ class Robot : public frc::TimedRobot {
 
   // Drive Objects
   SparkDrive* spark_drive;
+
+  //Autonomous Objectss
+  Autonomous *autonomous;
+  SparkDrive *m_SparkDrive;
 
   // Trajectory Testing Variables
   double const kIterationSecondsRatio = 0.02;

@@ -5,4 +5,3 @@ class Climber
     public:
         Climber();
 };
-
