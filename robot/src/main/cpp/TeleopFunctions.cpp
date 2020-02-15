@@ -7,10 +7,10 @@
 }
 void TeleopFunctions::TurnToAngle(double targetAngle, double proportion){
     //If a button is pressed, reset the counter, and signal that a turn is initiiated
-    if(js1->GetRawButton(a_button)){
-      TURN_BUTTON_TIMEOUT = 0;
-      turn_complete = false;
-    }
+    // if(js1->GetRawButton(a_button)){
+    //   TURN_BUTTON_TIMEOUT = 0;
+    //   turn_complete = false;
+    // }
 
     //Find the difference between the current angle and the target angle, multiply by a set value, and use that to find the rate
     double error = ((double) m_sparkDrive->GetGyroscope()->GetYaw()) - targetAngle;
@@ -27,6 +27,11 @@ void TeleopFunctions::TurnToAngle(double targetAngle, double proportion){
     current_rotation_rate = (current_rotation_rate > 1)? 1 : current_rotation_rate;
     current_rotation_rate = (current_rotation_rate < -1)? -1 : current_rotation_rate;
 
+    if(fabs(error) > slop){
+        turn_complete = false;
+        TURN_BUTTON_TIMEOUT = 0;
+    }
+    
     //If the turn has made it within the allowable error constant, increment the count
     if (fabs(error) < slop)
        TURN_BUTTON_TIMEOUT++;

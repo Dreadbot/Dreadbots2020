@@ -204,14 +204,27 @@ void Robot::TeleopPeriodic() {
       joystick_1->GetRawButton(left_bumper)
     );
   }
+
   frc::SmartDashboard::PutNumber("Current Angle", spark_drive->GetGyroscope()->GetYaw());
   if(kRotateToAngleEnabled){
+      if(frc::SmartDashboard::GetNumber("detectionCount", lastCount) == lastCount){
+        staleCount++;
+      }
+      else{
+        staleCount = 0;
+      }
+      lastCount = frc::SmartDashboard::GetNumber("detectionCount", lastCount);
+
     if(teleop_functions->GetTurnStatus()){
       selectedAngle = frc::SmartDashboard::GetNumber("selectedAngle", 0.0);
     }
-    if(!teleop_functions->GetTurnStatus() || joystick_1->GetRawButton(a_button)){
+    if((joystick_1->GetRawButton(a_button)) && staleCount < 5){
       teleop_functions->TurnToAngle(selectedAngle, .002);
+      staleCount = 0;
       //manipulator->PrepareShot(1000, 0);
+    }
+    else if(!joystick_1->GetRawButtonReleased(a_button)){
+      spark_drive->TankDrive(0,0,false,false);
     }
   }
  }

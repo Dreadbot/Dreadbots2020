@@ -68,6 +68,8 @@ class Robot : public frc::TimedRobot {
 
   //Rotate to angle variables
   double selectedAngle = 0;
+  int lastCount = 0;
+  int staleCount = 0;
 
   //ENABLED BOOLEANS
   const bool kDriveEnabled = false;
