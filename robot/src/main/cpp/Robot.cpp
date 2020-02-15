@@ -43,7 +43,7 @@ void Robot::RobotInit() {
   frc::SmartDashboard::PutNumber("Aimpid",0.1);
 
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
-  test = new Diagnostic(joystick_1);
+  //test = new Diagnostic(joystick_1);
 
   if(kTrajectoryEnabled){
     trajectory_generation_utility = new TrajectoryGenerationUtility();
@@ -73,13 +73,18 @@ void Robot::RobotInit() {
   }
   if(kShooterEnabled){
     shooter_motor = new rev::CANSparkMax(kFlyWheelMotorID, rev::CANSparkMax::MotorType::kBrushless);
+    aim_motor = new rev::CANSparkMax(kAimMotorID, rev::CANSparkMax::MotorType::kBrushless);
     shooter = new Shooter(shooter_motor, aim_motor);
   }
-  aim_motor = new rev::CANSparkMax(kAimMotorID, rev::CANSparkMax::MotorType::kBrushless);
   if(kFeederEnabled){
     geneva_motor = new rev::CANSparkMax(kGenevaMotorID, rev::CANSparkMax::MotorType::kBrushless);
     punch = new frc::Solenoid(kPunchSolenoidID);
     feeder = new Feeder(geneva_motor, punch);
+  }
+  if(kColorWheelEnabled){
+    color_motor = new WPI_TalonSRX(kColorWheelMotorID);
+    color_sol = new frc::Solenoid(kColorWheelSolenoidID);
+    color_wheel = new ColorWheel(color_motor, color_sol);
   }
 
   autonomous = new Autonomous(m_SparkDrive);
@@ -227,6 +232,20 @@ void Robot::TeleopPeriodic() {
       spark_drive->TankDrive(0,0,false,false);
     }
   }
+  if(kColorWheelEnabled){
+    color_wheel->GetCurrentColor();
+    if(joystick_1->GetRawButton(kDeployColorWheelButton)){
+      color_wheel->SetExtended(true);
+    }
+    else if(joystick_1->GetRawButton(kRetractColorWheelButton)){
+      color_wheel->SetExtended(false);
+    }
+    else if(joystick_1->GetRawButton(kColorWheelColorControl)){
+      std::cout << "calling" << std::endl;
+      color_wheel->TurnToColor(kRedTarget);
+    }
+  }
+
  }
 
 void Robot::TestPeriodic() {
