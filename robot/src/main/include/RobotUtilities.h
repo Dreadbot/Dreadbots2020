@@ -34,18 +34,21 @@ const frc::Color kRedTarget = frc::Color(0.561, 0.232, 0.114);
 const frc::Color kYellowTarget = frc::Color(0.361, 0.524, 0.113);
 
 const int kPrimaryDriverJoystickID = 0;
+const int kSecondaryDrvierJoystickID = 1;
 
-const int kUltraLeftFrontMotorID = 10;
-const int kUltraRightFrontMotorID = 1;
-const int kUltraLeftBackMotorID = 2;
-const int kUltraRightBackMotorID = 3;
+const int kUltraLeftFrontMotorID = 1;
+const int kUltraRightFrontMotorID = 2;
+const int kUltraLeftBackMotorID = 3;
+const int kUltraRightBackMotorID = 4;
 
 const int kIntakeMotorID = 5;
 const int kGenevaMotorID = 6;
 const int kFlyWheelMotorID = 7;
 const int kAimMotorID = 8;
+const int kColorWheelMotorID = 9;
 
-const int kClimbMotorID = 9;
+const int kClimbExtenderID = 10;
+const int kClimbWinchID = 11;
 
 const int kPunchSolenoidID = 1;
 

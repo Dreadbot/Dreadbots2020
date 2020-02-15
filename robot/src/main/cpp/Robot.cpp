@@ -43,6 +43,7 @@ void Robot::RobotInit() {
   frc::SmartDashboard::PutNumber("Aimpid",0.1);
 
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
+  joystick_2 = new frc::Joystick(kSecondaryDrvierJoystickID);
   test = new Diagnostic(joystick_1);
 
   if(kTrajectoryEnabled){
@@ -64,8 +65,6 @@ void Robot::RobotInit() {
 
   teleop_functions = new TeleopFunctions(joystick_1, shooter, spark_drive);
 
-  manipulator = new Manipulator(intake, feeder, shooter);
-
   //Manipulator Objects
   if(kIntakeEnabled){
     intake_motor = new rev::CANSparkMax(kIntakeMotorID, rev::CANSparkMax::MotorType::kBrushless);
@@ -82,6 +81,7 @@ void Robot::RobotInit() {
     feeder = new Feeder(geneva_motor, punch);
   }
 
+  manipulator = new Manipulator(intake, feeder, shooter);
   autonomous = new Autonomous(m_SparkDrive);
 
   }
@@ -157,15 +157,9 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
   
-  if(kDriveEnabled){
-    // Call SparkDrive::TankDrive() using the motors given.
-    spark_drive->TankDrive(-joystick_1->GetRawAxis(y_axis), joystick_1->GetRawAxis(z_axis), joystick_1->GetRawButton(right_bumper), joystick_1->GetRawButton(left_bumper));
-  }
- //teleopFunctions->ShooterFunction();
-
   // need to create sparkdrive above for this code 
  // spark_drive = new SparkDrive(new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless)
-   double joystickaxisY = joystick_1->GetRawAxis(1); 
+   double joystickaxisY = joystick_2->GetRawAxis(kIntakeAxis); 
    if(kIntakeEnabled){
     if(fabs(joystickaxisY)  <= 0.025){
        intake->Stop();
@@ -173,35 +167,17 @@ void Robot::TeleopPeriodic() {
     else{
        intake->SetSpeed(joystickaxisY * 5000 );
     }
-      //Testing Intake Motor Code
-    if (joystick_1->GetRawButtonPressed(x_button)) {
-      //intake->Start();
-      intake->SetSpeed(100);
-    }
-    if (joystick_1->GetRawButtonPressed(a_button)) {
-      intake->Stop();
-    }
    }
   //teleopFunctions->ShooterFunction();
-  
-  if(kShooterEnabled){
-    if (joystick_1->GetRawButtonPressed(b_button)) {
-      //intake->Start();
-      shooter->AimHeight(10);
-    }
-    if (joystick_1->GetRawButtonPressed(y_button)) {
-      shooter->AimHeight(0);
-    }
-  }
     
-  
-  if(kShooterEnabled){
+  if(kDriveEnabled){
     // Call SparkDrive::TankDrive() using the drivetrain motors
     spark_drive->TankDrive(
-      -joystick_1->GetRawAxis(y_axis), 
-      joystick_1->GetRawAxis(z_axis), 
-      joystick_1->GetRawButton(right_bumper), 
-      joystick_1->GetRawButton(left_bumper)
+      -joystick_1->GetRawAxis(kForwardBackwardAxis), 
+      joystick_1->GetRawAxis(kRotAxis), 
+      joystick_1->GetRawButton(kTurboButton), 
+      joystick_1->GetRawButton(kTurtleButton),
+      0.05
     );
   }
 
@@ -223,16 +199,22 @@ void Robot::TeleopPeriodic() {
       selectedAngle = (spark_drive->GetGyroscope()->GetYaw() + frc::SmartDashboard::GetNumber("selectedAngle", 0.0));
     }
     //Only turn when we hold the button, and we have seen the target recently
-    if(joystick_1->GetRawButton(a_button) && staleCount < 5){
+    if(joystick_1->GetRawButton(kAutoAimButton) && staleCount < 5){
       teleop_functions->TurnToAngle(selectedAngle, .002);
       staleCount = 0;
-      //manipulator->PrepareShot(1000, 0);
+      manipulator->PrepareShot(1000, 10);
     }
-    else if(!joystick_1->GetRawButtonReleased(a_button)){
+    else if(!joystick_1->GetRawButtonReleased(kAutoAimButton)){
       //when we release the button, then set motors to zero
       //this eliminates the constant turn after turn is done.
       spark_drive->TankDrive(0,0,false,false);
       teleop_functions->SetTurnStatus(true);
+    }
+    if(joystick_1->GetRawButton(kShootButton)){
+      manipulator->ContinuousShoot(0);
+    }
+    else{
+      manipulator->ResetManipulatorElements();
     }
   }
  }

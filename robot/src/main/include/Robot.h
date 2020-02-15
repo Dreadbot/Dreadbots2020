@@ -50,6 +50,8 @@ class Robot : public frc::TimedRobot {
 
   // Input Objects
   frc::Joystick *joystick_1;
+  frc::Joystick *joystick_2;
+
 
   // Drive Objects
   SparkDrive* spark_drive;
@@ -72,13 +74,13 @@ class Robot : public frc::TimedRobot {
   int staleCount = 0;
 
   //ENABLED BOOLEANS
-  const bool kDriveEnabled = false;
-  const bool kClimbEnabled = false;
-  const bool kShooterEnabled = false;
+  const bool kDriveEnabled = true;
+  const bool kClimbEnabled = true;
+  const bool kShooterEnabled = true;
   const bool kRotateToAngleEnabled = true;
-  const bool kIntakeEnabled = false;
-  const bool kFeederEnabled = false;
-  const bool kTrajectoryEnabled = false;
+  const bool kIntakeEnabled = true;
+  const bool kFeederEnabled = true;
+  const bool kTrajectoryEnabled = true;
 
   // Teleop Objects
     //Manipulator Objects

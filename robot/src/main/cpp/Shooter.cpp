@@ -50,7 +50,7 @@ Shooter::Shooter(rev::CANSparkMax *shooterMotor, rev::CANSparkMax *aimMotor)
 
 void Shooter::Shoot(double shooterSpeed){
     speed = shooterSpeed;
-    m_shooterMotor->Set(speed);
+    m_shooterPid->SetReference(speed, rev::ControlType::kVelocity);
 }
 void Shooter::AimHeight(double rotations) {
     m_aimPid->SetReference(rotations, rev::ControlType::kPosition); 
