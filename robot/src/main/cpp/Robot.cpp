@@ -207,24 +207,32 @@ void Robot::TeleopPeriodic() {
 
   frc::SmartDashboard::PutNumber("Current Angle", spark_drive->GetGyroscope()->GetYaw());
   if(kRotateToAngleEnabled){
-      if(frc::SmartDashboard::GetNumber("detectionCount", lastCount) == lastCount){
-        staleCount++;
-      }
-      else{
-        staleCount = 0;
-      }
-      lastCount = frc::SmartDashboard::GetNumber("detectionCount", lastCount);
-
-    if(teleop_functions->GetTurnStatus()){
-      selectedAngle = frc::SmartDashboard::GetNumber("selectedAngle", 0.0);
+    //Check if vision is actually seeing anything
+    if(frc::SmartDashboard::GetNumber("detectionCount", lastCount) == lastCount){
+      staleCount++; //A variable to show how "stale" the detectionCount is
     }
-    if((joystick_1->GetRawButton(a_button)) && staleCount < 5){
+    else{
+      //if vision does see a target, then the count is no longer stale
+      staleCount = 0;
+    }
+    //update the latest count, for use on next loop iteration
+    lastCount = frc::SmartDashboard::GetNumber("detectionCount", lastCount);
+
+    //if we are done turning (not currently turning), then update angle from vision
+    if(teleop_functions->GetTurnStatus()){
+      selectedAngle = (spark_drive->GetGyroscope()->GetYaw() + frc::SmartDashboard::GetNumber("selectedAngle", 0.0));
+    }
+    //Only turn when we hold the button, and we have seen the target recently
+    if(joystick_1->GetRawButton(a_button) && staleCount < 5){
       teleop_functions->TurnToAngle(selectedAngle, .002);
       staleCount = 0;
       //manipulator->PrepareShot(1000, 0);
     }
     else if(!joystick_1->GetRawButtonReleased(a_button)){
+      //when we release the button, then set motors to zero
+      //this eliminates the constant turn after turn is done.
       spark_drive->TankDrive(0,0,false,false);
+      teleop_functions->SetTurnStatus(true);
     }
   }
  }

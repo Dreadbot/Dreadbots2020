@@ -7,10 +7,6 @@
 }
 void TeleopFunctions::TurnToAngle(double targetAngle, double proportion){
     //If a button is pressed, reset the counter, and signal that a turn is initiiated
-    // if(js1->GetRawButton(a_button)){
-    //   TURN_BUTTON_TIMEOUT = 0;
-    //   turn_complete = false;
-    // }
 
     //Find the difference between the current angle and the target angle, multiply by a set value, and use that to find the rate
     double error = ((double) m_sparkDrive->GetGyroscope()->GetYaw()) - targetAngle;
@@ -27,6 +23,7 @@ void TeleopFunctions::TurnToAngle(double targetAngle, double proportion){
     current_rotation_rate = (current_rotation_rate > 1)? 1 : current_rotation_rate;
     current_rotation_rate = (current_rotation_rate < -1)? -1 : current_rotation_rate;
 
+    //if we are not within the slop, then we are not done with the turn
     if(fabs(error) > slop){
         turn_complete = false;
         TURN_BUTTON_TIMEOUT = 0;
@@ -55,7 +52,7 @@ void TeleopFunctions::TurnToAngle(double targetAngle, double proportion){
     //declare the turn finished and reset the gyro
     if(fabs(error) < slop && TURN_BUTTON_TIMEOUT > timeToAdjust){
         turn_complete = true;
-        m_sparkDrive->GetGyroscope()->ZeroYaw();
+        //m_sparkDrive->GetGyroscope()->ZeroYaw();
         m_sparkDrive->TankDrive(0,0,false,false);
     }
 }
@@ -63,6 +60,10 @@ void TeleopFunctions::TurnToAngle(double targetAngle, double proportion){
 bool TeleopFunctions::GetTurnStatus() {
     return turn_complete;
 }
+void TeleopFunctions::SetTurnStatus(bool turnStatus){
+    turn_complete = turnStatus;
+}
+
 void TeleopFunctions::ShooterFunction(){
        // printf("joystick_addr = %d \n",js1);
         if(js1->GetRawButton(shooterButton)){
