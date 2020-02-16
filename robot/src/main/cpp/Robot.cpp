@@ -139,21 +139,31 @@ void Robot::AutonomousPeriodic()
 
   iterative_clock += kIterationSecondsRatio;
 
+  // Get the time at the current iteration in the code
   units::time::second_t time_at_iteration = units::time::second_t(iterative_clock);
 
-  trajectory_generation_utility->SetChassisSpeeds(
-    trajectory_generation_utility->GetRamseteController()->Calculate(
-      spark_drive->GetRobotPose2dPosition(), 
-      trajectory_generation_utility->GetTrajectory().Sample(time_at_iteration)
-    )
-  );
+  // Get the Robot's Current Position according to Odometry
+  auto robot_pose2d = spark_drive->GetRobotPose2dPosition();
 
-  //std::cout << "Wheel Velocity: " << (double) (trajectory_generation_utility->GetChassisSpeeds().vx) << std::endl;
+  // Get the current trajectory state, or where the robot
+  // should be.
+  auto current_trajectory_state = trajectory_generation_utility->GetTrajectory().Sample(time_at_iteration);
 
-  spark_drive->GetLeftFrontPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
-  spark_drive->GetRightFrontPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
-  spark_drive->GetLeftBackPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
-  spark_drive->GetRightBackPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
+  // Calculate Chassis Speeds from the Robot Current State &
+  // Trajectory Current State.
+  auto chassis_speeds = trajectory_generation_utility->GetRamseteController()->Calculate(robot_pose2d, current_trajectory_state);
+
+  // Set the Chassis Speeds in the Utility Class
+  trajectory_generation_utility->SetChassisSpeeds(chassis_speeds);
+
+  // Calculate the Final Speeds of the Motors
+  double final_speeds = (double) (trajectory_generation_utility->GetChassisSpeeds().vx);
+
+  // Set the Motor Speeds in the Velocity Format.
+  spark_drive->GetLeftFrontPIDController().SetReference(final_speeds, rev::ControlType::kVelocity);
+  spark_drive->GetRightFrontPIDController().SetReference(final_speeds, rev::ControlType::kVelocity);
+  spark_drive->GetLeftBackPIDController().SetReference(final_speeds, rev::ControlType::kVelocity);
+  spark_drive->GetRightBackPIDController().SetReference(final_speeds, rev::ControlType::kVelocity);
 }
 
 void Robot::TeleopInit() {
