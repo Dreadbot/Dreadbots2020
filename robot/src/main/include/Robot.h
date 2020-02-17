@@ -38,7 +38,7 @@ class Robot : public frc::TimedRobot {
 
  private:
   frc::SendableChooser<std::string> m_chooser;
-  const std::string kAutoNameDefault = "Default";
+  const std::string AutoDefault = "Default";
   const std::string AutoRightRight = "RightRight";
   const std::string AutoRightCenter = "RightCenter";
   const std::string AutoRightLeft = "RightLeft";
@@ -57,7 +57,6 @@ class Robot : public frc::TimedRobot {
 
   //Autonomous Objectss
   Autonomous *autonomous;
-  SparkDrive *m_SparkDrive;
 
   // Trajectory Testing Variables
   double const kIterationSecondsRatio = 0.02;

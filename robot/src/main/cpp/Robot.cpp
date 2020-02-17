@@ -35,7 +35,7 @@
 #include "Robot.h"
 
 void Robot::RobotInit() {
-  m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
+  m_chooser.SetDefaultOption(AutoDefault, AutoDefault);
   m_chooser.AddOption(AutoRightRight, AutoRightRight);
   m_chooser.AddOption(AutoRightCenter, AutoRightCenter);
   m_chooser.AddOption(AutoRightLeft, AutoRightLeft);
@@ -64,7 +64,7 @@ void Robot::RobotInit() {
 
   teleop_functions = new TeleopFunctions(joystick_1, shooter, spark_drive);
 
-  manipulator = new Manipulator(intake, feeder, shooter);
+//  manipulator = new Manipulator(intake, feeder, shooter);
 
   //Manipulator Objects
   if(kIntakeEnabled){
@@ -87,7 +87,7 @@ void Robot::RobotInit() {
     color_wheel = new ColorWheel(color_motor, color_sol);
   }
 
-  autonomous = new Autonomous(m_SparkDrive);
+  autonomous = new Autonomous(spark_drive, new std::multimap<units::second_t, AutonState>());
 
   }
 
@@ -114,9 +114,9 @@ void Robot::RobotPeriodic() {}
  */
 void Robot::AutonomousInit() {
   m_autoSelected = m_chooser.GetSelected();
-  // m_autoSelected = SmartDashboard::GetString("Auto Selector",
-  //     kAutoNameDefault);
   std::cout << "Auto selected: " << m_autoSelected << std::endl;
+  // m_autoSelected = frc::SmartDashboard::GetString("Auto Selector",
+  //     AutoDefault);
 
   // Trajectory Code
   
@@ -124,13 +124,20 @@ void Robot::AutonomousInit() {
 
 void Robot::AutonomousPeriodic() 
 {
-  if (m_autoSelected == AutoRightRight)
+  std::cout << "Auto selected: " << m_autoSelected << std::endl;
+  std::cout << "AutoRightRight: " << AutoRightRight << std::endl;
+  if(m_autoSelected == AutoDefault)
+  {
+
+  }
+  else if (m_autoSelected == AutoRightRight)
   {
     autonomous->RightRight();
   }
+
   else if(m_autoSelected == AutoRightCenter)
   {
-    
+ spark_drive->TankDrive(1.0, 0.0, false, false, 0.0);
   }
   else if(m_autoSelected == AutoRightLeft)
   {
