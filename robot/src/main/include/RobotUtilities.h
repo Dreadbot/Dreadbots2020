@@ -17,7 +17,7 @@ enum JoystickInputs
   back_button = 9, start_button = 10, l_trigger = 11, r_trigger = 12
 };
 enum Joystick1Layout{
-    kForwardBackwardAxis = x_axis, kRotAxis = z_axis, kShootButton = a_button, kAutoAimButton = x_button,
+    kForwardBackwardAxis = y_axis, kRotAxis = z_axis, kShootButton = a_button, kAutoAimButton = x_button,
     kExtendClimbButton = right_trigger, kRetractClimbButton = left_trigger, kWinchButton = y_button,
      kTurtleButton = left_bumper, kTurboButton = right_bumper 
 }; 

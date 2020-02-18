@@ -20,6 +20,9 @@
 #include <units/units.h>
 
 #include <AHRS.h>
+#include <frc/Joystick.h>
+
+#include "RobotUtilities.h"
 
 using Velocity =
     units::compound_unit<units::meters, units::inverse<units::seconds>>;
@@ -77,6 +80,7 @@ class SparkDrive
   */
   void TankDrive(double y_axis, double rot_axis, bool turbo_button, bool turtle_button, double joystick_deadband);
 
+  void Test(frc::Joystick *joystick);
   /**
    * Utility Function for Getting the current angle of the gyroscope as a Rotation 2d.
    */

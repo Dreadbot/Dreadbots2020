@@ -75,12 +75,12 @@ class Robot : public frc::TimedRobot {
 
   //ENABLED BOOLEANS
   const bool kDriveEnabled = true;
-  const bool kClimbEnabled = true;
-  const bool kShooterEnabled = true;
-  const bool kRotateToAngleEnabled = true;
+  const bool kClimbEnabled = false;
+  const bool kShooterEnabled = false; //Possibly crashes code. Change made to fix, not tested yet.
+  const bool kRotateToAngleEnabled = false; //Not tested on full Robot yet
   const bool kIntakeEnabled = true;
   const bool kFeederEnabled = true;
-  const bool kTrajectoryEnabled = true;
+  const bool kTrajectoryEnabled = false; //Not tested on full robot yet
 
   // Teleop Objects
     //Manipulator Objects

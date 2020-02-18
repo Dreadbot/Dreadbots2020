@@ -44,14 +44,13 @@ void Robot::RobotInit() {
 
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
   joystick_2 = new frc::Joystick(kSecondaryDrvierJoystickID);
-  test = new Diagnostic(joystick_1);
+  //test = new Diagnostic(joystick_1);
 
   if(kTrajectoryEnabled){
     trajectory_generation_utility = new TrajectoryGenerationUtility();
     // Trajectory Test (prints to RioLog)
     ramsete_timed_follower = new RamseteTimedFollower(spark_drive,
     trajectory_generation_utility);
-
   }
 
   // Initialize SparkDrive Object using the UltraLord Drivetrain Configuration.
@@ -72,9 +71,9 @@ void Robot::RobotInit() {
   }
   if(kShooterEnabled){
     shooter_motor = new rev::CANSparkMax(kFlyWheelMotorID, rev::CANSparkMax::MotorType::kBrushless);
+    aim_motor = new rev::CANSparkMax(kAimMotorID, rev::CANSparkMax::MotorType::kBrushless);
     shooter = new Shooter(shooter_motor, aim_motor);
   }
-  aim_motor = new rev::CANSparkMax(kAimMotorID, rev::CANSparkMax::MotorType::kBrushless);
   if(kFeederEnabled){
     geneva_motor = new rev::CANSparkMax(kGenevaMotorID, rev::CANSparkMax::MotorType::kBrushless);
     punch = new frc::Solenoid(kPunchSolenoidID);
@@ -83,7 +82,6 @@ void Robot::RobotInit() {
 
   manipulator = new Manipulator(intake, feeder, shooter);
   autonomous = new Autonomous(m_SparkDrive);
-
   }
 
 /**
@@ -173,12 +171,27 @@ void Robot::TeleopPeriodic() {
   if(kDriveEnabled){
     // Call SparkDrive::TankDrive() using the drivetrain motors
     spark_drive->TankDrive(
-      -joystick_1->GetRawAxis(kForwardBackwardAxis), 
+      joystick_1->GetRawAxis(kForwardBackwardAxis), 
       joystick_1->GetRawAxis(kRotAxis), 
       joystick_1->GetRawButton(kTurboButton), 
       joystick_1->GetRawButton(kTurtleButton),
       0.05
     );
+  }
+
+  if(kFeederEnabled){
+    if(joystick_1->GetRawButtonPressed(1)){
+      feeder->AdvanceGeneva(1);
+    }
+  }
+
+  if(kShooterEnabled){
+    if(joystick_1->GetRawButton(2)){
+      shooter->Shoot(5000);
+    }
+    else{
+      shooter->Shoot(0);
+    }
   }
 
   frc::SmartDashboard::PutNumber("Current Angle", spark_drive->GetGyroscope()->GetYaw());
@@ -220,7 +233,8 @@ void Robot::TeleopPeriodic() {
  }
 
 void Robot::TestPeriodic() {
-  test->run();
+  // test->run();
+  spark_drive->Test(joystick_1);
 }
 #ifndef RUNNING_FRC_TESTS
 int main() { return frc::StartRobot<Robot>(); }
