@@ -35,6 +35,7 @@ const frc::Color kYellowTarget = frc::Color(0.361, 0.524, 0.113);
 
 const int kPrimaryDriverJoystickID = 0;
 
+//changed values for gamakichi
 const int kUltraLeftFrontMotorID = 10;
 const int kUltraRightFrontMotorID = 1;
 const int kUltraLeftBackMotorID = 2;
@@ -45,8 +46,10 @@ const int kGenevaMotorID = 6;
 const int kFlyWheelMotorID = 7;
 const int kAimMotorID = 8;
 
-const int kClimbMotorID = 9;
+const int kClimbMotorID = 11;
+
+const int kColorWheelMotorID = 4;
 
 const int kPunchSolenoidID = 1;
-
+const int kColorWheelSolenoidID = 4;
 

@@ -35,15 +35,17 @@
 #include "Robot.h"
 
 void Robot::RobotInit() {
-  m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
+  m_chooser.SetDefaultOption(AutoDefault, AutoDefault);
   m_chooser.AddOption(AutoRightRight, AutoRightRight);
   m_chooser.AddOption(AutoRightCenter, AutoRightCenter);
   m_chooser.AddOption(AutoRightLeft, AutoRightLeft);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   frc::SmartDashboard::PutNumber("Aimpid",0.1);
 
+  timer = new frc::Timer();
+
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
-  test = new Diagnostic(joystick_1);
+  //test = new Diagnostic(joystick_1);
 
   if(kTrajectoryEnabled){
     trajectory_generation_utility = new TrajectoryGenerationUtility();
@@ -64,7 +66,7 @@ void Robot::RobotInit() {
 
   teleop_functions = new TeleopFunctions(joystick_1, shooter, spark_drive);
 
-  manipulator = new Manipulator(intake, feeder, shooter);
+//  manipulator = new Manipulator(intake, feeder, shooter);
 
   //Manipulator Objects
   if(kIntakeEnabled){
@@ -73,18 +75,22 @@ void Robot::RobotInit() {
   }
   if(kShooterEnabled){
     shooter_motor = new rev::CANSparkMax(kFlyWheelMotorID, rev::CANSparkMax::MotorType::kBrushless);
+    aim_motor = new rev::CANSparkMax(kAimMotorID, rev::CANSparkMax::MotorType::kBrushless);
     shooter = new Shooter(shooter_motor, aim_motor);
   }
-  aim_motor = new rev::CANSparkMax(kAimMotorID, rev::CANSparkMax::MotorType::kBrushless);
   if(kFeederEnabled){
     geneva_motor = new rev::CANSparkMax(kGenevaMotorID, rev::CANSparkMax::MotorType::kBrushless);
     punch = new frc::Solenoid(kPunchSolenoidID);
     feeder = new Feeder(geneva_motor, punch);
   }
-
-  autonomous = new Autonomous(m_SparkDrive);
-
+  if(kColorWheelEnabled){
+    color_motor = new WPI_TalonSRX(kColorWheelMotorID);
+    color_sol = new frc::Solenoid(kColorWheelSolenoidID);
+    color_wheel = new ColorWheel(color_motor, color_sol);
   }
+
+  autonomous = new Autonomous(timer, spark_drive);
+}
 
 /**
  * This function is called every robot packet, no matter the mode. Use
@@ -109,9 +115,9 @@ void Robot::RobotPeriodic() {}
  */
 void Robot::AutonomousInit() {
   m_autoSelected = m_chooser.GetSelected();
-  // m_autoSelected = SmartDashboard::GetString("Auto Selector",
-  //     kAutoNameDefault);
   std::cout << "Auto selected: " << m_autoSelected << std::endl;
+  // m_autoSelected = frc::SmartDashboard::GetString("Auto Selector",
+  //     AutoDefault);
 
   // Trajectory Code
   
@@ -119,36 +125,38 @@ void Robot::AutonomousInit() {
 
 void Robot::AutonomousPeriodic() 
 {
-  if (m_autoSelected == AutoRightRight)
-  {
-    autonomous->RightRight();
-  }
-  else if(m_autoSelected == AutoRightCenter)
-  {
-    
-  }
-  else if(m_autoSelected == AutoRightLeft)
-  {
+  std::cout << "Auto selected: " << m_autoSelected << std::endl;
+  std::cout << "AutoRightRight: " << AutoRightRight << std::endl;
 
-  }
+  autonomous->AutonomousPeriodic();
 
-  iterative_clock += kIterationSecondsRatio;
+  // iterative_clock += kIterationSecondsRatio;
 
-  units::time::second_t time_at_iteration = units::time::second_t(iterative_clock);
+  // // Get the time at the current iteration in the code
+  // units::time::second_t time_at_iteration = units::time::second_t(iterative_clock);
 
-  trajectory_generation_utility->SetChassisSpeeds(
-    trajectory_generation_utility->GetRamseteController()->Calculate(
-      spark_drive->GetRobotPose2dPosition(), 
-      trajectory_generation_utility->GetTrajectory().Sample(time_at_iteration)
-    )
-  );
+  // // Get the Robot's Current Position according to Odometry
+  // auto robot_pose2d = spark_drive->GetRobotPose2dPosition();
 
-  //std::cout << "Wheel Velocity: " << (double) (trajectory_generation_utility->GetChassisSpeeds().vx) << std::endl;
+  // // Get the current trajectory state, or where the robot
+  // // should be.
+  // auto current_trajectory_state = trajectory_generation_utility->GetTrajectory().Sample(time_at_iteration);
 
-  spark_drive->GetLeftFrontPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
-  spark_drive->GetRightFrontPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
-  spark_drive->GetLeftBackPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
-  spark_drive->GetRightBackPIDController().SetReference((double) (trajectory_generation_utility->GetChassisSpeeds().vx), rev::ControlType::kVelocity);
+  // // Calculate Chassis Speeds from the Robot Current State &
+  // // Trajectory Current State.
+  // auto chassis_speeds = trajectory_generation_utility->GetRamseteController()->Calculate(robot_pose2d, current_trajectory_state);
+
+  // // Set the Chassis Speeds in the Utility Class
+  // trajectory_generation_utility->SetChassisSpeeds(chassis_speeds);
+
+  // // Calculate the Final Speeds of the Motors
+  // double final_speeds = (double) (trajectory_generation_utility->GetChassisSpeeds().vx);
+
+  // // Set the Motor Speeds in the Velocity Format.
+  // spark_drive->GetLeftFrontPIDController().SetReference(final_speeds, rev::ControlType::kVelocity);
+  // spark_drive->GetRightFrontPIDController().SetReference(final_speeds, rev::ControlType::kVelocity);
+  // spark_drive->GetLeftBackPIDController().SetReference(final_speeds, rev::ControlType::kVelocity);
+  // spark_drive->GetRightBackPIDController().SetReference(final_speeds, rev::ControlType::kVelocity);
 }
 
 void Robot::TeleopInit() {
@@ -235,6 +243,20 @@ void Robot::TeleopPeriodic() {
       teleop_functions->SetTurnStatus(true);
     }
   }
+  if(kColorWheelEnabled){
+    color_wheel->GetCurrentColor();
+    if(joystick_1->GetRawButton(kDeployColorWheelButton)){
+      color_wheel->SetExtended(true);
+    }
+    else if(joystick_1->GetRawButton(kRetractColorWheelButton)){
+      color_wheel->SetExtended(false);
+    }
+    else if(joystick_1->GetRawButton(kColorWheelColorControl)){
+      std::cout << "calling" << std::endl;
+      color_wheel->TurnToColor(kRedTarget);
+    }
+  }
+
  }
 
 void Robot::TestPeriodic() {

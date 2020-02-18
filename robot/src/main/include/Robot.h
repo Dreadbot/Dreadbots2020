@@ -12,6 +12,7 @@
 
 #include <frc/Joystick.h>
 #include <frc/TimedRobot.h>
+#include <frc/Timer.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
@@ -24,6 +25,7 @@
 #include "TrajectoryGenerationUtility.h"
 #include "Manipulator.h"
 #include "Autonomous.h"
+#include "ColorWheel.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -37,11 +39,14 @@ class Robot : public frc::TimedRobot {
 
  private:
   frc::SendableChooser<std::string> m_chooser;
-  const std::string kAutoNameDefault = "Default";
+  const std::string AutoDefault = "Default";
   const std::string AutoRightRight = "RightRight";
   const std::string AutoRightCenter = "RightCenter";
   const std::string AutoRightLeft = "RightLeft";
   std::string m_autoSelected;
+
+  // Timer Object
+  frc::Timer* timer;
 
   // Autonomous Functions
   TrajectoryGenerationUtility* trajectory_generation_utility;
@@ -56,7 +61,6 @@ class Robot : public frc::TimedRobot {
 
   //Autonomous Objectss
   Autonomous *autonomous;
-  SparkDrive *m_SparkDrive;
 
   // Trajectory Testing Variables
   double const kIterationSecondsRatio = 0.02;
@@ -75,10 +79,11 @@ class Robot : public frc::TimedRobot {
   const bool kDriveEnabled = false;
   const bool kClimbEnabled = false;
   const bool kShooterEnabled = false;
-  const bool kRotateToAngleEnabled = true;
+  const bool kRotateToAngleEnabled = false;
   const bool kIntakeEnabled = false;
   const bool kFeederEnabled = false;
   const bool kTrajectoryEnabled = false;
+  const bool kColorWheelEnabled = false;
 
   // Teleop Objects
     //Manipulator Objects
@@ -92,6 +97,9 @@ class Robot : public frc::TimedRobot {
     Shooter *shooter;
     Manipulator *manipulator;
   TeleopFunctions *teleop_functions;
+  ColorWheel *color_wheel;
+  WPI_TalonSRX *color_motor;
+  frc::Solenoid *color_sol;
   Diagnostic* test;
 
 };
