@@ -12,6 +12,7 @@
 
 #include <frc/Joystick.h>
 #include <frc/TimedRobot.h>
+#include <frc/Timer.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
@@ -43,6 +44,9 @@ class Robot : public frc::TimedRobot {
   const std::string AutoRightCenter = "RightCenter";
   const std::string AutoRightLeft = "RightLeft";
   std::string m_autoSelected;
+
+  // Timer Object
+  frc::Timer* timer;
 
   // Autonomous Functions
   TrajectoryGenerationUtility* trajectory_generation_utility;

@@ -42,6 +42,8 @@ void Robot::RobotInit() {
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   frc::SmartDashboard::PutNumber("Aimpid",0.1);
 
+  timer = new frc::Timer();
+
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
   //test = new Diagnostic(joystick_1);
 
@@ -87,9 +89,8 @@ void Robot::RobotInit() {
     color_wheel = new ColorWheel(color_motor, color_sol);
   }
 
-  autonomous = new Autonomous(spark_drive, new std::multimap<units::second_t, AutonState>());
-
-  }
+  autonomous = new Autonomous(timer, spark_drive);
+}
 
 /**
  * This function is called every robot packet, no matter the mode. Use
@@ -126,51 +127,36 @@ void Robot::AutonomousPeriodic()
 {
   std::cout << "Auto selected: " << m_autoSelected << std::endl;
   std::cout << "AutoRightRight: " << AutoRightRight << std::endl;
-  if(m_autoSelected == AutoDefault)
-  {
 
-  }
-  else if (m_autoSelected == AutoRightRight)
-  {
-    autonomous->RightRight();
-  }
+  autonomous->AutonomousPeriodic();
 
-  else if(m_autoSelected == AutoRightCenter)
-  {
- spark_drive->TankDrive(1.0, 0.0, false, false, 0.0);
-  }
-  else if(m_autoSelected == AutoRightLeft)
-  {
+  // iterative_clock += kIterationSecondsRatio;
 
-  }
+  // // Get the time at the current iteration in the code
+  // units::time::second_t time_at_iteration = units::time::second_t(iterative_clock);
 
-  iterative_clock += kIterationSecondsRatio;
+  // // Get the Robot's Current Position according to Odometry
+  // auto robot_pose2d = spark_drive->GetRobotPose2dPosition();
 
-  // Get the time at the current iteration in the code
-  units::time::second_t time_at_iteration = units::time::second_t(iterative_clock);
+  // // Get the current trajectory state, or where the robot
+  // // should be.
+  // auto current_trajectory_state = trajectory_generation_utility->GetTrajectory().Sample(time_at_iteration);
 
-  // Get the Robot's Current Position according to Odometry
-  auto robot_pose2d = spark_drive->GetRobotPose2dPosition();
+  // // Calculate Chassis Speeds from the Robot Current State &
+  // // Trajectory Current State.
+  // auto chassis_speeds = trajectory_generation_utility->GetRamseteController()->Calculate(robot_pose2d, current_trajectory_state);
 
-  // Get the current trajectory state, or where the robot
-  // should be.
-  auto current_trajectory_state = trajectory_generation_utility->GetTrajectory().Sample(time_at_iteration);
+  // // Set the Chassis Speeds in the Utility Class
+  // trajectory_generation_utility->SetChassisSpeeds(chassis_speeds);
 
-  // Calculate Chassis Speeds from the Robot Current State &
-  // Trajectory Current State.
-  auto chassis_speeds = trajectory_generation_utility->GetRamseteController()->Calculate(robot_pose2d, current_trajectory_state);
+  // // Calculate the Final Speeds of the Motors
+  // double final_speeds = (double) (trajectory_generation_utility->GetChassisSpeeds().vx);
 
-  // Set the Chassis Speeds in the Utility Class
-  trajectory_generation_utility->SetChassisSpeeds(chassis_speeds);
-
-  // Calculate the Final Speeds of the Motors
-  double final_speeds = (double) (trajectory_generation_utility->GetChassisSpeeds().vx);
-
-  // Set the Motor Speeds in the Velocity Format.
-  spark_drive->GetLeftFrontPIDController().SetReference(final_speeds, rev::ControlType::kVelocity);
-  spark_drive->GetRightFrontPIDController().SetReference(final_speeds, rev::ControlType::kVelocity);
-  spark_drive->GetLeftBackPIDController().SetReference(final_speeds, rev::ControlType::kVelocity);
-  spark_drive->GetRightBackPIDController().SetReference(final_speeds, rev::ControlType::kVelocity);
+  // // Set the Motor Speeds in the Velocity Format.
+  // spark_drive->GetLeftFrontPIDController().SetReference(final_speeds, rev::ControlType::kVelocity);
+  // spark_drive->GetRightFrontPIDController().SetReference(final_speeds, rev::ControlType::kVelocity);
+  // spark_drive->GetLeftBackPIDController().SetReference(final_speeds, rev::ControlType::kVelocity);
+  // spark_drive->GetRightBackPIDController().SetReference(final_speeds, rev::ControlType::kVelocity);
 }
 
 void Robot::TeleopInit() {

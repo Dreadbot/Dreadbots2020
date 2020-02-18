@@ -138,7 +138,7 @@ void SparkDrive::TankDrive(double y_axis,
   bool turtle_button, 
   double joystick_deadband)
 {
-   // Remove any possibility of Joystick Deadband.
+  // Remove any possibility of Joystick Deadband.
   // Essentially, if the joystick input is within
   // the range of the considered deadband
   // Consider the input as 0.0
