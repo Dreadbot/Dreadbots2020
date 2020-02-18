@@ -187,10 +187,10 @@ void Robot::TeleopPeriodic() {
 
   if(kShooterEnabled){
     if(joystick_1->GetRawButton(2)){
-      shooter->Shoot(5000);
+      shooter_motor->Set(-1);
     }
     else{
-      shooter->Shoot(0);
+      shooter_motor->Set(0);
     }
   }
 

@@ -24,8 +24,9 @@ void Feeder::GetSpin(){
 }
 void Feeder::AdvanceGeneva(int rots){
     //Make it so it stops. Could be a encoder problem.
-    m_geneva_controller->SetReference((m_geneva_encoder->GetPosition() + (rots * kGenevaGearRatio)) 
-                                    ,rev::ControlType::kPosition);
+    // m_geneva_controller->SetReference((m_geneva_encoder->GetPosition() + (rots * kGenevaGearRatio)) 
+    //                                 ,rev::ControlType::kPosition);
+    m_geneva_controller->SetReference(0, rev::ControlType::kVelocity);
     std::cout << "Setting: " << (m_geneva_encoder->GetPosition() + (rots * kGenevaGearRatio)) << std::endl;
 }
 void Feeder::SetPunchExtension(bool extended){

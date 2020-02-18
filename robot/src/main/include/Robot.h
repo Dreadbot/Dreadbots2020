@@ -76,7 +76,7 @@ class Robot : public frc::TimedRobot {
   //ENABLED BOOLEANS
   const bool kDriveEnabled = true;
   const bool kClimbEnabled = false;
-  const bool kShooterEnabled = false; //Possibly crashes code. Change made to fix, not tested yet.
+  const bool kShooterEnabled = true; //Possibly crashes code. Change made to fix, not tested yet.
   const bool kRotateToAngleEnabled = false; //Not tested on full Robot yet
   const bool kIntakeEnabled = true;
   const bool kFeederEnabled = true;
