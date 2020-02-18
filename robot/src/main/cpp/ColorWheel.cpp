@@ -89,7 +89,7 @@ void ColorWheel::RotateToColor(WPI_TalonSRX *motor, frc::Joystick *joystick, frc
     }
     if (spinState == WheelState::Spinning)
     {
-        if (matchedColor == targetcolor && colorConfidence >= ColorConfidenceTarget)){
+        if (matchedColor == *targetcolor && colorConfidence >= ColorConfidenceTarget){
             spinState = WheelState::NotSpinning;
             motor->Set(ControlMode::PercentOutput, 0.0);
         }
