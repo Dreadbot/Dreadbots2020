@@ -43,7 +43,7 @@ void Robot::RobotInit() {
   //frc::SmartDashboard::PutNumber("Aimpid",0.1);
 
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
-  colorWheelmotor = new WPI_TalonSRX(1);
+  colorWheelmotor = new WPI_TalonSRX(4);
   colorWheel = new ColorWheel();
 }
 
@@ -79,12 +79,13 @@ void Robot::AutonomousPeriodic() {
 void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic() {
+  
   //Call our color wheel class to execute code determining when to count rotations.
   colorWheel->RotateToNumber(colorWheelmotor, joystick_1);
 }
 
 void Robot::TestPeriodic() {}
-
+//std::cout << "In test periodic" << endl;
 #ifndef RUNNING_FRC_TESTS
 int main() { return frc::StartRobot<Robot>(); }
 #endif

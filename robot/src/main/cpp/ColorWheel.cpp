@@ -1,3 +1,4 @@
+#include <frc/smartdashboard/smartdashboard.h>
 #include <frc/Joystick.h>
 #include <ColorWheel.h>
 
@@ -60,7 +61,7 @@ void ColorWheel::RotateToNumber(WPI_TalonSRX *motor, frc::Joystick *joystick){
         double colorConfidence = 0.0;
         frc::Color detectedColor = m_colorSensor.GetColor();
         frc::Color matchedColor = m_colorMatcher.MatchClosestColor(detectedColor, colorConfidence); 
-
+        PrintColors(matchedColor);
         //do we need to check confidence number in this condition to see how confident the color matcher 
         //thinks the color is red? A value close to one means more confident. 
         if (matchedColor == kRedTarget && OnRed == false && colorConfidence >= ColorConfidenceTarget){
@@ -71,6 +72,7 @@ void ColorWheel::RotateToNumber(WPI_TalonSRX *motor, frc::Joystick *joystick){
             OnRed = false;
         }
     }
+    
 }
 
 
@@ -97,4 +99,20 @@ void ColorWheel::RotateToColor(WPI_TalonSRX *motor, frc::Joystick *joystick, frc
    
 }
 
-
+void ColorWheel::PrintColors(frc::Color color){
+        if(color == kBlueTarget){
+            frc::SmartDashboard::PutString("color","Blue");
+        }
+        else if(color == kRedTarget){
+            frc::SmartDashboard::PutString("color","Red");
+        }
+        else if(color == kYellowTarget){
+            frc::SmartDashboard::PutString("color","Yellow");
+        }
+        else if(color == kGreenTarget){
+            frc::SmartDashboard::PutString("color","Green");
+        }
+        else{
+            frc::SmartDashboard::PutString("color","no detected color");
+        }
+    }
