@@ -1,6 +1,9 @@
 #include <frc/smartdashboard/smartdashboard.h>
 #include <frc/Joystick.h>
 #include <ColorWheel.h>
+#include <iostream>
+#include <string>
+using namespace std;
 
 enum WheelState{
     NotSpinning,
@@ -50,7 +53,7 @@ void ColorWheel::RotateToNumber(WPI_TalonSRX *motor, frc::Joystick *joystick){
     if (spinState == WheelState::Spinning)
     {   
 
-        if (joystick->GetRawButtonPressed(1) || NumSpins>6)
+        if (joystick->GetRawButtonPressed(1) || NumSpins>7)
         {
             motor->Set(ControlMode::PercentOutput,0.0);
             spinState = WheelState::NotSpinning;
@@ -100,7 +103,7 @@ void ColorWheel::RotateToColor(WPI_TalonSRX *motor, frc::Joystick *joystick, frc
 }
 
 void ColorWheel::PrintColors(frc::Color color){
-        if(color == kBlueTarget){
+        /*if(color == kBlueTarget){
             frc::SmartDashboard::PutString("color","Blue");
         }
         else if(color == kRedTarget){
@@ -114,5 +117,22 @@ void ColorWheel::PrintColors(frc::Color color){
         }
         else{
             frc::SmartDashboard::PutString("color","no detected color");
+        }*/
+
+        if(color == kBlueTarget){
+            cout << "Blue" << endl;
         }
+        else if(color == kRedTarget){
+             cout << "Red" << endl;
+        }
+        else if(color == kYellowTarget){
+             cout << "Yellow" << endl;
+        }
+        else if(color == kGreenTarget){
+             cout << "Green" << endl;
+        }
+        else{
+             cout << "no color detected" << endl;
+        }
+
     }
