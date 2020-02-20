@@ -45,6 +45,7 @@ void Robot::RobotInit() {
   timer = new frc::Timer();
 
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
+  joystick_2 = new frc::Joystick(kSecondaryDriverJoystickID);
   //test = new Diagnostic(joystick_1);
 
   if(kTrajectoryEnabled){
@@ -56,10 +57,10 @@ void Robot::RobotInit() {
   }
 
   // Initialize SparkDrive Object using the UltraLord Drivetrain Configuration.
-  spark_drive = new SparkDrive(new rev::CANSparkMax(kUltraLeftFrontMotorID, rev::CANSparkMax::MotorType::kBrushless),
-    new rev::CANSparkMax(kUltraRightFrontMotorID, rev::CANSparkMax::MotorType::kBrushless), 
-    new rev::CANSparkMax(kUltraLeftBackMotorID, rev::CANSparkMax::MotorType::kBrushless), 
-    new rev::CANSparkMax(kUltraRightBackMotorID, rev::CANSparkMax::MotorType::kBrushless)
+  spark_drive = new SparkDrive(new rev::CANSparkMax(kBigSlinkLeftFrontMotorID, rev::CANSparkMax::MotorType::kBrushless),
+    new rev::CANSparkMax(kBigSlinkRightFrontMotorID, rev::CANSparkMax::MotorType::kBrushless), 
+    new rev::CANSparkMax(kBigSlinkLeftBackMotorID, rev::CANSparkMax::MotorType::kBrushless), 
+    new rev::CANSparkMax(kBigSlinkRightBackMotorID, rev::CANSparkMax::MotorType::kBrushless)
   );
 
 
@@ -165,31 +166,52 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
   
-  if(kDriveEnabled){
+  if(kDriveEnabled)
+  {
     // Call SparkDrive::TankDrive() using the motors given.
-    spark_drive->TankDrive(-joystick_1->GetRawAxis(y_axis), joystick_1->GetRawAxis(z_axis), joystick_1->GetRawButton(right_bumper), joystick_1->GetRawButton(left_bumper));
+    spark_drive->TankDrive(joystick_1->GetRawAxis(y_axis), joystick_1->GetRawAxis(z_axis), joystick_1->GetRawButton(right_bumper), joystick_1->GetRawButton(left_bumper));
   }
+  
+  if(kIntakeEnabled)
+  {
+    if(joystick_2->GetRawButton(right_bumper))
+    {
+      intake->SetPercentOutput(1.0);
+    }
+  }
+
+  if(kShooterEnabled)
+  {
+    shooter->SetShootingPercentOutput(-joystick_2->GetRawAxis(y_axis));
+    shooter->SetAdjusterPercentOutput(-joystick_2->GetRawAxis(w_axis));
+  }
+
+  // if(kDriveEnabled)
+  // {
+  //   spark_drive->GetLeftFrontMotorController()->Set(-joystick_1->GetRawAxis(y_axis));
+  // }
+
  //teleopFunctions->ShooterFunction();
 
   // need to create sparkdrive above for this code 
  // spark_drive = new SparkDrive(new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless)
-   double joystickaxisY = joystick_1->GetRawAxis(1); 
-   if(kIntakeEnabled){
-    if(fabs(joystickaxisY)  <= 0.025){
-       intake->Stop();
-    }
-    else{
-       intake->SetSpeed(joystickaxisY * 5000 );
-    }
-      //Testing Intake Motor Code
-    if (joystick_1->GetRawButtonPressed(x_button)) {
-      //intake->Start();
-      intake->SetSpeed(100);
-    }
-    if (joystick_1->GetRawButtonPressed(a_button)) {
-      intake->Stop();
-    }
-   }
+  //  double joystickaxisY = joystick_1->GetRawAxis(1); 
+  //  if(kIntakeEnabled){
+  //   if(fabs(joystickaxisY)  <= 0.025){
+  //      intake->Stop();
+  //   }
+  //   else{
+  //      intake->SetSpeed(joystickaxisY * 5000 );
+  //   }
+  //     //Testing Intake Motor Code
+  //   if (joystick_1->GetRawButtonPressed(x_button)) {
+  //     //intake->Start();
+  //     intake->SetSpeed(100);
+  //   }
+  //   if (joystick_1->GetRawButtonPressed(a_button)) {
+  //     intake->Stop();
+  //   }
+  //  }
   //teleopFunctions->ShooterFunction();
   
   if(kShooterEnabled){

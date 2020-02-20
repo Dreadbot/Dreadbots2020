@@ -21,6 +21,9 @@ Shooter::Shooter(int shooter_motor_id, int aim_motor_id){
     m_aimPid->SetIZone(0);  
     m_aimPid->SetFF(0);  //000015
     m_aimPid->SetOutputRange(-1.0, 1.0);
+
+    upper_limit_switch = new frc::DigitalInput(1);
+    lower_limit_switch = new frc::DigitalInput(2);
 }
 Shooter::Shooter(rev::CANSparkMax *shooterMotor, rev::CANSparkMax *aimMotor) 
 {
@@ -58,4 +61,30 @@ void Shooter::AimHeight(double rotations) {
 
 void Shooter::SetAimHeightP(double p){
     m_aimPid->SetP(p);
+}
+
+void Shooter::SetShootingPercentOutput(double percent_output)
+{
+  m_shooterMotor->Set(percent_output);
+}
+
+void Shooter::SetAdjusterPercentOutput(double percent_output)
+{
+  if(upper_limit_switch->Get())
+  {
+    if(percent_output > 0.0)
+    {
+      percent_output = 0.0;
+    }
+  }
+
+  if(lower_limit_switch->Get())
+  {
+    if(percent_output < 0.0)
+    {
+      percent_output = 0.0;
+    }
+  }
+  
+  m_aimMotor->Set(percent_output);
 }

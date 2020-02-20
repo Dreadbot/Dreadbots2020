@@ -1,5 +1,7 @@
 #pragma once
 
+#include <units/units.h>
+
 #include <frc/controller/RamseteController.h>
 #include <frc/trajectory/TrajectoryConfig.h>
 #include <frc/trajectory/TrajectoryGenerator.h>
