@@ -31,6 +31,7 @@ class Robot : public frc::TimedRobot {
  private:
   // INPUTS
   frc::Joystick *joystick_1;
+  frc::Color *targetcolor;
 
    //BUTTONS
   int const colorWheelButton = 1;

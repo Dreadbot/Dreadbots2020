@@ -13,7 +13,7 @@ class ColorWheel{
      void RotateToNumber(WPI_TalonSRX *motor, frc::Joystick *joystick);
      void RotateToColor(WPI_TalonSRX *motor, frc::Joystick *joystick, frc::Color *targetcolor);
     private:
-     void PrintColors(frc::Color color);
+     void PrintColor(frc::Color color, double colorConfidence);
 
 };
 

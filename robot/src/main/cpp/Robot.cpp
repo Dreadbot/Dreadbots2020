@@ -45,6 +45,8 @@ void Robot::RobotInit() {
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
   colorWheelmotor = new WPI_TalonSRX(4);
   colorWheel = new ColorWheel();
+  targetcolor = new frc::Color(kGreenTarget);
+  
 }
 
 /**
@@ -82,7 +84,9 @@ void Robot::TeleopPeriodic() {
   
   //Call our color wheel class to execute code determining when to count rotations.
   colorWheel->RotateToNumber(colorWheelmotor, joystick_1);
+  colorWheel->RotateToColor(colorWheelmotor, joystick_1, targetcolor);
 }
+  
 
 void Robot::TestPeriodic() {}
 //std::cout << "In test periodic" << endl;
