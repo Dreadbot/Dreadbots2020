@@ -83,11 +83,10 @@ void Robot::RobotInit() {
   if(kFeederEnabled){
     geneva_motor = new rev::CANSparkMax(kGenevaMotorID, rev::CANSparkMax::MotorType::kBrushless);
     punch = new frc::Solenoid(kPunchSolenoidID);
-    feeder = new Feeder(geneva_motor, punch);
+    feeder = new Feeder(geneva_motor, punch, joystick_1);
   }
 
   manipulator = new Manipulator(intake, feeder, shooter);
-  autonomous = new Autonomous(m_SparkDrive);
   if(kColorWheelEnabled){
     color_motor = new WPI_TalonSRX(kColorWheelMotorID);
     color_sol = new frc::Solenoid(kColorWheelSolenoidID);
@@ -195,14 +194,12 @@ void Robot::TeleopPeriodic() {
   }
 
   if(kFeederEnabled){
-    std::cout<<"Current Position: "<< feeder->GetGenevaPosition()<<std::endl;
-    if(joystick_1->GetRawButtonPressed(1)){
-      feeder->AdvanceGeneva(1);
-    }
+    std::cout<<"Switch State: "<< !feeder->GetLimitSwitchState()<<std::endl;
+    feeder->SensorAdvanceGeneva();
   }
 
   if(kShooterEnabled){
-    if(joystick_1->GetRawButton(2)){
+    if(joystick_1->GetRawButton(a_button)){
       shooter_motor->Set(-1);
     }
     else{

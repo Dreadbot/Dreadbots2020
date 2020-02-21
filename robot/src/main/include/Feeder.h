@@ -2,15 +2,16 @@
 #include "rev/CANSparkMax.h"
 #include "frc/Solenoid.h"
 #include "frc/DigitalInput.h"
-
+#include <frc/Joystick.h>
 
 class Feeder
 {
     public:
-        Feeder(rev::CANSparkMax *geneva_drive, frc::Solenoid *punch);
+        Feeder(rev::CANSparkMax *geneva_drive, frc::Solenoid *punch, frc::Joystick *joystick);
         void SetSpin(int rpm);
         void GetSpin();
         void AdvanceGeneva(int rots);
+        void SensorAdvanceGeneva();
         void SetPunchExtension(bool extended);
         bool GetPunchExtension();
         bool GetLimitSwitchState();
@@ -23,7 +24,11 @@ class Feeder
         rev::CANEncoder *m_geneva_encoder;
         frc::Solenoid *m_punch;
         frc::DigitalInput *geneva_limit_switch;
-        const int kLimitSwitchPort = 0;
+        frc::Joystick *joystick_1;
+        const int kLimitSwitchPort = 9;
         const double kGenevaGearRatio = 100;
-    
+        enum States{
+            move, moving, stopped
+        };
+        int state = stopped;
 };

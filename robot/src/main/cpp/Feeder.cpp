@@ -1,7 +1,9 @@
 #include <Feeder.h>
 
-Feeder::Feeder(rev::CANSparkMax *geneva_drive, frc::Solenoid *punch){
+Feeder::Feeder(rev::CANSparkMax *geneva_drive, frc::Solenoid *punch, frc::Joystick *joystick){
     m_geneva_drive = geneva_drive;
+    joystick_1 = joystick;
+    m_geneva_drive->SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     m_geneva_controller = new rev::CANPIDController(m_geneva_drive->GetPIDController());
     m_geneva_encoder = new rev::CANEncoder(m_geneva_drive->GetEncoder());
     m_punch = punch;
@@ -29,6 +31,21 @@ void Feeder::AdvanceGeneva(int rots){
     // m_geneva_controller->SetReference(0, rev::ControlType::kVelocity);
     std::cout << "Setting: " << (m_geneva_encoder->GetPosition() + (rots * kGenevaGearRatio)) << std::endl;
 }
+
+void Feeder::SensorAdvanceGeneva(){
+    if(state == stopped && joystick_1->GetRawButton(1)){ //1 is x button
+        m_geneva_drive->Set(.4);
+        state = move;
+    }
+    else if(state == move && !GetLimitSwitchState()){
+        state == moving;
+    }
+    else if(state == moving && GetLimitSwitchState()){
+        m_geneva_drive->Set(0);
+        state == stopped;
+    }
+}   
+
 void Feeder::SetPunchExtension(bool extended){
     m_punch->Set(extended);
 }
@@ -36,7 +53,7 @@ bool Feeder::GetPunchExtension(){
     return m_punch->Get();
 }
 bool Feeder::GetLimitSwitchState(){
-    return geneva_limit_switch->Get();
+    return !geneva_limit_switch->Get();
 }
 
 double Feeder::GetGenevaPosition(){

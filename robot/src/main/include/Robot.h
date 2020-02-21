@@ -86,7 +86,7 @@ class Robot : public frc::TimedRobot {
   const bool kShooterEnabled = false;
   const bool kRotateToAngleEnabled = false;
   const bool kIntakeEnabled = false;
-  const bool kFeederEnabled = false;
+  const bool kFeederEnabled = true;
   const bool kTrajectoryEnabled = false;
   const bool kColorWheelEnabled = false;
 

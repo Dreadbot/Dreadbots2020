@@ -55,8 +55,6 @@ const int kColorWheelMotorID = 9;
 const int kClimbExtenderID = 10;
 const int kClimbWinchID = 11;
 
-const int kColorWheelMotorID = 4;
-
 const int kPunchSolenoidID = 1;
 const int kColorWheelSolenoidID = 4;
 
