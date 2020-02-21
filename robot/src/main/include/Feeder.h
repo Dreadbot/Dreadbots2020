@@ -14,6 +14,7 @@ class Feeder
         void SetPunchExtension(bool extended);
         bool GetPunchExtension();
         bool GetLimitSwitchState();
+        double GetGenevaPosition();
         
 
     private:

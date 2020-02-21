@@ -180,6 +180,7 @@ void Robot::TeleopPeriodic() {
   }
 
   if(kFeederEnabled){
+    std::cout<<"Current Position: "<< feeder->GetGenevaPosition()<<std::endl;
     if(joystick_1->GetRawButtonPressed(1)){
       feeder->AdvanceGeneva(1);
     }
