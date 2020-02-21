@@ -44,6 +44,8 @@ void Robot::RobotInit() {
 
   timer = new frc::Timer();
 
+  ultra = new Ultra();
+
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
   joystick_2 = new frc::Joystick(kSecondaryDriverJoystickID);
   //test = new Diagnostic(joystick_1);

@@ -26,6 +26,7 @@
 #include "Manipulator.h"
 #include "Autonomous.h"
 #include "ColorWheel.h"
+#include "Ultra.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -62,6 +63,9 @@ class Robot : public frc::TimedRobot {
 
   //Autonomous Objectss
   Autonomous *autonomous;
+
+  //Ultrasonic Objecttss
+  Ultra *ultra;
 
   // Trajectory Testing Variables
   double const kIterationSecondsRatio = 0.02;
