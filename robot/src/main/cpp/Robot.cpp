@@ -47,7 +47,7 @@ void Robot::RobotInit() {
   ultra = new Ultra();
 
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
-  joystick_2 = new frc::Joystick(kSecondaryDriverJoystickID);
+  joystick_2 = new frc::Joystick(kSecondaryDrvierJoystickID);
   //test = new Diagnostic(joystick_1);
 
   if(kTrajectoryEnabled){
@@ -55,7 +55,6 @@ void Robot::RobotInit() {
     // Trajectory Test (prints to RioLog)
     ramsete_timed_follower = new RamseteTimedFollower(spark_drive,
     trajectory_generation_utility);
-
   }
 
   // Initialize SparkDrive Object using the UltraLord Drivetrain Configuration.
@@ -86,6 +85,9 @@ void Robot::RobotInit() {
     punch = new frc::Solenoid(kPunchSolenoidID);
     feeder = new Feeder(geneva_motor, punch);
   }
+
+  manipulator = new Manipulator(intake, feeder, shooter);
+  autonomous = new Autonomous(m_SparkDrive);
   if(kColorWheelEnabled){
     color_motor = new WPI_TalonSRX(kColorWheelMotorID);
     color_sol = new frc::Solenoid(kColorWheelSolenoidID);
@@ -168,95 +170,80 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
   
-  if(kDriveEnabled)
-  {
-    // Call SparkDrive::TankDrive() using the motors given.
-    spark_drive->TankDrive(joystick_1->GetRawAxis(y_axis), joystick_1->GetRawAxis(z_axis), joystick_1->GetRawButton(right_bumper), joystick_1->GetRawButton(left_bumper));
-  }
-  
-  if(kIntakeEnabled)
-  {
-    if(joystick_2->GetRawButton(right_bumper))
-    {
-      intake->SetPercentOutput(1.0);
-    }
-  }
-
-  if(kShooterEnabled)
-  {
-    shooter->SetShootingPercentOutput(-joystick_2->GetRawAxis(y_axis));
-    shooter->SetAdjusterPercentOutput(-joystick_2->GetRawAxis(w_axis));
-  }
-
-  // if(kDriveEnabled)
-  // {
-  //   spark_drive->GetLeftFrontMotorController()->Set(-joystick_1->GetRawAxis(y_axis));
-  // }
-
- //teleopFunctions->ShooterFunction();
-
   // need to create sparkdrive above for this code 
  // spark_drive = new SparkDrive(new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless)
-  //  double joystickaxisY = joystick_1->GetRawAxis(1); 
-  //  if(kIntakeEnabled){
-  //   if(fabs(joystickaxisY)  <= 0.025){
-  //      intake->Stop();
-  //   }
-  //   else{
-  //      intake->SetSpeed(joystickaxisY * 5000 );
-  //   }
-  //     //Testing Intake Motor Code
-  //   if (joystick_1->GetRawButtonPressed(x_button)) {
-  //     //intake->Start();
-  //     intake->SetSpeed(100);
-  //   }
-  //   if (joystick_1->GetRawButtonPressed(a_button)) {
-  //     intake->Stop();
-  //   }
-  //  }
+   double joystickaxisY = joystick_2->GetRawAxis(kIntakeAxis); 
+   if(kIntakeEnabled){
+    if(fabs(joystickaxisY)  <= 0.025){
+       intake->Stop();
+    }
+    else{
+       intake->SetSpeed(joystickaxisY * 5000 );
+    }
+   }
   //teleopFunctions->ShooterFunction();
-  
-  if(kShooterEnabled){
-    if (joystick_1->GetRawButtonPressed(b_button)) {
-      //intake->Start();
-      shooter->AimHeight(10);
-    }
-    if (joystick_1->GetRawButtonPressed(y_button)) {
-      shooter->AimHeight(0);
-    }
-  }
     
-  
-  if(kShooterEnabled){
+  if(kDriveEnabled){
     // Call SparkDrive::TankDrive() using the drivetrain motors
     spark_drive->TankDrive(
-      -joystick_1->GetRawAxis(y_axis), 
-      joystick_1->GetRawAxis(z_axis), 
-      joystick_1->GetRawButton(right_bumper), 
-      joystick_1->GetRawButton(left_bumper)
+      joystick_1->GetRawAxis(kForwardBackwardAxis), 
+      joystick_1->GetRawAxis(kRotAxis), 
+      joystick_1->GetRawButton(kTurboButton), 
+      joystick_1->GetRawButton(kTurtleButton),
+      0.05
     );
+  }
+
+  if(kFeederEnabled){
+    std::cout<<"Current Position: "<< feeder->GetGenevaPosition()<<std::endl;
+    if(joystick_1->GetRawButtonPressed(1)){
+      feeder->AdvanceGeneva(1);
+    }
+  }
+
+  if(kShooterEnabled){
+    if(joystick_1->GetRawButton(2)){
+      shooter_motor->Set(-1);
+    }
+    else{
+      shooter_motor->Set(0);
+    }
   }
 
   frc::SmartDashboard::PutNumber("Current Angle", spark_drive->GetGyroscope()->GetYaw());
   if(kRotateToAngleEnabled){
-      if(frc::SmartDashboard::GetNumber("detectionCount", lastCount) == lastCount){
-        staleCount++;
-      }
-      else{
-        staleCount = 0;
-      }
-      lastCount = frc::SmartDashboard::GetNumber("detectionCount", lastCount);
-
-    if(teleop_functions->GetTurnStatus()){
-      selectedAngle = frc::SmartDashboard::GetNumber("selectedAngle", 0.0);
+    //Check if vision is actually seeing anything
+    if(frc::SmartDashboard::GetNumber("detectionCount", lastCount) == lastCount){
+      staleCount++; //A variable to show how "stale" the detectionCount is
     }
-    if((joystick_1->GetRawButton(a_button)) && staleCount < 5){
+    else{
+      //if vision does see a target, then the count is no longer stale
+      staleCount = 0;
+    }
+    //update the latest count, for use on next loop iteration
+    lastCount = frc::SmartDashboard::GetNumber("detectionCount", lastCount);
+
+    //if we are done turning (not currently turning), then update angle from vision
+    if(teleop_functions->GetTurnStatus()){
+      selectedAngle = (spark_drive->GetGyroscope()->GetYaw() + frc::SmartDashboard::GetNumber("selectedAngle", 0.0));
+    }
+    //Only turn when we hold the button, and we have seen the target recently
+    if(joystick_1->GetRawButton(kAutoAimButton) && staleCount < 5){
       teleop_functions->TurnToAngle(selectedAngle, .002);
       staleCount = 0;
-      //manipulator->PrepareShot(1000, 0);
+      manipulator->PrepareShot(1000, 10);
     }
-    else if(!joystick_1->GetRawButtonReleased(a_button)){
+    else if(!joystick_1->GetRawButtonReleased(kAutoAimButton)){
+      //when we release the button, then set motors to zero
+      //this eliminates the constant turn after turn is done.
       spark_drive->TankDrive(0,0,false,false);
+      teleop_functions->SetTurnStatus(true);
+    }
+    if(joystick_1->GetRawButton(kShootButton)){
+      manipulator->ContinuousShoot(0);
+    }
+    else{
+      manipulator->ResetManipulatorElements();
     }
   }
   if(kColorWheelEnabled){
@@ -276,7 +263,8 @@ void Robot::TeleopPeriodic() {
  }
 
 void Robot::TestPeriodic() {
-  test->run();
+  // test->run();
+  spark_drive->Test(joystick_1);
 }
 #ifndef RUNNING_FRC_TESTS
 int main() { return frc::StartRobot<Robot>(); }

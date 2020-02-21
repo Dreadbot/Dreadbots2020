@@ -10,6 +10,7 @@ class Manipulator
         Manipulator(Intake *intake, Feeder *feeder, Shooter *shooter);
         void PrepareShot(int flywheel_rpm, int aim_position);
         void ContinuousShoot(int aim_position);
+        void ContinuousIntake();
         void ResetManipulatorElements();
     private:
         //Member objects

@@ -17,7 +17,7 @@ enum JoystickInputs
   back_button = 9, start_button = 10, l_trigger = 11, r_trigger = 12
 };
 enum Joystick1Layout{
-    kForwardBackwardAxis = x_axis, kRotAxis = z_axis, kShootButton = a_button, kAutoAimButton = x_button,
+    kForwardBackwardAxis = y_axis, kRotAxis = z_axis, kShootButton = a_button, kAutoAimButton = x_button,
     kExtendClimbButton = right_trigger, kRetractClimbButton = left_trigger, kWinchButton = y_button,
      kTurtleButton = left_bumper, kTurboButton = right_bumper 
 }; 
@@ -34,13 +34,12 @@ const frc::Color kRedTarget = frc::Color(0.561, 0.232, 0.114);
 const frc::Color kYellowTarget = frc::Color(0.361, 0.524, 0.113);
 
 const int kPrimaryDriverJoystickID = 0;
-const int kSecondaryDriverJoystickID = 1;
+const int kSecondaryDrvierJoystickID = 1;
 
-//changed values for gamakichi
-const int kUltraLeftFrontMotorID = 10;
-const int kUltraRightFrontMotorID = 1;
-const int kUltraLeftBackMotorID = 2;
-const int kUltraRightBackMotorID = 3;
+const int kUltraLeftFrontMotorID = 1;
+const int kUltraRightFrontMotorID = 2;
+const int kUltraLeftBackMotorID = 3;
+const int kUltraRightBackMotorID = 4;
 
 const int kBigSlinkLeftFrontMotorID = 1;
 const int kBigSlinkRightFrontMotorID = 2;
@@ -51,8 +50,10 @@ const int kIntakeMotorID = 5;
 const int kGenevaMotorID = 6;
 const int kFlyWheelMotorID = 7;
 const int kAimMotorID = 8;
+const int kColorWheelMotorID = 9;
 
-const int kClimbMotorID = 11;
+const int kClimbExtenderID = 10;
+const int kClimbWinchID = 11;
 
 const int kColorWheelMotorID = 4;
 

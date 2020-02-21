@@ -45,7 +45,8 @@ void Manipulator::ContinuousShoot(int aim_position){
             state_change_counter++;
             break;
         case(kAdvance):
-            m_feeder->AdvanceGeneva(1);//Use a motor encoder to advance the geneva drive once
+        case(kAdvancing):
+            m_feeder->SetSpin(1);//Use a motor encoder to advance the geneva drive once
             break;
     }
     
@@ -53,6 +54,9 @@ void Manipulator::ContinuousShoot(int aim_position){
     m_shooter->AimHeight(aim_position);
     m_shooter->Shoot(1);
     std::cout << "state: "<< state << std::endl;
+}
+void Manipulator::ContinuousIntake(){
+    
 }
 void Manipulator::ResetManipulatorElements(){
     //This function should be called continuously if the system is not shooting power cells or collecting power cells

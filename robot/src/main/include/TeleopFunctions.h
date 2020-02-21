@@ -12,6 +12,7 @@ class TeleopFunctions
         void TurnToAngle(double targetAngle, double proportion);//Autonomously turn to an angle for use with vision targeting. Must be continuously called until the turn is finished
         void ShooterFunction();
         bool GetTurnStatus();//Returns true if the turn if the turn is completed. Used to help call the TelopFunctions::TurnToAngle function.
+        void SetTurnStatus(bool turnStatus);
     private:
         frc::Joystick* js1;
         Shooter* shooter;

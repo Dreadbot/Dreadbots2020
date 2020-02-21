@@ -14,6 +14,7 @@ class Feeder
         void SetPunchExtension(bool extended);
         bool GetPunchExtension();
         bool GetLimitSwitchState();
+        double GetGenevaPosition();
         
 
     private:
@@ -23,6 +24,6 @@ class Feeder
         frc::Solenoid *m_punch;
         frc::DigitalInput *geneva_limit_switch;
         const int kLimitSwitchPort = 0;
-        const double kGenevaGearRatio = (72/14);
+        const double kGenevaGearRatio = 100;
     
 };
