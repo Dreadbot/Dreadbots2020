@@ -14,6 +14,11 @@ void Intake::SetSpeed(double speed) {
     m_pidController->SetReference(speed, rev::ControlType::kVelocity); 
 } 
 
+void Intake::SetPercentOutput(double percent_output)
+{
+  m_intake_motor->Set(percent_output);
+}
+
 void Intake::Start(){
     m_intake_motor->Set(.5);
 }

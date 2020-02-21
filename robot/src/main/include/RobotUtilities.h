@@ -41,6 +41,11 @@ const int kUltraRightFrontMotorID = 2;
 const int kUltraLeftBackMotorID = 3;
 const int kUltraRightBackMotorID = 4;
 
+const int kBigSlinkLeftFrontMotorID = 1;
+const int kBigSlinkRightFrontMotorID = 2;
+const int kBigSlinkLeftBackMotorID = 3;
+const int kBigSlinkRightBackMotorID = 4;
+
 const int kIntakeMotorID = 5;
 const int kGenevaMotorID = 6;
 const int kFlyWheelMotorID = 7;
@@ -50,6 +55,8 @@ const int kColorWheelMotorID = 9;
 const int kClimbExtenderID = 10;
 const int kClimbWinchID = 11;
 
-const int kPunchSolenoidID = 1;
+const int kColorWheelMotorID = 4;
 
+const int kPunchSolenoidID = 1;
+const int kColorWheelSolenoidID = 4;
 

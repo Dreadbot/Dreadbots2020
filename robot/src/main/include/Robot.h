@@ -12,6 +12,7 @@
 
 #include <frc/Joystick.h>
 #include <frc/TimedRobot.h>
+#include <frc/Timer.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
@@ -24,6 +25,7 @@
 #include "TrajectoryGenerationUtility.h"
 #include "Manipulator.h"
 #include "Autonomous.h"
+#include "ColorWheel.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -37,11 +39,14 @@ class Robot : public frc::TimedRobot {
 
  private:
   frc::SendableChooser<std::string> m_chooser;
-  const std::string kAutoNameDefault = "Default";
+  const std::string AutoDefault = "Default";
   const std::string AutoRightRight = "RightRight";
   const std::string AutoRightCenter = "RightCenter";
   const std::string AutoRightLeft = "RightLeft";
   std::string m_autoSelected;
+
+  // Timer Object
+  frc::Timer* timer;
 
   // Autonomous Functions
   TrajectoryGenerationUtility* trajectory_generation_utility;
@@ -52,13 +57,11 @@ class Robot : public frc::TimedRobot {
   frc::Joystick *joystick_1;
   frc::Joystick *joystick_2;
 
-
   // Drive Objects
   SparkDrive* spark_drive;
 
   //Autonomous Objectss
   Autonomous *autonomous;
-  SparkDrive *m_SparkDrive;
 
   // Trajectory Testing Variables
   double const kIterationSecondsRatio = 0.02;
@@ -76,11 +79,12 @@ class Robot : public frc::TimedRobot {
   //ENABLED BOOLEANS
   const bool kDriveEnabled = true;
   const bool kClimbEnabled = false;
-  const bool kShooterEnabled = true; //Possibly crashes code. Change made to fix, not tested yet.
-  const bool kRotateToAngleEnabled = false; //Not tested on full Robot yet
-  const bool kIntakeEnabled = true;
-  const bool kFeederEnabled = true;
-  const bool kTrajectoryEnabled = false; //Not tested on full robot yet
+  const bool kShooterEnabled = false;
+  const bool kRotateToAngleEnabled = false;
+  const bool kIntakeEnabled = false;
+  const bool kFeederEnabled = false;
+  const bool kTrajectoryEnabled = false;
+  const bool kColorWheelEnabled = false;
 
   // Teleop Objects
     //Manipulator Objects
@@ -94,6 +98,9 @@ class Robot : public frc::TimedRobot {
     Shooter *shooter;
     Manipulator *manipulator;
   TeleopFunctions *teleop_functions;
+  ColorWheel *color_wheel;
+  WPI_TalonSRX *color_motor;
+  frc::Solenoid *color_sol;
   Diagnostic* test;
 
 };

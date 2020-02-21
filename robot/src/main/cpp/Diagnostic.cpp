@@ -2,10 +2,10 @@
 
 Diagnostic::Diagnostic(frc::Joystick *joystick_1){
         this->js1 = joystick_1;
-        M1l = new rev::CANSparkMax(1, rev::CANSparkMax::MotorType::kBrushless);
-        M2l = new rev::CANSparkMax(2, rev::CANSparkMax::MotorType::kBrushless);
-        M4r = new rev::CANSparkMax(4, rev::CANSparkMax::MotorType::kBrushless);
-        M5r = new rev::CANSparkMax(5, rev::CANSparkMax::MotorType::kBrushless); 
+        M1l = new rev::CANSparkMax(kUltraLeftFrontMotorID, rev::CANSparkMax::MotorType::kBrushless);
+        M2l = new rev::CANSparkMax(kUltraRightFrontMotorID, rev::CANSparkMax::MotorType::kBrushless);
+        M4r = new rev::CANSparkMax(kUltraLeftBackMotorID, rev::CANSparkMax::MotorType::kBrushless);
+        M5r = new rev::CANSparkMax(kUltraRightBackMotorID, rev::CANSparkMax::MotorType::kBrushless); 
 }
 
 void Diagnostic::run(){
