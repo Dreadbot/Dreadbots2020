@@ -33,16 +33,20 @@ void Feeder::AdvanceGeneva(int rots){
 }
 
 void Feeder::SensorAdvanceGeneva(){
+    std::cout<<"Start State: "<<state<<std::endl;
     if(state == stopped && joystick_1->GetRawButton(1)){ //1 is x button
         m_geneva_drive->Set(.4);
         state = move;
+        std::cout<<"State: "<<state<<std::endl;
     }
     else if(state == move && !GetLimitSwitchState()){
-        state == moving;
+        state = moving;
+        std::cout<<"State: "<<state<<std::endl;
     }
     else if(state == moving && GetLimitSwitchState()){
         m_geneva_drive->Set(0);
-        state == stopped;
+        state = stopped;
+        std::cout<<"State: "<<state<<std::endl;
     }
 }   
 

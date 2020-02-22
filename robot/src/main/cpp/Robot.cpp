@@ -194,7 +194,7 @@ void Robot::TeleopPeriodic() {
   }
 
   if(kFeederEnabled){
-    std::cout<<"Switch State: "<< !feeder->GetLimitSwitchState()<<std::endl;
+    std::cout<<"Switch State: "<< feeder->GetLimitSwitchState()<<std::endl;
     feeder->SensorAdvanceGeneva();
   }
 
