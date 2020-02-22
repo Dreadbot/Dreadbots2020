@@ -1,4 +1,4 @@
-#include <frc/smartdashboard/smartdashboard.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/Joystick.h>
 #include <ColorWheel.h>
 #include <iostream>
@@ -40,6 +40,7 @@ ColorWheel::ColorWheel(){
 void ColorWheel::RotateToNumber(WPI_TalonSRX *motor, frc::Joystick *joystick){
 
     //Put in some smart dashboard output to be helpful for debugging
+    frc::SmartDashboard::PutNumber("SpinState", spinState);
     
     if (spinState == WheelState::NotSpinning && joystick->GetRawButtonPressed(1))
     {
@@ -85,6 +86,7 @@ void ColorWheel::RotateToColor(WPI_TalonSRX *motor, frc::Joystick *joystick, frc
     double colorConfidence = 0.0;
     frc::Color detectedColor = m_colorSensor.GetColor();
     frc::Color matchedColor = m_colorMatcher.MatchClosestColor(detectedColor, colorConfidence); 
+    frc::SmartDashboard::PutNumber("SpinState", spinState);
     if (spinState == WheelState::NotSpinning && joystick->GetRawButton(2))
     {
         spinState = WheelState::InitSpinning;
@@ -113,36 +115,26 @@ void ColorWheel::RotateToColor(WPI_TalonSRX *motor, frc::Joystick *joystick, frc
 }
 
 void ColorWheel::PrintColor(frc::Color color, double colorConfidence){
-        /*if(color == kBlueTarget){
-            frc::SmartDashboard::PutString("color","Blue");
-        }
-        else if(color == kRedTarget){
-            frc::SmartDashboard::PutString("color","Red");
-        }
-        else if(color == kYellowTarget){
-            frc::SmartDashboard::PutString("color","Yellow");
-        }
-        else if(color == kGreenTarget){
-            frc::SmartDashboard::PutString("color","Green");
-        }
-        else{
-            frc::SmartDashboard::PutString("color","no detected color");
-        }*/
-
+  
         if(color == kBlueTarget){
+            frc::SmartDashboard::PutString("color","Blue"); 
             cout << "Blue\t" << colorConfidence << endl;
         }
         else if(color == kRedTarget){
-             cout << "Red\t" << colorConfidence << endl;
+            frc::SmartDashboard::PutString("color","Red");
+            cout << "Red\t" << colorConfidence << endl;
         }
         else if(color == kYellowTarget){
-             cout << "Yellow\t" << colorConfidence << endl;
+            frc::SmartDashboard::PutString("color","Yellow");
+            cout << "Yellow\t" << colorConfidence << endl;
         }
         else if(color == kGreenTarget){
-             cout << "Green\t" << colorConfidence << endl;
+            frc::SmartDashboard::PutString("color","Green");
+            cout << "Green\t" << colorConfidence << endl;
         }
         else{
-             cout << "no color detected" << endl;
+            frc::SmartDashboard::PutString("color","No color detected");
+            cout << "no color detected" << endl;
         }
 
     }
