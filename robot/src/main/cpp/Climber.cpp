@@ -1,65 +1,20 @@
 #include <Climber.h>
-Climber::Climber(){}
-//does not work, this is all code pulled from the internet, and will not work unless we download the whole file. 
-/*{
-    stop = false;
-
+Climber::Climber(rev::CANSparkMax *telescopeMotor, rev::CANSparkMax *winchMotor){
+    m_telescopeMotor = telescopeMotor;
+    m_winchMotor = winchMotor;
+    m_telescopePid = new rev::CANPIDController(m_telescopeMotor -> GetPIDController());
+    m_winchPid = new rev::CANPIDController(m_winchMotor -> GetPIDController());
 }
-
-void climber::Climber::onInit()
-{
-    StartInternalCycle();
-}
-
-//void climber::Climber::StartInternalCycle()
-{
-    mutStartStop.lock();
-
-    stop = false;
-
-    internalThread = new boost::thread(Climber::InternalThreadFunction, this);
-
-    mutStartStop.unlock();
-
-}
-
-void climber::Climber::StopInternalCycle()
-{
-    mutStartStop.lock();
-
-    stop = true;
-    internalThread->join();
-    delete internalThread;
-    internalThread = NULL;
-
-    mutStartStop.unlock();
-
-}
-
-void climber::Climber::InternalThreadFunction(Climber* climber)
-{
-    climber->InternalCycleProcedure();
-}
-
-void climber::Climber::InternalCycleProcedure()
-{
-    while (!stop)
+void Climber::SetTelescope(bool rasietelescope){
+    if (rasietelescope= true){
+        m_telescopePid -> SetReference(1.0, rev::ControlType::kPosition);
+    } 
+    else
     {
+        m_telescopePid -> SetReference(0.0, rev::ControlType::kPosition);
     }
-}
-
-
-climber::Climber::~DianeClimber(){
-    StopInternalCycle();
-}
-
-climber::ClimberMsg::DianeClimberMsg()
-{
-
-}
-
-climber::ClimberMsg::~DianeClimberMsg(){
-
-}
-
-Climber::Climber(){}*/
+    
+};
+void Climber::SetWinch(double winchspeed){
+    m_winchMotor -> Set(winchspeed);
+};
