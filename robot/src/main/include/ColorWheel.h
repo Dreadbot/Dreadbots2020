@@ -6,6 +6,7 @@
 #include <frc/util/color.h>
 #include <ctre/Phoenix.h>
 #include <RobotUtilities.h>
+#include <frc/Solenoid.h>
 
 class ColorWheel{
     public:
@@ -14,6 +15,7 @@ class ColorWheel{
      void RotateToColor(WPI_TalonSRX *motor, frc::Joystick *joystick, frc::Color *targetcolor);
     private:
      void PrintColor(frc::Color color, double colorConfidence);
+     frc::Solenoid *Solenoid;
 
 };
 
