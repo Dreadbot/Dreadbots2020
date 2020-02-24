@@ -55,7 +55,7 @@ void ColorWheel::RotateToNumber(WPI_TalonSRX *motor, frc::Joystick *joystick){
     if (spinState == WheelState::InitSpinning && CurrentButton == 1) 
     {
         NumSpins = 0;
-        motor->Set(ControlMode::PercentOutput,0.3);
+        motor->Set(ControlMode::PercentOutput,0.7);
         spinState = WheelState::Spinning;
     }
     if (spinState == WheelState::Spinning && CurrentButton == 1)
@@ -104,13 +104,13 @@ void ColorWheel::RotateToColor(WPI_TalonSRX *motor, frc::Joystick *joystick, frc
     if (spinState == WheelState::InitSpinning && CurrentButton == 2)
     {
         spinState = WheelState::Spinning;
-        motor->Set(ControlMode::PercentOutput, 0.3);
+        motor->Set(ControlMode::PercentOutput, 0.7);
     }
     if (spinState == WheelState::Spinning && CurrentButton == 2)
     {
         PrintColor(matchedColor, colorConfidence);
         if (matchedColor == *targetcolor && colorConfidence >= ColorConfidenceTarget){
-            if (NumColorSamples > 25){
+            if (NumColorSamples > 5){
             spinState = WheelState::NotSpinning;
             motor->Set(ControlMode::PercentOutput, 0.0);
             NumColorSamples = 0;
@@ -120,7 +120,7 @@ void ColorWheel::RotateToColor(WPI_TalonSRX *motor, frc::Joystick *joystick, frc
             else {
                 NumColorSamples += 1;
             }
-
+ 
         }
     }
    
@@ -148,5 +148,7 @@ void ColorWheel::PrintColor(frc::Color color, double colorConfidence){
             frc::SmartDashboard::PutString("color","No color detected");
             cout << "no color detected" << endl;
         }
+        frc::SmartDashboard::PutNumber("NumSpins", NumSpins);
 
     }
+
