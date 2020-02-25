@@ -27,6 +27,7 @@
 #include "Autonomous.h"
 #include "ColorWheel.h"
 #include "Ultra.h"
+#include "Climber.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -81,11 +82,11 @@ class Robot : public frc::TimedRobot {
   int staleCount = 0;
 
   //ENABLED BOOLEANS
-  const bool kDriveEnabled = true;
-  const bool kClimbEnabled = false;
-  const bool kShooterEnabled = false;
+  const bool kDriveEnabled = false;
+  const bool kClimbEnabled = true;
+  const bool kShooterEnabled = true;
   const bool kRotateToAngleEnabled = false;
-  const bool kIntakeEnabled = false;
+  const bool kIntakeEnabled = true;
   const bool kFeederEnabled = true;
   const bool kTrajectoryEnabled = false;
   const bool kColorWheelEnabled = false;
@@ -97,11 +98,15 @@ class Robot : public frc::TimedRobot {
     rev::CANSparkMax *aim_motor;
     rev::CANSparkMax *geneva_motor;
     frc::Solenoid *punch;
+    frc::Solenoid *intake_pin;
     Intake *intake;
     Feeder *feeder;
     Shooter *shooter;
     Manipulator *manipulator;
   TeleopFunctions *teleop_functions;
+  Climber *climber;
+  rev::CANSparkMax *climb_winch;
+  rev::CANSparkMax *climb_telescope;
   ColorWheel *color_wheel;
   WPI_TalonSRX *color_motor;
   frc::Solenoid *color_sol;

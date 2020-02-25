@@ -12,6 +12,7 @@ class Manipulator
         void ContinuousShoot(int aim_position);
         void ContinuousIntake();
         void ResetManipulatorElements();
+        void GetState();
     private:
         //Member objects
         Intake *m_intake; 
@@ -24,5 +25,5 @@ class Manipulator
             kPunching, kRetracting, kAdvance, kAdvancing
         };
         int state_change_counter = 0;
-        const int kCountsToExtend = 100, kCountsToRetract = 100, kLoadingRPM = 1000;
+        const int kCountsToExtend = 5;
 };

@@ -57,7 +57,7 @@ void Shooter::Shoot(double shooterSpeed){
     shooting_motor->Set(speed);
 }
 void Shooter::AimHeight(double rotations) {
-    aiming_motor_pid_controller->SetReference(rotations, rev::ControlType::kPosition); 
+  aiming_motor_pid_controller->SetReference(rotations, rev::ControlType::kPosition);
 }
 
 void Shooter::SetAimHeightP(double p){

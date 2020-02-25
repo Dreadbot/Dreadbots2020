@@ -1,7 +1,8 @@
 #include <Intake.h>
-Intake::Intake(rev::CANSparkMax *intake_motor){ 
+Intake::Intake(rev::CANSparkMax *intake_motor, frc::Solenoid *intake_pin){ 
     m_intake_motor = intake_motor;
     m_pidController = new rev::CANPIDController(m_intake_motor->GetPIDController());
+    m_intake_pin = intake_pin;
 
     m_pidController->SetP(6e-5);
     m_pidController->SetI(1e-6);
@@ -17,6 +18,10 @@ void Intake::SetSpeed(double speed) {
 void Intake::SetPercentOutput(double percent_output)
 {
   m_intake_motor->Set(percent_output);
+}
+
+void Intake::DeployIntake(){
+    m_intake_pin->Set(true); //This is true because true flips the solenoid from what is default, and the pin should be physically connected to be extended by default
 }
 
 void Intake::Start(){

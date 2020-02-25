@@ -21,17 +21,17 @@ void Manipulator::ContinuousShoot(int aim_position){
     }
 
     //Change state based on a counter so that the solenoid has time to retract
-    else if(state == kRetracting && state_change_counter > kCountsToRetract){
+    else if(state == kRetracting && m_feeder->GetPunchSwitchState()){
         state = kAdvance;
         state_change_counter = 0;
     }
 
     //Change state if the geneva drive has rotated away from the limit switch
-    else if(state == kAdvance && !m_feeder->GetLimitSwitchState())
+    else if(state == kAdvance && !m_feeder->GetGenevaSwitchState())
         state = kAdvancing;
 
     //Change state back to the start once the geneva drive has made it back to the limit switch
-    else if(state == kAdvancing && m_feeder->GetLimitSwitchState())
+    else if(state == kAdvancing && m_feeder->GetGenevaSwitchState())
         state = kPunching;
 
     //Choose behavior based on the FSM
@@ -42,17 +42,16 @@ void Manipulator::ContinuousShoot(int aim_position){
             break;
         case(kRetracting):
             m_feeder->SetPunchExtension(false);//Retract the punch
-            state_change_counter++;
             break;
         case(kAdvance):
         case(kAdvancing):
-            m_feeder->SetSpin(1);//Use a motor encoder to advance the geneva drive once
+            m_feeder->SetSpin(0.5);//Turn the motor on
             break;
     }
     
     //Set the position of the aim plate and always drive the flywheel
     m_shooter->AimHeight(aim_position);
-    m_shooter->Shoot(1);
+    m_shooter->Shoot(-0.5);
     std::cout << "state: "<< state << std::endl;
 }
 void Manipulator::ContinuousIntake(){
@@ -69,8 +68,8 @@ void Manipulator::ResetManipulatorElements(){
     }
 
     //Once the punch is retracted, if the geneva is not at a limit switch, turn it slowly
-    else if(!m_feeder->GetPunchExtension() && !m_feeder->GetLimitSwitchState()){
-        m_feeder->SetSpin(60);
+    else if(!m_feeder->GetPunchExtension() && !m_feeder->GetGenevaSwitchState()){
+        m_feeder->SetSpin(0.2);
         std::cout << "spinning" << std::endl;
     }
 
@@ -79,5 +78,20 @@ void Manipulator::ResetManipulatorElements(){
         m_feeder->SetSpin(0);
         state = kPunching;
         std::cout << "stopping the spin" << std::endl;
+    }
+    m_shooter->SetShootingPercentOutput(0);
+}
+void Manipulator::GetState(){
+    switch(state){
+        case(kPunching):
+            std::cout << "kPunching" << std::endl;
+            break;
+        case(kRetracting):
+            std::cout << "kRetracting" << std::endl;
+            break;
+        case(kAdvance):
+        case(kAdvancing):
+            std::cout << "kAdvancing" << std::endl;
+            break;
     }
 }

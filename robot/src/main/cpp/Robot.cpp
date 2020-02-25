@@ -47,7 +47,7 @@ void Robot::RobotInit() {
   ultra = new Ultra();
 
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
-  joystick_2 = new frc::Joystick(kSecondaryDrvierJoystickID);
+  joystick_2 = new frc::Joystick(kSecondaryDriverJoystickID);
   //test = new Diagnostic(joystick_1);
 
   if(kTrajectoryEnabled){
@@ -66,14 +66,12 @@ void Robot::RobotInit() {
 
 
 
-  teleop_functions = new TeleopFunctions(joystick_1, shooter, spark_drive);
+  //teleop_functions = new TeleopFunctions(joystick_1, shooter, spark_drive);
 
-//  manipulator = new Manipulator(intake, feeder, shooter);
-
-  //Manipulator Objects
   if(kIntakeEnabled){
     intake_motor = new rev::CANSparkMax(kIntakeMotorID, rev::CANSparkMax::MotorType::kBrushless);
-    intake = new Intake(intake_motor);
+    intake_pin = new frc::Solenoid(kIntakePinID);
+    intake = new Intake(intake_motor, intake_pin);
   }
   if(kShooterEnabled){
     shooter_motor = new rev::CANSparkMax(kFlyWheelMotorID, rev::CANSparkMax::MotorType::kBrushless);
@@ -87,10 +85,16 @@ void Robot::RobotInit() {
   }
 
   manipulator = new Manipulator(intake, feeder, shooter);
+
   if(kColorWheelEnabled){
     color_motor = new WPI_TalonSRX(kColorWheelMotorID);
     color_sol = new frc::Solenoid(kColorWheelSolenoidID);
     color_wheel = new ColorWheel(color_motor, color_sol);
+  }
+  if(kClimbEnabled){
+    climb_telescope = new rev::CANSparkMax(kClimbTelescopeMotorID, rev::CANSparkMax::MotorType::kBrushless);
+    climb_winch = new rev::CANSparkMax(kClimbWinchMotorID, rev::CANSparkMax::MotorType::kBrushless);
+    climber = new Climber(climb_telescope, climb_winch);
   }
 
   autonomous = new Autonomous(timer, spark_drive);
@@ -194,16 +198,47 @@ void Robot::TeleopPeriodic() {
   }
 
   if(kFeederEnabled){
-    std::cout<<"Switch State: "<< feeder->GetLimitSwitchState()<<std::endl;
     feeder->SensorAdvanceGeneva();
+    if(joystick_2->GetRawButton(y_button)){
+      feeder->ExtendRetract(20);
+    }
   }
 
   if(kShooterEnabled){
-    if(joystick_1->GetRawButton(a_button)){
-      shooter_motor->Set(-1);
+    manipulator->GetState();
+    if(joystick_1->GetRawButton(kShootButton)){
+      manipulator->ContinuousShoot(0);
+    
     }
     else{
-      shooter_motor->Set(0);
+      //manipulator->ResetManipulatorElements();
+      shooter->SetShootingPercentOutput(-0.5);
+      if(feeder->GetSenorAdvanceGenevaState() == 2){
+        feeder->SetSpin(0);
+      }
+    }
+
+  }
+
+  if(kClimbEnabled){
+    if(joystick_1->GetRawButton(kExtendClimbButton)){
+      climber->SetTelescope(0.5);
+    }
+    else if(joystick_1->GetRawButton(kRetractClimbButton)){
+      climber->SetTelescope(-0.5);
+    }
+    else{
+      climber->SetTelescope(0.0);
+    }
+
+    if(joystick_1->GetRawButton(y_button)){
+      climber->SetWinch(0.2);
+    }
+    else if(joystick_1->GetRawButton(b_button)){
+      climber->SetWinch(-0.2);
+    }
+    else{
+      climber->SetWinch(0.0);
     }
   }
 
@@ -236,12 +271,6 @@ void Robot::TeleopPeriodic() {
       spark_drive->TankDrive(0,0,false,false);
       teleop_functions->SetTurnStatus(true);
     }
-    if(joystick_1->GetRawButton(kShootButton)){
-      manipulator->ContinuousShoot(0);
-    }
-    else{
-      manipulator->ResetManipulatorElements();
-    }
   }
   if(kColorWheelEnabled){
     color_wheel->GetCurrentColor();
@@ -252,12 +281,11 @@ void Robot::TeleopPeriodic() {
       color_wheel->SetExtended(false);
     }
     else if(joystick_1->GetRawButton(kColorWheelColorControl)){
-      std::cout << "calling" << std::endl;
       color_wheel->TurnToColor(kRedTarget);
     }
   }
 
- }
+}
 
 void Robot::TestPeriodic() {
   // test->run();
