@@ -41,7 +41,7 @@ void TeleopFunctions::TurnToAngle(double targetAngle, double proportion){
     //controller input, but the rotation axis of the drive base based on the rotation rate found
     m_sparkDrive->TankDrive(
         js1->GetRawAxis(kPrimaryDriverJoystickID), 
-        current_rotation_rate, 
+        -current_rotation_rate, 
         js1->GetRawButton(right_bumper), 
         js1->GetRawButton(left_bumper),
         0.0

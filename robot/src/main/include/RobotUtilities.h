@@ -17,15 +17,15 @@ enum JoystickInputs
   back_button = 9, start_button = 10, l_trigger = 11, r_trigger = 12
 };
 enum Joystick1Layout{
-    kForwardBackwardAxis = y_axis, kRotAxis = z_axis, kShootButton = a_button, kAutoAimButton = x_button,
-    kExtendClimbButton = right_trigger, kRetractClimbButton = left_trigger, kWinchButton = y_button,
-     kTurtleButton = left_bumper, kTurboButton = right_bumper 
+    kForwardBackwardAxis = y_axis, kRotAxis = z_axis, kExtendClimbButton = start_button, 
+    kRetractClimbButton = back_button, kWinchButton = x_button, kTurtleButton = right_bumper, 
+    kTurboButton = right_trigger
 }; 
 enum Joystick2Layout{
-    kRetractColorWheelButton = a_button, kDeployColorWheelButton = y_button, kColorWheelColorControl = left_trigger, 
-    kColorWheelRotationControl = right_trigger, kIntakeAxis = y_axis, kRegressGenevaButton = left_bumper, 
-    kAdvanceGenevaButton = right_bumper, kIncreaseAimOffsetPOV = 90, kDecreaseAimOffsetPOV = 270,
-    kCameraSwitchButton = start_button
+    kShootButton = b_button, kIntakeButton = x_button, kOuttakeButton = a_button, kAutoAimButton = y_button,
+    kRegressGenevaButton = left_bumper, kAdvanceGenevaButton = right_bumper, kRetractColorWheelButton = left_trigger,
+    kDeployColorWheelButton = right_trigger, kColorWheelColorControl = start_button, kColorWheelRotationControl = back_button, 
+    kIncreaseAimOffsetPOV = 90, kDecreaseAimOffsetPOV = 270,
 };
 
 const frc::Color kBlueTarget = frc::Color(0.143, 0.427, 0.429);

@@ -218,7 +218,7 @@ void Robot::TeleopPeriodic() {
     // Debug Statement Printing Out Current Manipulator State
     //manipulator->GetState();
     if(joystick_2->GetRawButton(a_button)){
-      manipulator->ContinuousShoot(0);
+      manipulator->ContinuousShoot(0, 0.4);
     }
     else
     {

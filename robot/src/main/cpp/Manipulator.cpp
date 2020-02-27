@@ -11,7 +11,7 @@ void Manipulator::PrepareShot(int rpm, int aim_position){
     m_shooter->Shoot(rpm);
     m_shooter->AimHeight(aim_position);
 }
-void Manipulator::ContinuousShoot(int aim_position){
+void Manipulator::ContinuousShoot(int aim_position, int geneva_speed){
     //Finite State Machine logic to switch between states
 
     //Change state based on a counter so that the solenoid has time to extend
@@ -45,7 +45,7 @@ void Manipulator::ContinuousShoot(int aim_position){
             break;
         case(kAdvance):
         case(kAdvancing):
-            m_feeder->SetSpin(0.5);//Turn the motor on
+            m_feeder->SetSpin(geneva_speed);//Turn the motor on
             break;
     }
     
