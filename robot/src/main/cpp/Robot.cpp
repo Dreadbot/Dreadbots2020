@@ -218,13 +218,14 @@ void Robot::TeleopPeriodic() {
     // B Button for Shoot
     if(joystick_2->GetRawButton(kShootButton))
     {
+      shooter->SetShootingPercentOutput(-0.8);
       // Continually Shoot
       manipulator->ContinuousShoot(0, 0.4);
     }
     else
     {
       // Default Shooting PercentOutput to Avoid Ramp-Up Time
-      shooter->SetShootingPercentOutput(-0.5);
+      shooter->SetShootingPercentOutput(0);
 
       // If The Geneva State is Stoppped, Stop the Spin.
       if(feeder->GetSenorAdvanceGenevaState() == 2)
