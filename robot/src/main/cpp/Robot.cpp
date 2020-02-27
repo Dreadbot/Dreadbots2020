@@ -228,15 +228,15 @@ void Robot::TeleopPeriodic() {
       shooter->SetShootingPercentOutput(0);
 
       // If The Geneva State is Stoppped, Stop the Spin.
-      if(feeder->GetSenorAdvanceGenevaState() == 2)
+      if(manipulator->GetSensorAdvanceGenevaState() == 2)
       {
         // Set to 0 RPM
-        feeder->SetSpin(0);
+        manipulator->GenevaSetSpin(0);
       }
     }
 
     // Internal Check for Advancing Geneva without Shooting
-    feeder->SensorAdvanceGeneva();
+    manipulator->SensorAdvanceGeneva(joystick_2->GetRawButton(kAdvanceGenevaButton));
   }
 
   if(kDriveEnabled){
@@ -257,24 +257,25 @@ void Robot::TeleopPeriodic() {
   //   }
   // }
 
-  // if(kShooterEnabled){
-  //   // Debug Statement Printing Out Current Manipulator State
-  //   //manipulator->GetState();
-  //   if(joystick_2->GetRawButton(a_button)){
-  //     manipulator->ContinuousShoot(0);
-  //   }
-  //   else
-  //   {
-  //     //manipulator->ResetManipulatorElements();
-  //     shooter->SetShootingPercentOutput(-0.5);
-  //     if(feeder->GetSenorAdvanceGenevaState() == 2)
-  //     {
-  //       feeder->SetSpin(0);
-  //     }
-  //   }
+  if(kShooterEnabled){
+    // Debug Statement Printing Out Current Manipulator State
+    //manipulator->GetState();
+    if(joystick_2->GetRawButton(kShootButton)){
+      shooter->SetShootingPercentOutput(-0.8);
+      manipulator->ContinuousShoot(0, 0.4);
+    }
+    else
+    {
+      //manipulator->ResetManipulatorElements();
+      shooter->SetShootingPercentOutput(0);
+      if(manipulator->GetSensorAdvanceGenevaState() == 2)
+      {
+        manipulator->GenevaSetSpin(0);
+      }
+    }
 
-  //   feeder->SensorAdvanceGeneva();
-  // }
+    manipulator->SensorAdvanceGeneva(joystick_2->GetRawButton(x_button));
+  }
 
   if(kClimbEnabled){
     if(joystick_1->GetRawButton(kExtendClimbButton)){

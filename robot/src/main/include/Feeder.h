@@ -14,16 +14,14 @@ class Feeder
     public:
         Feeder(rev::CANSparkMax *geneva_drive, frc::Solenoid *punch, frc::Joystick *joystick_1, frc::Joystick *joystick_2);
         void SetSpin(double rpm);
-        void GetSpin();
-        void AdvanceGeneva(int rots);
-        void SensorAdvanceGeneva();
+        // void SensorAdvanceGeneva(bool spin); //MOVED TO MANIPULATOR.CPP
         void SetPunchExtension(bool extended);
         bool GetPunchExtension();
         bool GetGenevaSwitchState();
         bool GetPunchSwitchState();
         double GetGenevaPosition();
         void ExtendRetract(int milliseconds_between);
-        int GetSenorAdvanceGenevaState();
+        int GetSensorAdvanceGenevaState();
         
 
     private:

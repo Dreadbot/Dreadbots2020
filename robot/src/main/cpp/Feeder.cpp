@@ -21,39 +21,29 @@ Feeder::Feeder(rev::CANSparkMax *geneva_drive, frc::Solenoid *punch, frc::Joysti
     m_geneva_controller->SetOutputRange(-1.0, 1.0);
     m_geneva_encoder->SetPositionConversionFactor(1.0);
 }
-void Feeder::SetSpin(double rpm){
-    m_geneva_drive->Set(rpm);
-}
-void Feeder::GetSpin(){
-     m_geneva_encoder->GetVelocity();
-}
-void Feeder::AdvanceGeneva(int rots)
-{//Deprectated
-    //Make it so it stops. Could be a encoder problem.
-    m_geneva_drive->Set(1);
-    // m_geneva_controller->SetReference(0, rev::ControlType::kVelocity);
-    std::cout << "Setting: " << (m_geneva_encoder->GetPosition() + (rots * kGenevaGearRatio)) << std::endl;
+void Feeder::SetSpin(double power){
+    m_geneva_drive->Set(power);
 }
 
-void Feeder::SensorAdvanceGeneva(){
-    std::cout<<"Start State: "<<state<<std::endl;
-    if(state == stopped && joystick_2->GetRawButton(x_button)){
-        m_geneva_drive->Set(.4);
-        state = move;
-        std::cout<<"Indexing"<<state<<std::endl;
-    }
-    else if(state == move && !GetGenevaSwitchState()){
-        state = moving;
-        std::cout<<"State: "<<state<<std::endl;
-    }
-    else if(state == moving && GetGenevaSwitchState()){
-        m_geneva_drive->Set(0);
-        state = stopped;
-        std::cout<<"State: "<<state<<std::endl;
-    }
+//NOW MOVED TO MANIPULATOR.CPP:
 
-    std::cout << "got through" << std::endl;
-}   
+// void Feeder::SensorAdvanceGeneva(bool spin){ 
+//     std::cout<<"Start State: "<<state<<std::endl;
+//     if(state == stopped && spin){
+//         m_geneva_drive->Set(.4);
+//         state = move;
+//         std::cout<<"Indexing"<<state<<std::endl;
+//     }
+//     else if(state == move && !GetGenevaSwitchState()){
+//         state = moving;
+//         std::cout<<"State: "<<state<<std::endl;
+//     }
+//     else if(state == moving && GetGenevaSwitchState()){
+//         m_geneva_drive->Set(0);
+//         state = stopped;
+//         std::cout<<"State: "<<state<<std::endl;
+//     }
+// }   
 
 void Feeder::SetPunchExtension(bool extended){
     m_punch->Set(extended);
@@ -83,6 +73,6 @@ void Feeder::ExtendRetract(int milliseconds_between){
     SetPunchExtension(false);
     frc::SmartDashboard::PutBoolean("Punch", false);
 }
-int Feeder::GetSenorAdvanceGenevaState(){
+int Feeder::GetSensorAdvanceGenevaState(){
     return state;
 }

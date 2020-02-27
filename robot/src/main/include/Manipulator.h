@@ -13,6 +13,9 @@ class Manipulator
         void ContinuousIntake();
         void ResetManipulatorElements();
         void GetState();
+        void SensorAdvanceGeneva(bool spin);
+        void GenevaSetSpin(double power);
+        int GetSensorAdvanceGenevaState();
     private:
         //Member objects
         Intake *m_intake;
@@ -20,10 +23,15 @@ class Manipulator
         Shooter *m_shooter;
         
         //Finite State Machine vars
-        int state;
-        enum States{
+        int shooterState;
+        enum shooterStates{
             kPunching, kRetracting, kAdvance, kAdvancing
         };
         int state_change_counter = 0;
         const int kCountsToExtend = 5;
+
+           enum genevaStates{
+            move, moving, stopped
+        };
+        int genevaState = stopped;
 };
