@@ -12,7 +12,7 @@
 class Feeder
 {    
     public:
-        Feeder(rev::CANSparkMax *geneva_drive, frc::Solenoid *punch, frc::Joystick *joystick);
+        Feeder(rev::CANSparkMax *geneva_drive, frc::Solenoid *punch, frc::Joystick *joystick_1, frc::Joystick *joystick_2);
         void SetSpin(double rpm);
         void GetSpin();
         void AdvanceGeneva(int rots);
@@ -34,6 +34,7 @@ class Feeder
         frc::DigitalInput *geneva_limit_switch;
         frc::DigitalInput *punch_limit_switch;
         frc::Joystick *joystick_1;
+        frc::Joystick *joystick_2;
         const int kGenevaSwitchPort = 9;
         const int kPunchSwitchPort = 3;
         const double kGenevaGearRatio = 100;

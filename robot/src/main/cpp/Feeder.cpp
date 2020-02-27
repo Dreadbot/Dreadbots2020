@@ -1,8 +1,9 @@
 #include <Feeder.h>
 
-Feeder::Feeder(rev::CANSparkMax *geneva_drive, frc::Solenoid *punch, frc::Joystick *joystick){
+Feeder::Feeder(rev::CANSparkMax *geneva_drive, frc::Solenoid *punch, frc::Joystick *joystick_1, frc::Joystick *joystick_2){
     m_geneva_drive = geneva_drive;
-    joystick_1 = joystick;
+    this->joystick_1 = joystick_1;
+    this->joystick_2 = joystick_2;
     m_geneva_drive->SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     m_geneva_controller = new rev::CANPIDController(m_geneva_drive->GetPIDController());
     m_geneva_encoder = new rev::CANEncoder(m_geneva_drive->GetEncoder());
@@ -36,7 +37,7 @@ void Feeder::AdvanceGeneva(int rots)
 
 void Feeder::SensorAdvanceGeneva(){
     std::cout<<"Start State: "<<state<<std::endl;
-    if(state == stopped && joystick_1->GetRawButton(x_button)){
+    if(state == stopped && joystick_2->GetRawButton(x_button)){
         m_geneva_drive->Set(.4);
         state = move;
         std::cout<<"Indexing"<<state<<std::endl;
@@ -50,6 +51,8 @@ void Feeder::SensorAdvanceGeneva(){
         state = stopped;
         std::cout<<"State: "<<state<<std::endl;
     }
+
+    std::cout << "got through" << std::endl;
 }   
 
 void Feeder::SetPunchExtension(bool extended){

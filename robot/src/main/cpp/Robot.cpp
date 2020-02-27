@@ -81,7 +81,7 @@ void Robot::RobotInit() {
   if(kFeederEnabled){
     geneva_motor = new rev::CANSparkMax(kGenevaMotorID, rev::CANSparkMax::MotorType::kBrushless);
     punch = new frc::Solenoid(kPunchSolenoidID);
-    feeder = new Feeder(geneva_motor, punch, joystick_1);
+    feeder = new Feeder(geneva_motor, punch, joystick_1, joystick_2);
   }
 
   manipulator = new Manipulator(intake, feeder, shooter);
@@ -183,19 +183,61 @@ void Robot::TeleopPeriodic() {
   
   // need to create sparkdrive above for this code 
  // spark_drive = new SparkDrive(new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless)
-   double joystickaxisY = joystick_2->GetRawAxis(y_axis);
-   std::cout << "Joystick Axis: " << joystickaxisY << std::endl;
-   if(kIntakeEnabled){
-    if(fabs(joystickaxisY)  <= 0.025){
-       intake->Stop();
-    }
-    else{
-       intake->SetSpeed(joystickaxisY * 5000 );
-       std::cout << "bruh" << std::endl;
-    }
-   }
+  //  double joystickaxisY = joystick_2->GetRawAxis();
+  //  std::cout << "Joystick Axis: " << joystickaxisY << std::endl;
+  //  if(kIntakeEnabled){
+  //   if(fabs(joystickaxisY)  <= 0.025){
+  //      intake->Stop();
+  //   }
+  //   else{
+  //      intake->SetSpeed(joystickaxisY * 5000 );
+  //      std::cout << "bruh" << std::endl;
+  //   }
+  //  }
   //teleopFunctions->ShooterFunction();
-    
+  
+  if(kIntakeEnabled)
+  {
+    // X Button for Intake
+    if(joystick_2->GetRawButton(kIntakeButton))
+    {
+      // Set Speed to -5000 RPM
+      intake->SetSpeed(-5000);
+    }
+
+    // A Button for Outtake
+    if(joystick_2->GetRawButton(kOuttakeButton))
+    {
+      // Set Speed to 5000 RPM
+      intake->SetSpeed(5000);
+    }
+  }
+
+  if(kShooterEnabled)
+  {
+    // B Button for Shoot
+    if(joystick_2->GetRawButton(kShootButton))
+    {
+      // Continually Shoot
+      manipulator->ContinuousShoot(0, 0.4);
+    }
+    else
+    {
+      // Default Shooting PercentOutput to Avoid Ramp-Up Time
+      shooter->SetShootingPercentOutput(-0.5);
+
+      // If The Geneva State is Stoppped, Stop the Spin.
+      if(feeder->GetSenorAdvanceGenevaState() == 2)
+      {
+        // Set to 0 RPM
+        feeder->SetSpin(0);
+      }
+    }
+
+    // Internal Check for Advancing Geneva without Shooting
+    feeder->SensorAdvanceGeneva();
+  }
+
   if(kDriveEnabled){
     // Call SparkDrive::TankDrive() using the drivetrain motors
     spark_drive->TankDrive(
@@ -214,24 +256,24 @@ void Robot::TeleopPeriodic() {
   //   }
   // }
 
-  if(kShooterEnabled){
-    // Debug Statement Printing Out Current Manipulator State
-    //manipulator->GetState();
-    if(joystick_2->GetRawButton(a_button)){
-      manipulator->ContinuousShoot(0, 0.4);
-    }
-    else
-    {
-      //manipulator->ResetManipulatorElements();
-      shooter->SetShootingPercentOutput(-0.5);
-      if(feeder->GetSenorAdvanceGenevaState() == 2)
-      {
-        feeder->SetSpin(0);
-      }
-    }
+  // if(kShooterEnabled){
+  //   // Debug Statement Printing Out Current Manipulator State
+  //   //manipulator->GetState();
+  //   if(joystick_2->GetRawButton(a_button)){
+  //     manipulator->ContinuousShoot(0);
+  //   }
+  //   else
+  //   {
+  //     //manipulator->ResetManipulatorElements();
+  //     shooter->SetShootingPercentOutput(-0.5);
+  //     if(feeder->GetSenorAdvanceGenevaState() == 2)
+  //     {
+  //       feeder->SetSpin(0);
+  //     }
+  //   }
 
-    feeder->SensorAdvanceGeneva();
-  }
+  //   feeder->SensorAdvanceGeneva();
+  // }
 
   if(kClimbEnabled){
     if(joystick_1->GetRawButton(kExtendClimbButton)){

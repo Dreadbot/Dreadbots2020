@@ -15,9 +15,9 @@ class Manipulator
         void GetState();
     private:
         //Member objects
-        Intake *m_intake; 
+        Intake *m_intake;
         Feeder *m_feeder; 
-        Shooter *m_shooter; 
+        Shooter *m_shooter;
         
         //Finite State Machine vars
         int state;
