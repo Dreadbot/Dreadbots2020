@@ -82,8 +82,8 @@ class Robot : public frc::TimedRobot {
   int staleCount = 0;
 
   //ENABLED BOOLEANS
-  const bool kDriveEnabled = false;
-  const bool kClimbEnabled = true;
+  const bool kDriveEnabled = true;
+  const bool kClimbEnabled = false;
   const bool kShooterEnabled = true;
   const bool kRotateToAngleEnabled = false;
   const bool kIntakeEnabled = true;

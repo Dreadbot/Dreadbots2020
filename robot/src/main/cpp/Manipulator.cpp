@@ -5,7 +5,7 @@ Manipulator::Manipulator(Intake *intake, Feeder *feeder, Shooter *shooter){
     m_intake = intake;
     m_feeder = feeder;
     m_shooter = shooter;
-    state = 0;
+    state = kPunching;
 }
 void Manipulator::PrepareShot(int rpm, int aim_position){
     m_shooter->Shoot(rpm);
@@ -83,14 +83,14 @@ void Manipulator::ResetManipulatorElements(){
 }
 void Manipulator::GetState(){
     switch(state){
-        case(kPunching):
+        case kPunching:
             std::cout << "kPunching" << std::endl;
             break;
-        case(kRetracting):
+        case kRetracting:
             std::cout << "kRetracting" << std::endl;
             break;
-        case(kAdvance):
-        case(kAdvancing):
+        case kAdvance:
+        case kAdvancing:
             std::cout << "kAdvancing" << std::endl;
             break;
     }

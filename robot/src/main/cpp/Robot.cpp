@@ -127,7 +127,10 @@ void Robot::AutonomousInit() {
   // m_autoSelected = frc::SmartDashboard::GetString("Auto Selector",
   //     AutoDefault);
 
-  // Trajectory Code
+  if(kIntakeEnabled)
+  {
+    intake->DeployIntake();
+  }
   
 }
 
@@ -169,19 +172,26 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit() {
   spark_drive->GetGyroscope()->ZeroYaw();
+
+  if(kIntakeEnabled)
+  {
+    intake->DeployIntake();
+  }
 }
 
 void Robot::TeleopPeriodic() {
   
   // need to create sparkdrive above for this code 
  // spark_drive = new SparkDrive(new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless)
-   double joystickaxisY = joystick_2->GetRawAxis(kIntakeAxis); 
+   double joystickaxisY = joystick_2->GetRawAxis(y_axis);
+   std::cout << "Joystick Axis: " << joystickaxisY << std::endl;
    if(kIntakeEnabled){
     if(fabs(joystickaxisY)  <= 0.025){
        intake->Stop();
     }
     else{
        intake->SetSpeed(joystickaxisY * 5000 );
+       std::cout << "bruh" << std::endl;
     }
    }
   //teleopFunctions->ShooterFunction();
@@ -197,27 +207,30 @@ void Robot::TeleopPeriodic() {
     );
   }
 
-  if(kFeederEnabled){
-    feeder->SensorAdvanceGeneva();
-    if(joystick_2->GetRawButton(y_button)){
-      feeder->ExtendRetract(20);
-    }
-  }
+  // if(kFeederEnabled){
+  //   feeder->SensorAdvanceGeneva();
+  //   if(joystick_2->GetRawButton(x_button)){
+  //     feeder->ExtendRetract(20);
+  //   }
+  // }
 
   if(kShooterEnabled){
-    manipulator->GetState();
-    if(joystick_1->GetRawButton(kShootButton)){
+    // Debug Statement Printing Out Current Manipulator State
+    //manipulator->GetState();
+    if(joystick_2->GetRawButton(a_button)){
       manipulator->ContinuousShoot(0);
-    
     }
-    else{
+    else
+    {
       //manipulator->ResetManipulatorElements();
       shooter->SetShootingPercentOutput(-0.5);
-      if(feeder->GetSenorAdvanceGenevaState() == 2){
+      if(feeder->GetSenorAdvanceGenevaState() == 2)
+      {
         feeder->SetSpin(0);
       }
     }
 
+    feeder->SensorAdvanceGeneva();
   }
 
   if(kClimbEnabled){
@@ -284,7 +297,6 @@ void Robot::TeleopPeriodic() {
       color_wheel->TurnToColor(kRedTarget);
     }
   }
-
 }
 
 void Robot::TestPeriodic() {

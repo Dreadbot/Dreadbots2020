@@ -26,7 +26,8 @@ void Feeder::SetSpin(double rpm){
 void Feeder::GetSpin(){
      m_geneva_encoder->GetVelocity();
 }
-void Feeder::AdvanceGeneva(int rots){//Deprectated
+void Feeder::AdvanceGeneva(int rots)
+{//Deprectated
     //Make it so it stops. Could be a encoder problem.
     m_geneva_drive->Set(1);
     // m_geneva_controller->SetReference(0, rev::ControlType::kVelocity);
