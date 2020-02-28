@@ -231,15 +231,19 @@ void Robot::TeleopPeriodic()
     // X Button for Intake
     if(joystick_2->GetRawButton(kIntakeButton))
     {
-      // Set Speed to -3750 RPM
+      // Set Speed to -3750 RPM (Negative -> Intake)
       intake->SetSpeed(-3750);
     }
-
     // A Button for Outtake
-    if(joystick_2->GetRawButton(kOuttakeButton))
+    else if(joystick_2->GetRawButton(kOuttakeButton))
     {
-      // Set Speed to 3750 RPM
+      // Set Speed to 3750 RPM (Positive -> Outtake)
       intake->SetSpeed(3750);
+    }
+    else
+    {
+      // When no Intake/Outtake Buttons Are Pressed, Set Intake Motor to 0 RPM.
+      intake->SetSpeed(0);
     }
   }
 
