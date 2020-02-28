@@ -89,7 +89,7 @@ void Robot::RobotInit() {
   if(kColorWheelEnabled){
     color_motor = new WPI_TalonSRX(kColorWheelMotorID);
     color_sol = new frc::Solenoid(kColorWheelSolenoidID);
-    color_wheel = new ColorWheel(color_motor, color_sol);
+    color_wheel = new ColorWheel();
   }
   if(kClimbEnabled){
     climb_telescope = new rev::CANSparkMax(kClimbTelescopeMotorID, rev::CANSparkMax::MotorType::kBrushless);
@@ -330,16 +330,26 @@ void Robot::TeleopPeriodic() {
     }
   }
   if(kColorWheelEnabled){
-    color_wheel->GetCurrentColor();
-    if(joystick_1->GetRawButton(kDeployColorWheelButton)){
-      color_wheel->SetExtended(true);
-    }
-    else if(joystick_1->GetRawButton(kRetractColorWheelButton)){
-      color_wheel->SetExtended(false);
-    }
-    else if(joystick_1->GetRawButton(kColorWheelColorControl)){
-      color_wheel->TurnToColor(kRedTarget);
-    }
+    //To do: ColorWheel class is taking care of button presses, but we will need
+    //To do: We also probably need to pass in the selenoid, we can consider passing all of these
+    //into the colorwheel constructor which seems to be the pattern for the other classes
+    color_wheel->RotateToNumber(color_motor, joystick_2);
+    //To do: Get color target from smart dashboard, as this value will be given to us
+    //from field during play
+    frc::Color *targetcolor = new frc::Color(kGreenTarget);
+    color_wheel->RotateToColor(color_motor, joystick_2, targetcolor);
+
+    //Old code left here for reference until we are sure we don't want any of it
+    // color_wheel->GetCurrentColor();
+    // if(joystick_1->GetRawButton(kDeployColorWheelButton)){
+    //   color_wheel->SetExtended(true);
+    // }
+    // else if(joystick_1->GetRawButton(kRetractColorWheelButton)){
+    //   color_wheel->SetExtended(false);
+    // }
+    // else if(joystick_1->GetRawButton(kColorWheelColorControl)){
+    //   color_wheel->TurnToColor(kRedTarget);
+    // }
   }
 }
 

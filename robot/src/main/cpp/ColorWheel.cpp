@@ -1,85 +1,153 @@
+#include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/Joystick.h>
 #include <ColorWheel.h>
+#include <iostream>
+#include <string>
+using namespace std;
 
-ColorWheel::ColorWheel(WPI_TalonSRX *colorMotor, frc::Solenoid *sol)
-{
-    spinState = WheelState::NotSpinning;
-    NumSpins = 0;
+enum WheelState{
+    NotSpinning,
+    InitSpinning,
+    Spinning
+};
+WheelState spinState = WheelState::NotSpinning;
 
-    m_colorMotor = colorMotor;
-    m_colorMotor->SetNeutralMode(NeutralMode::Brake);
-    m_sol = sol;
-    m_colorSensor = new rev::ColorSensorV3(frc::I2C::Port::kOnboard);
-    m_colorMatch = new rev::ColorMatch();
+frc::Color CurrentColor;
+int NumSpins = 0;
 
-    m_colorMatch->AddColorMatch(kBlueTarget);
-    m_colorMatch->AddColorMatch(kRedTarget);
-    m_colorMatch->AddColorMatch(kYellowTarget);
-    m_colorMatch->AddColorMatch(kGreenTarget);
-}
+bool OnRed = false;
 
-frc::Color ColorWheel::GetCurrentColor(){
-    return m_colorMatch->MatchClosestColor(m_colorSensor->GetColor(), confidence);
-}
+bool OnTargetColor = false;
 
-void ColorWheel::TurnToColor(frc::Color targetColor){
-  if(targetColor == GetCurrentColor()){
-      m_colorMotor->Set(ControlMode::PercentOutput, 0);
-      SetColorMatched(true);
-  }
-  else{
-      m_colorMotor->Set(ControlMode::PercentOutput, .5);
-      std::cout << "Driving the color motor" << std::endl;
-  }
-} 
+double ColorConfidenceTarget = 0.9;
 
-void ColorWheel::SetColorMatched(bool color_matched){
-    this->color_matched = color_matched;
-}
+int NumColorSamples = 0;
 
-bool ColorWheel::GetColorMatched(){
-    return color_matched;
-}
+int CurrentButton = 0;
 
-void ColorWheel::RotateToNumber(){
-    //Call this only when GetRotationsComplete() returns false and a button is held, 
-    //SetRotationsComplete() may be called after a waiting period to allow this to be done more than once per match
-    if (spinState == NotSpinning && !rotations_complete)
+//Notes after some research Saturday: We probably want to use the ColorMatch class to detect color rather than the 
+//ColorSensor. See example code https://github.com/REVrobotics/Color-Sensor-v3-Examples/blob/master/C%2B%2B/Color%20Match/src/main/cpp/Robot.cpp
+static constexpr auto i2cPort = frc::I2C::Port::kOnboard;
+rev::ColorSensorV3 m_colorSensor(i2cPort);
+rev::ColorMatch m_colorMatcher;
+
+ColorWheel::ColorWheel(){
+    m_colorMatcher.AddColorMatch(kBlueTarget);
+    m_colorMatcher.AddColorMatch(kGreenTarget);
+    m_colorMatcher.AddColorMatch(kRedTarget);
+    m_colorMatcher.AddColorMatch(kYellowTarget);
+    Solenoid = new frc::Solenoid(4);
+ }
+
+//Update RotateToNumber to not take in the sensor and get current color from m_colorMatch
+void ColorWheel::RotateToNumber(WPI_TalonSRX *motor, frc::Joystick *joystick){
+
+    //Put in some smart dashboard output to be helpful for debugging
+    frc::SmartDashboard::PutNumber("SpinState", spinState);
+    
+    if (spinState == WheelState::NotSpinning && joystick->GetRawButtonPressed(1))
     {
-        spinState = InitSpinning;
+        spinState = WheelState::InitSpinning;
+        CurrentButton = 1;
+        Solenoid->Set(true);
 
     }
-    if (spinState == Spinning && rotations_complete)
+    if (spinState == WheelState::InitSpinning && CurrentButton == 1) 
     {
-            spinState = NotSpinning;
+        NumSpins = 0;
+        motor->Set(ControlMode::PercentOutput,0.7);
+        spinState = WheelState::Spinning;
     }
-    if(NumSpins > 6)
-        rotations_complete = true;
+    if (spinState == WheelState::Spinning && CurrentButton == 1)
+    {   
 
-    switch(spinState){
-        case(NotSpinning):
-            m_colorMotor->Set(ControlMode::PercentOutput, 0.0);
-        break;
-        case(InitSpinning):
-            NumSpins = 0;
-            spinState = Spinning;
-        break;
-        case(Spinning):
-            m_colorMotor->Set(ControlMode::PercentOutput, 0.2);
-            if(GetCurrentColor() == kRedTarget)
-                NumSpins++;
-        break;
-    }    
-}
-void ColorWheel::SetRotationsComplete(bool rotations_complete){
-    this->rotations_complete = rotations_complete;
-}
-bool ColorWheel::GetRotationsComplete(){
-    return rotations_complete;
-}
-void ColorWheel::SetExtended(bool extended){
-    m_sol->Set(extended);
-}
-bool ColorWheel::GetExtended(){
-    return m_sol->Get();
+        if (joystick->GetRawButtonPressed(1) || NumSpins>7)
+        {
+            motor->Set(ControlMode::PercentOutput,0.0);
+            spinState = WheelState::NotSpinning;
+            CurrentButton = 0;
+            Solenoid->Set(false);
+            return;
+        
+        }
+
+        //A value betwen 0 and 1, 1 being absolute perfect color match
+        double colorConfidence = 0.0;
+        frc::Color detectedColor = m_colorSensor.GetColor();
+        frc::Color matchedColor = m_colorMatcher.MatchClosestColor(detectedColor, colorConfidence); 
+        PrintColor(matchedColor, colorConfidence);
+        //do we need to check confidence number in this condition to see how confident the color matcher 
+        //thinks the color is red? A value close to one means more confident. 
+        if (matchedColor == kRedTarget && OnRed == false && colorConfidence >= ColorConfidenceTarget){
+            NumSpins = NumSpins+1;
+            OnRed = true;
+        }
+        else if (!(matchedColor == kRedTarget)) {
+            OnRed = false;
+        }
+    }
+    
 }
 
+
+void ColorWheel::RotateToColor(WPI_TalonSRX *motor, frc::Joystick *joystick, frc::Color *targetcolor){
+    double colorConfidence = 0.0;
+    frc::Color detectedColor = m_colorSensor.GetColor();
+    frc::Color matchedColor = m_colorMatcher.MatchClosestColor(detectedColor, colorConfidence); 
+    frc::SmartDashboard::PutNumber("SpinState", spinState);
+    if (spinState == WheelState::NotSpinning && joystick->GetRawButton(2))
+    {
+        spinState = WheelState::InitSpinning;
+        CurrentButton = 2;
+        Solenoid->Set(true);
+    }
+    if (spinState == WheelState::InitSpinning && CurrentButton == 2)
+    {
+        spinState = WheelState::Spinning;
+        motor->Set(ControlMode::PercentOutput, 0.7);
+    }
+    if (spinState == WheelState::Spinning && CurrentButton == 2)
+    {
+        PrintColor(matchedColor, colorConfidence);
+        if (matchedColor == *targetcolor && colorConfidence >= ColorConfidenceTarget){
+            if (NumColorSamples > 5){
+            spinState = WheelState::NotSpinning;
+            motor->Set(ControlMode::PercentOutput, 0.0);
+            NumColorSamples = 0;
+            CurrentButton = 0;
+            Solenoid->Set(false);
+            }
+            else {
+                NumColorSamples += 1;
+            }
+ 
+        }
+    }
+   
+}
+
+void ColorWheel::PrintColor(frc::Color color, double colorConfidence){
+  
+        if(color == kBlueTarget){
+            frc::SmartDashboard::PutString("color","Blue"); 
+            cout << "Blue\t" << colorConfidence << endl;
+        }
+        else if(color == kRedTarget){
+            frc::SmartDashboard::PutString("color","Red");
+            cout << "Red\t" << colorConfidence << endl;
+        }
+        else if(color == kYellowTarget){
+            frc::SmartDashboard::PutString("color","Yellow");
+            cout << "Yellow\t" << colorConfidence << endl;
+        }
+        else if(color == kGreenTarget){
+            frc::SmartDashboard::PutString("color","Green");
+            cout << "Green\t" << colorConfidence << endl;
+        }
+        else{
+            frc::SmartDashboard::PutString("color","No color detected");
+            cout << "no color detected" << endl;
+        }
+        frc::SmartDashboard::PutNumber("NumSpins", NumSpins);
+
+    }
