@@ -91,6 +91,8 @@ class Robot : public frc::TimedRobot {
   const bool kTrajectoryEnabled = false;
   const bool kColorWheelEnabled = false;
 
+  int enabled_subsystems;
+
   // Teleop Objects
     //Manipulator Objects
     rev::CANSparkMax *intake_motor;
