@@ -50,6 +50,9 @@ Shooter::Shooter(rev::CANSparkMax *shooterMotor, rev::CANSparkMax *aimMotor)
   aiming_motor_pid_controller->SetIZone(0);  
   aiming_motor_pid_controller->SetFF(0);  //000015
   aiming_motor_pid_controller->SetOutputRange(-1.0, 1.0);
+
+  upper_limit_switch = new frc::DigitalInput(1);
+  lower_limit_switch = new frc::DigitalInput(2);
 }
 
 void Shooter::Shoot(double shooterSpeed){
@@ -73,6 +76,7 @@ void Shooter::SetAdjusterPercentOutput(double percent_output)
 {
   // When the upper limit switch is reading true,
   // we no longer want to go past the limit switch.
+  std::cout << "limit switch logic" << std::endl;
   if(upper_limit_switch->Get())
   {
     if(percent_output > 0.0)
