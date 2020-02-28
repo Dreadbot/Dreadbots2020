@@ -119,3 +119,18 @@ void Manipulator::GenevaSetSpin(double power){
 int Manipulator::GetSensorAdvanceGenevaState(){
     return m_feeder->GetSensorAdvanceGenevaState();
 }
+
+Intake* Manipulator::GetIntake()
+{
+    return m_intake;
+}
+
+Feeder* Manipulator::GetFeeder()
+{
+    return m_feeder;
+}
+
+Shooter* Manipulator::GetShooter()
+{
+    return m_shooter;
+}

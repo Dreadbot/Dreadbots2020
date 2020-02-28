@@ -16,6 +16,10 @@ class Manipulator
         void SensorAdvanceGeneva(bool spin);
         void GenevaSetSpin(double power);
         int GetSensorAdvanceGenevaState();
+
+        Intake* GetIntake();
+        Feeder* GetFeeder();
+        Shooter* GetShooter();
     private:
         //Member objects
         Intake *m_intake;
