@@ -39,5 +39,6 @@ class Robot : public frc::TimedRobot {
   //Color wheel class
   WPI_TalonSRX *colorWheelmotor;
   ColorWheel* colorWheel;
+  frc::Solenoid *solenoid;
 
 };
