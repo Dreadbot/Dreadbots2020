@@ -246,6 +246,9 @@ void Robot::TeleopPeriodic()
   std::cout << "Shooter Subsystem Teleoperated Periodic Call" << std::endl;
   if(kShooterEnabled)
   {
+    // Utility for Adjusting Hood or Aim Motor.
+    shooter->SetAdjusterPercentOutput(joystick_2->GetRawAxis(w_axis));
+
     // B Button for Shoot
     if(joystick_2->GetRawButton(kShootButton))
     {
