@@ -99,6 +99,7 @@ void Manipulator::ResetManipulatorElements(){
 // }
 void Manipulator::SensorAdvanceGeneva(bool spin){
     std::cout<<"X button is: " << spin <<std::endl;
+    std::cout << "SensorAdvance state: " << genevaState << std::endl;
     if(genevaState == stopped && spin){
         m_feeder->SetSpin(.4);
         genevaState = move;

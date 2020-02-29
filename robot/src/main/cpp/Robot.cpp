@@ -249,6 +249,7 @@ void Robot::TeleopPeriodic()
   std::cout << "Shooter Subsystem Teleoperated Periodic Call" << std::endl;
   if(kShooterEnabled)
   {
+    std::cout << "*********************Geneva switch: " << std::boolalpha << feeder->GetGenevaSwitchState() << std::endl;
     // Utility for Adjusting Hood or Aim Motor.
     shooter->SetAdjusterPercentOutput(joystick_2->GetRawAxis(w_axis));
 
