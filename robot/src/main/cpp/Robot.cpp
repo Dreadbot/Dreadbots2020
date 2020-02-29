@@ -45,13 +45,18 @@ void Robot::RobotInit()
   m_chooser.AddOption(AutoRightCenter, AutoRightCenter);
   m_chooser.AddOption(AutoRightLeft, AutoRightLeft);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
-  frc::SmartDashboard::PutNumber("Aimpid",0.1);
+  //frc::SmartDashboard::PutNumber("Aimpid",0.1);
+  frc::SmartDashboard::PutNumber("Hood Position", 0);
+  frc::SmartDashboard::PutNumber("Target Speed", 4000);
+  frc::SmartDashboard::PutNumber("P value", 6e-5);
+  frc::SmartDashboard::PutNumber("I value", 6e-5);
+  frc::SmartDashboard::PutNumber("D value", 6e-5);
 
   // Initialize Timer Object
   timer = new frc::Timer();
 
   // Initialize Ultra Object for Ultrasonics
-  ultra = new Ultra();
+  //ultra = new Ultra();
 
   // Initialize Joystick Objects
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
@@ -214,35 +219,71 @@ void Robot::TeleopInit()
     teleoperated->HandleTeleopInitIntake();
   }
 
-  ContinuousShooterSpeed = frc::SmartDashboard::GetNumber("ContinuousShoot() shooter_rpm", 0.0);
+  if(kShooterEnabled){
+    shooter->SetAdjusterPercentOutput(0.75);
+    shooter->SetUpperBool(false);
+    shooter->SetLowerBool(false);
+    shooter->SetAimReadiness(false);
+  }
+
+  //ContinuousShooterSpeed = frc::SmartDashboard::GetNumber("ContinuousShoot() shooter_rpm", 0.0);
 }
 
 void Robot::TeleopPeriodic() 
 {
-  std::cout << "Intake Subsystem Teleoperated Periodic Call" << std::endl;
+  //std::cout << "Intake Subsystem Teleoperated Periodic Call" << std::endl;
   if(kIntakeEnabled)
   {
     teleoperated->HandleIntakeInputs();
   }
 
-  std::cout << "Shooter Subsystem Teleoperated Periodic Call" << std::endl;
+  //std::cout << "Shooter Subsystem Teleoperated Periodic Call" << std::endl;
   if(kShooterEnabled)
   {
-    std::cout << "*********************Geneva switch: " << std::boolalpha << feeder->GetGenevaSwitchState() << std::endl;
+    //frc::SmartDashboard::PutBoolean("Upper Limit Switch", shooter->GetUpperLimitSwitch());
+    //frc::SmartDashboard::PutBoolean("Lower Limit Switch", shooter->GetLowerLimitSwitch());
+    //frc::SmartDashboard::PutNumber("Current Hood Position", shooter->GetHoodPosition());
+    P = frc::SmartDashboard::GetNumber("P Value", 6e-5);
+    I = frc::SmartDashboard::GetNumber("I Value", 1e-6);
+    D= frc::SmartDashboard::GetNumber("D Value", 0);
+    shooter->SetPID(P, I, D);
+    if(shooter->GetLowerLimitSwitch() && !shooter->GetLowerLimitBool()){ 
+      std::cout << "***************LOWER LIMIT TRIGGERED" << std::endl;
+      shooter->SetLowerLimit(shooter->GetHoodPosition());
+      shooter->SetAdjusterPercentOutput(-0.75);
+    }
+    else if(shooter->GetUpperLimitSwitch() && !shooter->GetUpperLimitBool()){
+      std::cout << "***************UPPER LIMIT TRIGGERED" << std::endl;
+      shooter->SetUpperLimit(shooter->GetHoodPosition());
+      shooter->SetAdjusterPercentOutput(0.75);
+    }
+    else if (shooter->GetUpperLimitBool() && shooter->GetLowerLimitBool()){
+      shooter->SetAimReadiness(true);
+    }
+    if(shooter->GetAimReadiness()){
+      position = frc::SmartDashboard::GetNumber("Hood Position", 0.5);
+      //std::cout << "Adjusting Position to: " << position << std::endl;
+      shooter->SetAdjusterPosition(position);
+    }
+
+
+
+    //std::cout << "*********************Geneva switch: " << std::boolalpha << feeder->GetGenevaSwitchState() << std::endl;
     // Utility for Adjusting Hood or Aim Motor.
-    shooter->SetAdjusterPercentOutput(joystick_2->GetRawAxis(w_axis));
 
     // B Button for Shoot
     if(joystick_2->GetRawButton(kShootButton))
     {
       // Continually Shoot
-      manipulator->ContinuousShoot(0, 0.4, 2000);
+      manipulator->ContinuousShoot(0, 0.4, frc::SmartDashboard::GetNumber("Target Speed", 4000));
     }
     else if(joystick_2->GetRawButton(kAdvanceGenevaButton)){
       manipulator->SensorAdvanceGeneva(true);
     }
-    else{
+    else if(manipulator->GetSensorAdvanceGenevaState() == 2){
       manipulator->ResetManipulatorElements();
+    }
+    else{ 
       manipulator->SensorAdvanceGeneva(false);
     }
 
@@ -250,25 +291,25 @@ void Robot::TeleopPeriodic()
     manipulator->SensorAdvanceGeneva(joystick_2->GetRawButton(kAdvanceGenevaButton));
   }
 
-  std::cout << "Drive Subsystem Teleoperated Periodic Call" << std::endl;
+  //std::cout << "Drive Subsystem Teleoperated Periodic Call" << std::endl;
   if(kDriveEnabled)
   {
     teleoperated->HandleDriveInputs();
   }
 
-  std::cout << "Climb Subsystem Teleoperated Periodic Call" << std::endl;
+  //std::cout << "Climb Subsystem Teleoperated Periodic Call" << std::endl;
   if(kClimbEnabled)
   {
     teleoperated->HandleClimbInputs();
   }
 
-  std::cout << "Rotate To Angle Feature Teleoperated Periodic Call" << std::endl;
+  //std::cout << "Rotate To Angle Feature Teleoperated Periodic Call" << std::endl;
   if(kRotateToAngleEnabled)
   {
     teleoperated->HandleRotateToAngleInputs();
   }
 
-  std::cout << "Color Wheel Subsystem Teleoperated Periodic Call" << std::endl;
+  //std::cout << "Color Wheel Subsystem Teleoperated Periodic Call" << std::endl;
   if(kColorWheelEnabled)
   {
     //To do: ColorWheel class is taking care of button presses, but we will need

@@ -28,10 +28,10 @@ class Manipulator
         Shooter *m_shooter;
         
         //Finite State Machine vars
-        int shooterState;
         enum shooterStates{
             kRamping, kPunching, kRetracting, kAdvance, kAdvancing
         };
+        int shooterState = kRamping;
         int state_change_counter = 0;
         const int kCountsToExtend = 5;
 

@@ -33,18 +33,18 @@ void Teleoperated::HandleIntakeInputs()
     if(joystick_2->GetRawButton(kIntakeButton))
     {
       // Set Speed to -3750 RPM (Negative -> Intake)
-      manipulator->GetIntake()->SetSpeed(-3000);
+      manipulator->GetIntake()->SetSpeed(-4000);
     }
     // A Button for Outtake
     else if(joystick_2->GetRawButton(kOuttakeButton))
     {
       // Set Speed to 3750 RPM (Positive -> Outtake)
-      manipulator->GetIntake()->SetSpeed(3000);
+      manipulator->GetIntake()->SetSpeed(4000);
     }
     else
     {
       // When no Intake/Outtake Buttons Are Pressed, Set Intake Motor to 0 RPM.
-      manipulator->GetIntake()->SetSpeed(0);
+      manipulator->GetIntake()->SetPercentOutput(0);
     }
 }
 

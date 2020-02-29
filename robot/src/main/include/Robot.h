@@ -72,6 +72,10 @@ class Robot : public frc::TimedRobot {
   //Ultrasonic Objecttss
   Ultra *ultra;
 
+  //Shooting Objects
+  double position;
+  double P, I, D;
+
   // Trajectory Testing Variables
   double const kIterationSecondsRatio = 0.02;
 

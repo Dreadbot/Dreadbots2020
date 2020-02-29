@@ -12,10 +12,10 @@ void Manipulator::PrepareShot(int rpm, int aim_position){
 }
 void Manipulator::ContinuousShoot(int aim_position, double geneva_speed, int shooting_rpm){
     //Finite State Machine logic to switch between states
-    frc::SmartDashboard::PutNumber("GetShootingSpeed(): ", m_shooter->GetShootingSpeed());
+    frc::SmartDashboard::PutNumber("GetShootingSpeed(): ", -m_shooter->GetShootingSpeed());
     frc::SmartDashboard::PutNumber("ShooterState: ", shooterState);
-    frc::SmartDashboard::PutBoolean("Geneva Limit Switch", m_feeder->GetGenevaSwitchState());
-    frc::SmartDashboard::PutBoolean("If Statement", (shooterState == kRamping && abs(abs(m_shooter->GetShootingSpeed()) - shooting_rpm) < 100));
+    //frc::SmartDashboard::PutBoolean("Geneva Limit Switch", m_feeder->GetGenevaSwitchState());
+    //frc::SmartDashboard::PutBoolean("If Statement", (shooterState == kRamping && abs(abs(m_shooter->GetShootingSpeed()) - shooting_rpm) < 100));
 
     if(shooterState == kRamping && abs(abs(m_shooter->GetShootingSpeed()) - shooting_rpm) < 250){
         shooterState = kPunching;
@@ -59,14 +59,14 @@ void Manipulator::ContinuousShoot(int aim_position, double geneva_speed, int sho
     }
     
     //Set the position of the aim plate and always drive the flywheel
-    m_shooter->AimHeight(aim_position);
+    //m_shooter->AimHeight(aim_position);
     m_shooter->Shoot(-shooting_rpm);
 }
 void Manipulator::ContinuousIntake(){
     
 }
 void Manipulator::ResetManipulatorElements(){
-    std::cout << "Switch State" << std::boolalpha << m_feeder->GetPunchExtension() << std::endl;
+    //std::cout << "Switch State" << std::boolalpha << m_feeder->GetPunchExtension() << std::endl;
     
     //This function should be called continuously if the system is not shooting power cells or collecting power cells
     //The function will get the system back into a state where the punch is retracted and the geneva drive is lined up
@@ -86,9 +86,9 @@ void Manipulator::ResetManipulatorElements(){
     //Once the geneva drive reaches a limit switch, stop it
     else{
         m_feeder->SetSpin(0);
-        shooterState = kPunching;
-        std::cout << "stopping the spin" << std::endl;
+        //std::cout << "stopping the spin" << std::endl;
     }
+    shooterState = kRamping;
     m_shooter->SetShootingPercentOutput(0);
 }
 // void Manipulator::GetState(){
@@ -106,22 +106,28 @@ void Manipulator::ResetManipulatorElements(){
 //     }
 // }
 void Manipulator::SensorAdvanceGeneva(bool spin){
-    std::cout<<"X button is: " << spin <<std::endl;
-    std::cout << "SensorAdvance state: " << genevaState << std::endl;
+    //std::cout<<"X button is: " << spin <<std::endl;
+    //std::cout << "SensorAdvance state: " << genevaState << std::endl;
     if(genevaState == stopped && spin){
         m_feeder->SetSpin(.4);
         genevaState = move;
-        std::cout<<"Indexing"<<genevaState<<std::endl;
+        //std::cout<<"Indexing"<<genevaState<<std::endl;
     }
     else if(genevaState == move && !m_feeder->GetGenevaSwitchState()){
         genevaState = moving;
-        std::cout<<"State: "<<genevaState<<std::endl;
+        //std::cout<<"State: "<<genevaState<<std::endl;
     }
     else if(genevaState == moving && m_feeder->GetGenevaSwitchState()){
         m_feeder->SetSpin(0);
         genevaState = stopped;
-        std::cout<<"State: "<<genevaState<<std::endl;
+        //std::cout<<"State: "<<genevaState<<std::endl;
     }
+
+    if(genevaState == move || genevaState == moving){
+        //std::cout << "Moving" << std::endl;
+        m_feeder->SetSpin(0.4);
+    }
+
 }
 
 void Manipulator::GenevaSetSpin(double power){
