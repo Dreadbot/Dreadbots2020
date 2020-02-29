@@ -85,6 +85,7 @@ void Robot::TeleopPeriodic() {
   //Call our color wheel class to execute code determining when to count rotations.
   colorWheel->RotateToNumber();
   colorWheel->RotateToColor(targetcolor);
+  colorWheel->ControlSolenoid();
 }
   
 

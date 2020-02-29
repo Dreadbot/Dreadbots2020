@@ -42,7 +42,21 @@ ColorWheel::ColorWheel(WPI_TalonSRX *motor, frc::Joystick *joystick, frc::Soleno
     colormotor = motor;
     colorjoystick = joystick;
     colorsolenoid = solenoid;
- }
+ } 
+
+void ColorWheel::ControlSolenoid(){
+    if (colorjoystick->GetRawButtonPressed(3)){
+        bool isup = colorsolenoid->Get();
+
+        if(isup == true){
+            colorsolenoid->Set(false);
+        }
+        else{
+            colorsolenoid->Set(true);
+        }
+    }
+
+}
 
 //Update RotateToNumber to not take in the sensor and get current color from m_colorMatch
 void ColorWheel::RotateToNumber(){
@@ -54,7 +68,7 @@ void ColorWheel::RotateToNumber(){
     {
         spinState = WheelState::InitSpinning;
         CurrentButton = 1;
-        colorsolenoid->Set(true);
+        //colorsolenoid->Set(true);
 
     }
     if (spinState == WheelState::InitSpinning && CurrentButton == 1) 
@@ -71,7 +85,7 @@ void ColorWheel::RotateToNumber(){
             colormotor->Set(ControlMode::PercentOutput,0.0);
             spinState = WheelState::NotSpinning;
             CurrentButton = 0;
-            colorsolenoid->Set(false);
+            //colorsolenoid->Set(false);
             return;
         
         }
@@ -104,12 +118,12 @@ void ColorWheel::RotateToColor(frc::Color *targetcolor){
     {
         spinState = WheelState::InitSpinning;
         CurrentButton = 2;
-        colorsolenoid->Set(true);
+        //colorsolenoid->Set(true);
     }
     if (spinState == WheelState::InitSpinning && CurrentButton == 2)
     {
         spinState = WheelState::Spinning;
-        colormotor->Set(ControlMode::PercentOutput, 0.7);
+        colormotor->Set(ControlMode::PercentOutput, 0.2);
     }
     if (spinState == WheelState::Spinning && CurrentButton == 2)
     {
@@ -120,7 +134,7 @@ void ColorWheel::RotateToColor(frc::Color *targetcolor){
             colormotor->Set(ControlMode::PercentOutput, 0.0);
             NumColorSamples = 0;
             CurrentButton = 0;
-            colorsolenoid->Set(false);
+            //colorsolenoid->Set(false);
             }
             else {
                 NumColorSamples += 1;
@@ -154,6 +168,7 @@ void ColorWheel::PrintColor(frc::Color color, double colorConfidence){
             cout << "no color detected" << endl;
         }
         frc::SmartDashboard::PutNumber("NumSpins", NumSpins);
+        frc::SmartDashboard::PutNumber("Confidence", colorConfidence);
 
     }
 
