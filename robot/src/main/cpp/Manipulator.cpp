@@ -44,6 +44,7 @@ void Manipulator::ContinuousShoot(int aim_position, double geneva_speed, int sho
     switch(shooterState){
         case(kRamping):
              m_feeder->SetSpin(0);
+             break;
         case(kPunching):
             m_feeder->SetPunchExtension(true);//Extend the punch
             state_change_counter++;
