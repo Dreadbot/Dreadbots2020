@@ -17,7 +17,11 @@ void Manipulator::ContinuousShoot(int aim_position, double geneva_speed, int sho
     //frc::SmartDashboard::PutBoolean("Geneva Limit Switch", m_feeder->GetGenevaSwitchState());
     //frc::SmartDashboard::PutBoolean("If Statement", (shooterState == kRamping && abs(abs(m_shooter->GetShootingSpeed()) - shooting_rpm) < 100));
 
-    if(shooterState == kRamping && abs(abs(m_shooter->GetShootingSpeed()) - shooting_rpm) < 250){
+    int speedDifference = abs(m_shooter->GetShootingSpeed()) - shooting_rpm;
+    if(shooterState == kRamping && speedDifference < 500 && speedDifference > 0){
+        shooterState = kPunching;
+    }
+    else if(shooterState == kRamping && speedDifference > -100 && speedDifference < 0){
         shooterState = kPunching;
     }
     //Change state based on a counter so that the solenoid has time to extend
