@@ -92,7 +92,7 @@ void Robot::RobotInit()
 
     // Intialize Internal Subsystems to Pass into Intake Container Class
     intake_motor = new rev::CANSparkMax(kIntakeMotorID, rev::CANSparkMax::MotorType::kBrushless);
-    intake_pin = new frc::Solenoid(kIntakePinID);
+    intake_pin = new frc::Solenoid(kIntakeMotorID);
     
     // Initialize Intake System Container Object using Intake Motor & Intake Holding Solenoid
     intake = new Intake(intake_motor, intake_pin);
@@ -164,6 +164,17 @@ void Robot::RobotInit()
   autonomous = new Autonomous(timer, spark_drive);
 
   std::cout << "Robot Intialized with " << enabled_subsystems << " Subsystems." << std::endl;
+  test = new Diagnostic(joystick_1,
+    joystick_2,
+    spark_drive,
+    intake,
+    geneva_motor,
+    shooter_motor,
+    aim_motor,
+    color_motor,
+    climber,
+    punch
+    );
 }
 
 /**
@@ -381,10 +392,9 @@ void Robot::TeleopPeriodic()
   }
 }
 
-void Robot::TestPeriodic() 
-{
-  // test->run();
-  spark_drive->Test(joystick_1);
+void Robot::TestPeriodic() {
+  std::cout << "Value is:" << joystick_1->GetRawAxis(1)<< std::endl;
+  test->run();
 }
 #ifndef RUNNING_FRC_TESTS
 int main() { return frc::StartRobot<Robot>(); }

@@ -50,10 +50,15 @@ const int kIntakeMotorID = 5;
 const int kGenevaMotorID = 6;
 const int kFlyWheelMotorID = 7;
 const int kAimMotorID = 8;
-const int kColorWheelMotorID = 9;
+//const int kColorWheelMotorID = 9;
 const int kClimbTelescopeMotorID = 10;
 const int kClimbWinchMotorID = 11;
 
-const int kIntakePinID = 0;
-const int kColorWheelSolenoidID = 1;
-const int kPunchSolenoidID = 2;
+const int kClimbMotorID = 11;
+const int kWinchMotorID = 12;
+
+const int kColorWheelMotorID = 4;
+
+const int kPunchSolenoidID = 1;
+const int kColorWheelSolenoidID = 4;
+
