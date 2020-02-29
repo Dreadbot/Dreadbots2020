@@ -68,10 +68,10 @@ void TeleopFunctions::ShooterFunction(){
        // printf("joystick_addr = %d \n",js1);
         if(js1->GetRawButton(shooterButton)){
          //Hard coding power rn
-         shooter->Shoot(0.2);
+         shooter->Shoot(1000);
         }
         else{
-             shooter->Shoot(0.00);
+             shooter->Shoot(0);
          }
          
          

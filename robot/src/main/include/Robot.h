@@ -89,7 +89,7 @@ class Robot : public frc::TimedRobot {
   const bool kDriveEnabled = true;
   const bool kClimbEnabled = false;
   const bool kShooterEnabled = true;
-  const bool kRotateToAngleEnabled = true;
+  const bool kRotateToAngleEnabled = false;
   const bool kIntakeEnabled = true;
   const bool kFeederEnabled = true;
   const bool kTrajectoryEnabled = false;
@@ -109,6 +109,7 @@ class Robot : public frc::TimedRobot {
     Feeder *feeder;
     Shooter *shooter;
     Manipulator *manipulator;
+    double ContinuousShooterSpeed = 0.0;
   TeleopFunctions *teleop_functions;
   Climber *climber;
   rev::CANSparkMax *climb_winch;

@@ -33,13 +33,13 @@ void Teleoperated::HandleIntakeInputs()
     if(joystick_2->GetRawButton(kIntakeButton))
     {
       // Set Speed to -3750 RPM (Negative -> Intake)
-      manipulator->GetIntake()->SetSpeed(-1500);
+      manipulator->GetIntake()->SetSpeed(-3000);
     }
     // A Button for Outtake
     else if(joystick_2->GetRawButton(kOuttakeButton))
     {
       // Set Speed to 3750 RPM (Positive -> Outtake)
-      manipulator->GetIntake()->SetSpeed(1500);
+      manipulator->GetIntake()->SetSpeed(3000);
     }
     else
     {
@@ -58,7 +58,7 @@ void Teleoperated::HandleShooterInputs()
     {
       manipulator->GetShooter()->SetShootingPercentOutput(-0.8);
       // Continually Shoot
-      manipulator->ContinuousShoot(0, 0.4);
+      manipulator->ContinuousShoot(0, 0.4, 5000);
     }
     else
     {

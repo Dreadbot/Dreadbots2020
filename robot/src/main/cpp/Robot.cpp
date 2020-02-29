@@ -130,21 +130,20 @@ void Robot::RobotInit()
 
   // Initialize Manipulator Container Object using Intake, Feeder, and Shooter Objects
   manipulator = new Manipulator(intake, feeder, shooter);
-
   // Setup ColorWheel System
-  std::cout << "Color Wheel Subsystem Setup..." << std::endl;
-  std::cout << " ---> ENABLED: " << std::boolalpha << kColorWheelEnabled << std::endl;
-  if(kColorWheelEnabled)
-  {
-    ++enabled_subsystems;
+  // std::cout << "Color Wheel Subsystem Setup..." << std::endl;
+  // std::cout << " ---> ENABLED: " << std::boolalpha << kColorWheelEnabled << std::endl;
+  // if(kColorWheelEnabled)
+  // {
+  //   ++enabled_subsystems;
 
-    // Define Internal Subsystems to Pass into ColorWheel Container Class
-    color_motor = new WPI_TalonSRX(kColorWheelMotorID);
-    color_sol = new frc::Solenoid(kColorWheelSolenoidID);
+  //   // Define Internal Subsystems to Pass into ColorWheel Container Class
+  //   color_motor = new WPI_TalonSRX(kColorWheelMotorID);
+  //   color_sol = new frc::Solenoid(kColorWheelSolenoidID);
 
-    // Define ColorWheel Object
-    color_wheel = new ColorWheel();
-  }
+  //   // Define ColorWheel Object
+  //   color_wheel = new ColorWheel();
+  // }
 
   // Setup Climber System
   std::cout << "Climb Subsystem Setup..." << std::endl;
@@ -214,6 +213,8 @@ void Robot::TeleopInit()
   {
     teleoperated->HandleTeleopInitIntake();
   }
+
+  ContinuousShooterSpeed = frc::SmartDashboard::GetNumber("ContinuousShoot() shooter_rpm", 0.0);
 }
 
 void Robot::TeleopPeriodic() 
@@ -227,7 +228,26 @@ void Robot::TeleopPeriodic()
   std::cout << "Shooter Subsystem Teleoperated Periodic Call" << std::endl;
   if(kShooterEnabled)
   {
-    teleoperated->HandleShooterInputs();
+    std::cout << "*********************Geneva switch: " << std::boolalpha << feeder->GetGenevaSwitchState() << std::endl;
+    // Utility for Adjusting Hood or Aim Motor.
+    shooter->SetAdjusterPercentOutput(joystick_2->GetRawAxis(w_axis));
+
+    // B Button for Shoot
+    if(joystick_2->GetRawButton(kShootButton))
+    {
+      // Continually Shoot
+      manipulator->ContinuousShoot(0, 0.4, 2000);
+    }
+    else if(joystick_2->GetRawButton(kAdvanceGenevaButton)){
+      manipulator->SensorAdvanceGeneva(true);
+    }
+    else{
+      manipulator->ResetManipulatorElements();
+      manipulator->SensorAdvanceGeneva(false);
+    }
+
+    // Internal Check for Advancing Geneva without Shooting
+    manipulator->SensorAdvanceGeneva(joystick_2->GetRawButton(kAdvanceGenevaButton));
   }
 
   std::cout << "Drive Subsystem Teleoperated Periodic Call" << std::endl;
@@ -251,7 +271,26 @@ void Robot::TeleopPeriodic()
   std::cout << "Color Wheel Subsystem Teleoperated Periodic Call" << std::endl;
   if(kColorWheelEnabled)
   {
-    teleoperated->HandleColorWheelInputs();
+    //To do: ColorWheel class is taking care of button presses, but we will need
+    //To do: We also probably need to pass in the selenoid, we can consider passing all of these
+    //into the colorwheel constructor which seems to be the pattern for the other classes
+    // color_wheel->RotateToNumber(color_motor, joystick_2);
+    // //To do: Get color target from smart dashboard, as this value will be given to us
+    // //from field during play
+    // frc::Color *targetcolor = new frc::Color(kGreenTarget);
+    // color_wheel->RotateToColor(color_motor, joystick_2, targetcolor);
+
+    //Old code left here for reference until we are sure we don't want any of it
+    // color_wheel->GetCurrentColor();
+    // if(joystick_1->GetRawButton(kDeployColorWheelButton)){
+    //   color_wheel->SetExtended(true);
+    // }
+    // else if(joystick_1->GetRawButton(kRetractColorWheelButton)){
+    //   color_wheel->SetExtended(false);
+    // }
+    // else if(joystick_1->GetRawButton(kColorWheelColorControl)){
+    //   color_wheel->TurnToColor(kRedTarget);
+    // }
   }
 }
 
