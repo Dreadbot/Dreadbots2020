@@ -160,8 +160,15 @@ void Robot::RobotInit()
     climber = new Climber(climb_telescope, climb_winch);
   }
 
-  // Define the Autonomous Container Class using SparkDrive and Robot's Timer Object.
+  // Define the Autonomous & Teleoperated Container Class using SparkDrive and Robot's Timer Object.
   autonomous = new Autonomous(timer, spark_drive);
+  teleoperated = new Teleoperated(joystick_1, 
+    joystick_2,
+    manipulator,
+    spark_drive,
+    climber,
+    teleop_functions,
+    color_wheel);
 
   std::cout << "Robot Intialized with " << enabled_subsystems << " Subsystems." << std::endl;
   test = new Diagnostic(joystick_1,
@@ -177,27 +184,8 @@ void Robot::RobotInit()
     );
 }
 
-/**
- * This function is called every robot packet, no matter the mode. Use
- * this for items like diagnostics that you want ran during disabled,
- * autonomous, teleoperated and test.
- *
- * <p> This runs after the mode specific periodic functions, but before
- * LiveWindow and SmartDashboard integrated updating.
- */
 void Robot::RobotPeriodic() {}
 
-/**
- * This autonomous (along with the chooser code above) shows how to select
- * between different autonomous modes using the dashboard. The sendable chooser
- * code works with the Java SmartDashboard. If you prefer the LabVIEW Dashboard,
- * remove all of the chooser code and uncomment the GetString line to get the
- * auto name from the text box below the Gyro.
- *
- * You can add additional auto modes by adding additional comparisons to the
- * if-else structure below with additional strings. If using the SendableChooser
- * make sure to add them to the chooser code above as well.
- */
 void Robot::AutonomousInit() {
   std::cout << "Robot Entering Autonomous Mode..." << std::endl;
   
@@ -224,13 +212,20 @@ void Robot::AutonomousPeriodic()
 void Robot::TeleopInit() 
 {
   std::cout << "Robot Entering Teleoperated Mode..." << std::endl;
-  spark_drive->GetGyroscope()->ZeroYaw();
+  
+  // Zero Yaw on Gyro
+  if(kDriveEnabled)
+  {
+    teleoperated->HandleTeleopInitDrive();
+  }
 
   // Deploy the Intake Mechanism from its "Locked" State.
   if(kIntakeEnabled)
   {
-    intake->DeployIntake();
+    teleoperated->HandleTeleopInitIntake();
   }
+
+  ContinuousShooterSpeed = frc::SmartDashboard::GetNumber("ContinuousShoot() shooter_rpm", 0.0);
 }
 
 void Robot::TeleopPeriodic() 
@@ -238,23 +233,7 @@ void Robot::TeleopPeriodic()
   std::cout << "Intake Subsystem Teleoperated Periodic Call" << std::endl;
   if(kIntakeEnabled)
   {
-    // X Button for Intake
-    if(joystick_2->GetRawButton(kIntakeButton))
-    {
-      // Set Speed to -3750 RPM (Negative -> Intake)
-      intake->SetSpeed(-3750);
-    }
-    // A Button for Outtake
-    else if(joystick_2->GetRawButton(kOuttakeButton))
-    {
-      // Set Speed to 3750 RPM (Positive -> Outtake)
-      intake->SetSpeed(3750);
-    }
-    else
-    {
-      // When no Intake/Outtake Buttons Are Pressed, Set Intake Motor to 0 RPM.
-      intake->SetSpeed(0);
-    }
+    teleoperated->HandleIntakeInputs();
   }
 
   std::cout << "Shooter Subsystem Teleoperated Periodic Call" << std::endl;
@@ -268,13 +247,13 @@ void Robot::TeleopPeriodic()
     if(joystick_2->GetRawButton(kShootButton))
     {
       // Continually Shoot
-      manipulator->ContinuousShoot(0, 0.4);
+      manipulator->ContinuousShoot(0, 0.4, 2000);
     }
     else if(joystick_2->GetRawButton(kAdvanceGenevaButton)){
       manipulator->SensorAdvanceGeneva(true);
     }
     else{
-      // manipulator->ResetManipulatorElements();
+      manipulator->ResetManipulatorElements();
       manipulator->SensorAdvanceGeneva(false);
     }
 
@@ -285,85 +264,19 @@ void Robot::TeleopPeriodic()
   std::cout << "Drive Subsystem Teleoperated Periodic Call" << std::endl;
   if(kDriveEnabled)
   {
-    // Call SparkDrive::TankDrive() using the drivetrain motors
-    spark_drive->TankDrive
-    (
-      joystick_1->GetRawAxis(kForwardBackwardAxis), 
-      joystick_1->GetRawAxis(kRotAxis), 
-      joystick_1->GetRawButton(kTurboButton), 
-      joystick_1->GetRawButton(kTurtleButton),
-      0.05
-    );
+    teleoperated->HandleDriveInputs();
   }
 
   std::cout << "Climb Subsystem Teleoperated Periodic Call" << std::endl;
   if(kClimbEnabled)
   {
-    if(joystick_1->GetRawButton(kExtendClimbButton))
-    {
-      climber->SetTelescope(0.5);
-    }
-    else if(joystick_1->GetRawButton(kRetractClimbButton))
-    {
-      climber->SetTelescope(-0.5);
-    }
-    else
-    {
-      climber->SetTelescope(0.0);
-    }
-
-    if(joystick_1->GetRawButton(y_button))
-    {
-      climber->SetWinch(0.2);
-    }
-    else if(joystick_1->GetRawButton(b_button))
-    {
-      climber->SetWinch(-0.2);
-    }
-    else
-    {
-      climber->SetWinch(0.0);
-    }
+    teleoperated->HandleClimbInputs();
   }
 
   std::cout << "Rotate To Angle Feature Teleoperated Periodic Call" << std::endl;
   if(kRotateToAngleEnabled)
   {
-    frc::SmartDashboard::PutNumber("Current Angle", spark_drive->GetGyroscope()->GetYaw());
-    //Check if vision is actually seeing anything
-    if(frc::SmartDashboard::GetNumber("detectionCount", lastCount) == lastCount)
-    {
-      staleCount++; //A variable to show how "stale" the detectionCount is
-    }
-    else
-    {
-      //if vision does see a target, then the count is no longer stale
-      staleCount = 0;
-    }
-
-    //update the latest count, for use on next loop iteration
-    lastCount = frc::SmartDashboard::GetNumber("detectionCount", lastCount);
-
-    //if we are done turning (not currently turning), then update angle from vision
-    if(teleop_functions->GetTurnStatus())
-    {
-      selectedAngle = (spark_drive->GetGyroscope()->GetYaw() + frc::SmartDashboard::GetNumber("selectedAngle", 0.0));
-    }
-
-    //Only turn when we hold the button, and we have seen the target recently
-    if(joystick_1->GetRawButton(kAutoAimButton) && staleCount < 5)
-    {
-      teleop_functions->TurnToAngle(selectedAngle, .002);
-      staleCount = 0;
-      manipulator->PrepareShot(1000, 10);
-    }
-    else if(!joystick_1->GetRawButtonReleased(kAutoAimButton))
-    {
-      //when we release the button, then set motors to zero
-      //this eliminates the constant turn after turn is done.
-      spark_drive->TankDrive(0,0,false,false);
-      teleop_functions->SetTurnStatus(true);
-    }
+    teleoperated->HandleRotateToAngleInputs();
   }
 
   std::cout << "Color Wheel Subsystem Teleoperated Periodic Call" << std::endl;

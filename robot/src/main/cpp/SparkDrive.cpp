@@ -119,8 +119,8 @@ void SparkDrive::TankDrive(double y_axis,
   // Calculating Final Speed by adding both the
   // Forward/Backward speed (y_speed) and Rotation
   // Speeds (rot_speed)
-  left_final_speed = -y_speed + rot_speed;
-  right_final_speed = y_speed + rot_speed;
+  left_final_speed = -y_speed - rot_speed;
+  right_final_speed = y_speed - rot_speed;
 
   // Setting the final speed to a max of 100%
   // To prevent any errors if we reach the limit.

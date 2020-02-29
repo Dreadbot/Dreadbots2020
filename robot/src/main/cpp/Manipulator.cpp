@@ -1,21 +1,27 @@
 #include <Manipulator.h>
-#include "frc/DigitalInput.h"
 
 Manipulator::Manipulator(Intake *intake, Feeder *feeder, Shooter *shooter){
     m_intake = intake;
     m_feeder = feeder;
     m_shooter = shooter;
-    shooterState = kPunching;
+    shooterState = kRamping;
 }
 void Manipulator::PrepareShot(int rpm, int aim_position){
     m_shooter->Shoot(rpm);
     m_shooter->AimHeight(aim_position);
 }
-void Manipulator::ContinuousShoot(int aim_position, int geneva_speed){
+void Manipulator::ContinuousShoot(int aim_position, double geneva_speed, int shooting_rpm){
     //Finite State Machine logic to switch between states
+    frc::SmartDashboard::PutNumber("GetShootingSpeed(): ", m_shooter->GetShootingSpeed());
+    frc::SmartDashboard::PutNumber("ShooterState: ", shooterState);
+    frc::SmartDashboard::PutBoolean("Geneva Limit Switch", m_feeder->GetGenevaSwitchState());
+    frc::SmartDashboard::PutBoolean("If Statement", (shooterState == kRamping && abs(abs(m_shooter->GetShootingSpeed()) - shooting_rpm) < 100));
 
+    if(shooterState == kRamping && abs(abs(m_shooter->GetShootingSpeed()) - shooting_rpm) < 250){
+        shooterState = kPunching;
+    }
     //Change state based on a counter so that the solenoid has time to extend
-    if(shooterState == kPunching && state_change_counter > kCountsToExtend){
+    else if(shooterState == kPunching && state_change_counter > kCountsToExtend){
         shooterState = kRetracting;
         state_change_counter = 0;
     }
@@ -32,10 +38,13 @@ void Manipulator::ContinuousShoot(int aim_position, int geneva_speed){
 
     //Change state back to the start once the geneva drive has made it back to the limit switch
     else if(shooterState == kAdvancing && m_feeder->GetGenevaSwitchState())
-        shooterState = kPunching;
+        shooterState = kRamping;
 
     //Choose behavior based on the FSM
     switch(shooterState){
+        case(kRamping):
+             m_feeder->SetSpin(0);
+             break;
         case(kPunching):
             m_feeder->SetPunchExtension(true);//Extend the punch
             state_change_counter++;
@@ -51,8 +60,7 @@ void Manipulator::ContinuousShoot(int aim_position, int geneva_speed){
     
     //Set the position of the aim plate and always drive the flywheel
     m_shooter->AimHeight(aim_position);
-    m_shooter->Shoot(-0.5);
-    std::cout << "state: "<< shooterState << std::endl;
+    m_shooter->Shoot(-shooting_rpm);
 }
 void Manipulator::ContinuousIntake(){
     
@@ -121,4 +129,19 @@ void Manipulator::GenevaSetSpin(double power){
 }
 int Manipulator::GetSensorAdvanceGenevaState(){
     return m_feeder->GetSensorAdvanceGenevaState();
+}
+
+Intake* Manipulator::GetIntake()
+{
+    return m_intake;
+}
+
+Feeder* Manipulator::GetFeeder()
+{
+    return m_feeder;
+}
+
+Shooter* Manipulator::GetShooter()
+{
+    return m_shooter;
 }

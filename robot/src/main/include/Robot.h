@@ -21,6 +21,7 @@
 #include "RamseteTimedFollower.h"
 #include "RobotUtilities.h"
 #include "SparkDrive.h"
+#include "Teleoperated.h"
 #include "TeleopFunctions.h"
 #include "TrajectoryGenerationUtility.h"
 #include "Manipulator.h"
@@ -62,8 +63,11 @@ class Robot : public frc::TimedRobot {
   // Drive Objects
   SparkDrive* spark_drive;
 
-  //Autonomous Objectss
+  //Autonomous Object Container
   Autonomous *autonomous;
+
+  // Teleoperated Object Container
+  Teleoperated* teleoperated;
 
   //Ultrasonic Objecttss
   Ultra *ultra;
@@ -105,6 +109,7 @@ class Robot : public frc::TimedRobot {
     Feeder *feeder;
     Shooter *shooter;
     Manipulator *manipulator;
+    double ContinuousShooterSpeed = 0.0;
   TeleopFunctions *teleop_functions;
   Climber *climber;
   rev::CANSparkMax *climb_winch;

@@ -23,9 +23,16 @@ class Shooter
    */
   Shooter(rev::CANSparkMax* shooting_motor, rev::CANSparkMax* aim_motor);
 
-  void Shoot(double shooter_speed);
+  void Shoot(int rpm);
   void AimHeight(double position_ticks);
-  void SetAimHeightP(double p); 
+  void SetAimHeightP(double p);
+
+  /**
+   * Return the actual speed in rpms of the flywheel
+   * 
+   * 
+   */
+  int GetShootingSpeed(); 
 
   /**
    * Utility Method to Set the Percent Output of the Shooting Motor
@@ -44,6 +51,7 @@ class Shooter
  private:
   rev::CANSparkMax* shooting_motor;
   rev::CANPIDController* shooting_motor_pid_controller;
+  rev::CANEncoder *shooter_encoder;
   double speed;
 
   rev::CANSparkMax* aiming_motor; 
