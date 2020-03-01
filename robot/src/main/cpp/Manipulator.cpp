@@ -6,9 +6,37 @@ Manipulator::Manipulator(Intake *intake, Feeder *feeder, Shooter *shooter){
     m_shooter = shooter;
     shooterState = kRamping;
 }
-void Manipulator::PrepareShot(int rpm, double aim_position){
-    m_shooter->Shoot(-rpm);
+void Manipulator::PrepareShot(){
+    int rpm;
+    double aim_position;
+    distance = frc::SmartDashboard::GetNumber("selectedDistance", 100);
+    if(distance <= 60 || (distance > 60 && distance <= 90)){
+        rpm = ShootingSpeeds[0];
+        aim_position = HoodPositions[0];
+    }
+    else if(distance > 90 && distance <= 150){
+        rpm = ShootingSpeeds[1];
+        aim_position = HoodPositions[1];
+    }
+    else if(distance > 150 && distance <= 210){
+        rpm = ShootingSpeeds[2];
+        aim_position = HoodPositions[2];
+    }
+    else if(distance > 210 && distance <= 270){
+        rpm = ShootingSpeeds[3];
+        aim_position = HoodPositions[3];
+    }
+    else if(distance > 270){
+        rpm = ShootingSpeeds[4];
+        aim_position = HoodPositions[4];
+    }
+    else
+    {
+        rpm = 0;
+        aim_position = 0.5;
+    }
     m_shooter->SetAdjusterPosition(aim_position);
+    m_shooter->Shoot(rpm);
 }
 void Manipulator::ContinuousShoot(int aim_position, double geneva_speed, int shooting_rpm){
     //Finite State Machine logic to switch between states

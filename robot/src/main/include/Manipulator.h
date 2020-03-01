@@ -9,7 +9,7 @@ class Manipulator
 {
     public:
         Manipulator(Intake *intake, Feeder *feeder, Shooter *shooter);
-        void PrepareShot(int flywheel_rpm, double aim_position);
+        void PrepareShot();
         void ContinuousShoot(int aim_position, double geneva_speed, int shooting_rpm);
         void ContinuousIntake();
         void ResetManipulatorElements();
@@ -39,4 +39,8 @@ class Manipulator
             move, moving, stopped
         };
         int genevaState = stopped;
+        
+        int ShootingSpeeds [5] = {2500, 3000, 3500, 4500, 5600};
+        double HoodPositions [5] = {0, .2, .4, .6, 1};
+        int distance;
 };

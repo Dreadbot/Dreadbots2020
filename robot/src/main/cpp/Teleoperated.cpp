@@ -147,7 +147,7 @@ void Teleoperated::HandleRotateToAngleInputs()
     double pValue = frc::SmartDashboard::GetNumber("Turn P Value", 0.002);
     teleop_functions->TurnToAngle(selectedAngle, pValue);
     staleCount = 0;
-    manipulator->PrepareShot(frc::SmartDashboard::GetNumber("Target Speed", 4000), frc::SmartDashboard::GetNumber("Hood Position", 0.5));
+    manipulator->PrepareShot();
   }
   else if(joystick_2->GetRawButtonReleased(kAutoAimButton))
   {
