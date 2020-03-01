@@ -135,10 +135,23 @@ while(True):
         checked_pixels = 0
         #Contour filtration
         if w>30 and w<300 and h>10 and h<150:
-            #Draw the bounding box with a point in the center
+            confidence = 0
+            wh_ratio = w/h
+            wh_ratio_offset = abs(2.3 - wh_ratio)
+            wh_ratio_rating = (-51.510*(wh_ratio_offset**2)) + (0.144*wh_ratio_offset) + 1.025
+            if wh_ratio_rating > 0.2:
+                blue = 0
+                green = 255
+                red = 0
+            else:
+                blue = 0
+                green = 255
+                red = 0
+
+	    #Draw the bounding box with a point in the center
             #img_to_push = cv2.add(img, np.array([75.0]))
 
-            cv2.rectangle(img_to_push, (x,y), (x+w,y+h), (0,255,0), 2) #Thank you moth
+            cv2.rectangle(img_to_push, (x,y), (x+w,y+h), (red, green, blue), 2) #Thank you moth
             cv2.circle(img_to_push, (int(x+(w/2)),int(y+(h/2))), 5, (255,0,0))
             target = [int(x+(w/2)), int(y+(h/2))]
 
@@ -154,17 +167,28 @@ while(True):
             fin_angle_hori = ((math.atan((target[0]-(img_w/2))/flength)))*(180/math.pi)
 
             #Calculate vertical angle for distance calculations
-            fin_angle_vert = ((((math.atan((img_h/2)-target[1]))*-1)/flength)*(180/math.pi)) + cam_offset
-            distance = target_height / math.tan(fin_angle_vert*(math.pi/180))
+	    #                 arctan(centerline - targety) * 180/pi     all + camera offset
+            fin_angle_raw_rad = math.atan(((img_h/2) - y)/flength)
+            fin_angle_deg = math.degrees(fin_angle_raw_rad) + cam_offset
+            fin_angle_rad = math.radians(fin_angle_deg)
+            distance = target_height / math.tan(fin_angle_rad)
+
+
+            #fin_angle_vert = math.degrees(math.atan((img_h/2) - target[1])/flength) + cam_offset
+            #distance = target_height * 1/ math.tan(radians(fin_angle_vert))
             target_found = True
 
         else:
             print("No contour")
             #img_to_push = cv2.add(img, np.array([75.0]))
 
+        #BEGIN PC DETECTION
+        #Values 
+
     if target_found:
         #Push final angle to shuffleboard
         tbl.putNumber("selectedAngle", fin_angle_hori)
+        tbl.putNumber("selectedDistance", distance)
         tbl.putNumber("detectionCount", counter)
     counter += 1
 
@@ -174,9 +198,23 @@ while(True):
     if cs_bool:
         print("Drive bool:", tbl.getBoolean("driveCam", False))
         if tbl.getBoolean("driveCam", False) == True:
+            scale_factor = 10
+
+            width = int(drive_img.shape[1] * scale_factor / 100)
+            height = int(drive_img.shape[0] * scale_factor / 100)
+            dim = (width, height)
+            drive_resized = cv2.resize(drive_img, dim, interpolation = cv2.INTER_AREA)
+
             outputStream.putFrame(drive_img)
         if tbl.getBoolean("driveCam", False) == False:
-            outputStream.putFrame(img_to_push)
+            scale_factor = 70
+
+            width = int(img_to_push.shape[1] * scale_factor / 100)
+            height = int(img_to_push.shape[0] * scale_factor / 100)
+            dim = (width, height)
+
+            img_to_push_resized = cv2.resize(img_to_push, dim, interpolation = cv2.INTER_AREA)
+            outputStream.putFrame(img_to_push_resized)
 
     os.system('clear')
     print("Loop #: ", counter)
@@ -185,8 +223,8 @@ while(True):
         print("MEGA FREAKING DUB")
 
     if target_found:
-        print("Turn to ", fin_angle_hori, " Distance:", distance, " Calculated angle:", fin_angle_vert, " (X, Y):", target[0], target[1])
-
+        print("Turn to ", fin_angle_hori, " Distance:", distance, " Calculated angle:", fin_angle_deg, " (X, Y):", target[0], target[1], " (CX, CY):", img_w/2, img_h/2)
+        print("CONFIDENCE CRITERIA  w/h ratio conf:", wh_ratio_rating)
     if t_error:
         print("TypeError")
 
