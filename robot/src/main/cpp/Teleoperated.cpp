@@ -51,7 +51,7 @@ void Teleoperated::HandleIntakeInputs()
 void Teleoperated::HandleShooterInputs()
 {
   // Utility for Adjusting Hood or Aim Motor.
-    manipulator->GetShooter()->SetAdjusterPercentOutput(joystick_2->GetRawAxis(w_axis));
+    //manipulator->GetShooter()->SetAdjusterPercentOutput(joystick_2->GetRawAxis(w_axis));
 
     // B Button for Shoot
     if(joystick_2->GetRawButton(kShootButton))
@@ -122,6 +122,7 @@ void Teleoperated::HandleClimbInputs()
 void Teleoperated::HandleRotateToAngleInputs()
 {
   frc::SmartDashboard::PutNumber("Current Angle", spark_drive->GetGyroscope()->GetYaw());
+  //std::cout << "Current Angle: " << spark_drive->GetGyroscope()->GetYaw() << std::endl;
   //Check if vision is actually seeing anything
   if(frc::SmartDashboard::GetNumber("detectionCount", lastCount) == lastCount)
   {
@@ -132,7 +133,6 @@ void Teleoperated::HandleRotateToAngleInputs()
     //if vision does see a target, then the count is no longer stale
     staleCount = 0;
   }
-
   //update the latest count, for use on next loop iteration
   lastCount = frc::SmartDashboard::GetNumber("detectionCount", lastCount);
 
@@ -141,19 +141,19 @@ void Teleoperated::HandleRotateToAngleInputs()
   {
     selectedAngle = (spark_drive->GetGyroscope()->GetYaw() + frc::SmartDashboard::GetNumber("selectedAngle", 0.0));
   }
-
   //Only turn when we hold the button, and we have seen the target recently
-  if(joystick_1->GetRawButton(kAutoAimButton) && staleCount < 5)
+  if(joystick_2->GetRawButton(kAutoAimButton) && staleCount < 5)
   {
-    teleop_functions->TurnToAngle(selectedAngle, .002);
+    double pValue = frc::SmartDashboard::GetNumber("Turn P Value", 0.002);
+    teleop_functions->TurnToAngle(selectedAngle, pValue);
     staleCount = 0;
-    manipulator->PrepareShot(1000, 10);
+    manipulator->PrepareShot(frc::SmartDashboard::GetNumber("Target Speed", 4000), frc::SmartDashboard::GetNumber("Hood Position", 0.5));
   }
-  else if(!joystick_1->GetRawButtonReleased(kAutoAimButton))
+  else if(joystick_2->GetRawButtonReleased(kAutoAimButton))
   {
     //when we release the button, then set motors to zero
     //this eliminates the constant turn after turn is done.
-    spark_drive->TankDrive(0,0,false,false);
+    //spark_drive->TankDrive(0,0,false,false);
     teleop_functions->SetTurnStatus(true);
   }
 }

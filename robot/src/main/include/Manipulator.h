@@ -9,7 +9,7 @@ class Manipulator
 {
     public:
         Manipulator(Intake *intake, Feeder *feeder, Shooter *shooter);
-        void PrepareShot(int flywheel_rpm, int aim_position);
+        void PrepareShot(int flywheel_rpm, double aim_position);
         void ContinuousShoot(int aim_position, double geneva_speed, int shooting_rpm);
         void ContinuousIntake();
         void ResetManipulatorElements();

@@ -6,9 +6,9 @@ Manipulator::Manipulator(Intake *intake, Feeder *feeder, Shooter *shooter){
     m_shooter = shooter;
     shooterState = kRamping;
 }
-void Manipulator::PrepareShot(int rpm, int aim_position){
-    m_shooter->Shoot(rpm);
-    m_shooter->AimHeight(aim_position);
+void Manipulator::PrepareShot(int rpm, double aim_position){
+    m_shooter->Shoot(-rpm);
+    m_shooter->SetAdjusterPosition(aim_position);
 }
 void Manipulator::ContinuousShoot(int aim_position, double geneva_speed, int shooting_rpm){
     //Finite State Machine logic to switch between states

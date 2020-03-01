@@ -167,6 +167,7 @@ void Robot::RobotInit()
 
   // Define the Autonomous & Teleoperated Container Class using SparkDrive and Robot's Timer Object.
   autonomous = new Autonomous(timer, spark_drive);
+  teleop_functions = new TeleopFunctions(joystick_2, shooter, spark_drive);
   teleoperated = new Teleoperated(joystick_1, 
     joystick_2,
     manipulator,
@@ -176,6 +177,8 @@ void Robot::RobotInit()
     color_wheel);
 
   std::cout << "Robot Intialized with " << enabled_subsystems << " Subsystems." << std::endl;
+  frc::SmartDashboard::PutNumber("Min Rot Speed", 0.01);
+  frc::SmartDashboard::PutNumber("Turn P Value", 0.008);
 }
 
 void Robot::RobotPeriodic() {}
@@ -257,13 +260,14 @@ void Robot::TeleopPeriodic()
       shooter->SetUpperLimit(shooter->GetHoodPosition());
       shooter->SetAdjusterPercentOutput(0.75);
     }
-    else if (shooter->GetUpperLimitBool() && shooter->GetLowerLimitBool()){
+    else if (shooter->GetUpperLimitBool() && shooter->GetLowerLimitBool() && !shooter->GetAimReadiness()){
       shooter->SetAimReadiness(true);
+      shooter->SetAdjusterPosition(0.5);
     }
     if(shooter->GetAimReadiness()){
       position = frc::SmartDashboard::GetNumber("Hood Position", 0.5);
       //std::cout << "Adjusting Position to: " << position << std::endl;
-      shooter->SetAdjusterPosition(position);
+      //shooter->SetAdjusterPosition(position);
     }
 
 
@@ -292,7 +296,7 @@ void Robot::TeleopPeriodic()
   }
 
   //std::cout << "Drive Subsystem Teleoperated Periodic Call" << std::endl;
-  if(kDriveEnabled)
+  if(kDriveEnabled && teleop_functions->GetTurnStatus())
   {
     teleoperated->HandleDriveInputs();
   }
@@ -306,6 +310,7 @@ void Robot::TeleopPeriodic()
   //std::cout << "Rotate To Angle Feature Teleoperated Periodic Call" << std::endl;
   if(kRotateToAngleEnabled)
   {
+    frc::SmartDashboard::PutBoolean("turn complete?", teleop_functions->GetTurnStatus());
     teleoperated->HandleRotateToAngleInputs();
   }
 
