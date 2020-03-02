@@ -22,8 +22,8 @@ class TeleopFunctions
         int shooterButton = 1;
 
      //TurnToAngle vars
-        double current_rotation_rate, proportion;
-        const double slop = 1.5, min_rotation_speed = .27;
+        double current_rotation_rate, proportion, min_rotation_speed = 0;
+        const double slop = 1.5; 
         int TURN_BUTTON_TIMEOUT;
         const int timeToAdjust = 10;
         bool turn_complete = true;

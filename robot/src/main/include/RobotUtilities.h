@@ -17,15 +17,15 @@ enum JoystickInputs
   back_button = 9, start_button = 10, l_trigger = 11, r_trigger = 12
 };
 enum Joystick1Layout{
-    kForwardBackwardAxis = x_axis, kRotAxis = z_axis, kShootButton = a_button, kAutoAimButton = x_button,
-    kExtendClimbButton = right_trigger, kRetractClimbButton = left_trigger, kWinchButton = y_button,
-     kTurtleButton = left_bumper, kTurboButton = right_bumper 
+    kForwardBackwardAxis = y_axis, kRotAxis = z_axis, kExtendClimbButton = start_button, 
+    kRetractClimbButton = back_button, kWinchButton = x_button, kTurtleButton = right_bumper, 
+    kTurboButton = right_trigger
 }; 
 enum Joystick2Layout{
-    kRetractColorWheelButton = a_button, kDeployColorWheelButton = y_button, kColorWheelColorControl = left_trigger, 
-    kColorWheelRotationControl = right_trigger, kIntakeAxis = y_axis, kRegressGenevaButton = left_bumper, 
-    kAdvanceGenevaButton = right_bumper, kIncreaseAimOffsetPOV = 90, kDecreaseAimOffsetPOV = 270,
-    kCameraSwitchButton = start_button
+    kShootButton = b_button, kIntakeButton = x_button, kOuttakeButton = a_button, kAutoAimButton = y_button,
+    kRegressGenevaButton = left_bumper, kAdvanceGenevaButton = right_bumper, kRetractColorWheelButton = left_trigger,
+    kDeployColorWheelButton = right_trigger, kColorWheelColorControl = start_button, kColorWheelRotationControl = back_button, 
+    kIncreaseAimOffsetPOV = 90, kDecreaseAimOffsetPOV = 270,
 };
 
 const frc::Color kBlueTarget = frc::Color(0.143, 0.427, 0.429);
@@ -34,22 +34,26 @@ const frc::Color kRedTarget = frc::Color(0.561, 0.232, 0.114);
 const frc::Color kYellowTarget = frc::Color(0.361, 0.524, 0.113);
 
 const int kPrimaryDriverJoystickID = 0;
+const int kSecondaryDriverJoystickID = 1;
 
-//changed values for gamakichi
-const int kUltraLeftFrontMotorID = 10;
-const int kUltraRightFrontMotorID = 1;
-const int kUltraLeftBackMotorID = 2;
-const int kUltraRightBackMotorID = 3;
+const int kUltraLeftFrontMotorID = 1;
+const int kUltraRightFrontMotorID = 2;
+const int kUltraLeftBackMotorID = 3;
+const int kUltraRightBackMotorID = 4;
+
+const int kBigSlinkLeftFrontMotorID = 1;
+const int kBigSlinkRightFrontMotorID = 2;
+const int kBigSlinkLeftBackMotorID = 3;
+const int kBigSlinkRightBackMotorID = 4;
 
 const int kIntakeMotorID = 5;
 const int kGenevaMotorID = 6;
 const int kFlyWheelMotorID = 7;
 const int kAimMotorID = 8;
+const int kColorWheelMotorID = 9;
+const int kClimbTelescopeMotorID = 10;
+const int kClimbWinchMotorID = 11;
 
-const int kClimbMotorID = 11;
-
-const int kColorWheelMotorID = 4;
-
-const int kPunchSolenoidID = 1;
-const int kColorWheelSolenoidID = 4;
-
+const int kIntakePinID = 0;
+const int kColorWheelSolenoidID = 1;
+const int kPunchSolenoidID = 2;

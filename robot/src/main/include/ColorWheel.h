@@ -1,44 +1,33 @@
 #pragma once
 
-#include "rev/ColorSensorV3.h"
-#include "rev/ColorMatch.h"
-#include "frc/I2C.h"
-#include "frc/util/color.h"
-#include "ctre/Phoenix.h"
-#include "RobotUtilities.h"
-#include <frc/Joystick.h>
+#include <rev/ColorSensorV3.h>
+#include <rev/ColorMatch.h>
+#include <frc/I2C.h>
+#include <frc/util/color.h>
+#include <ctre/Phoenix.h>
+#include <RobotUtilities.h>
 #include <frc/Solenoid.h>
 
-class ColorWheel
+class ColorWheel{
+    public:
+     ColorWheel();
+     void RotateToNumber(WPI_TalonSRX *motor, frc::Joystick *joystick);
+     void RotateToColor(WPI_TalonSRX *motor, frc::Joystick *joystick, frc::Color *targetcolor);
+    private:
+     void PrintColor(frc::Color color, double colorConfidence);
+     frc::Solenoid *Solenoid;
+
+};
+
+/*class ColorWheel
 {
     public:
-        ColorWheel(WPI_TalonSRX *colorMotor, frc::Solenoid *sol);
-        frc::Color GetCurrentColor();
+        ColorWheel(WPI_TalonSRX *colorMotor);
         void TurnToColor(frc::Color targetColor);
-        void SetColorMatched(bool color_matched);
-        bool GetColorMatched();
-        void RotateToNumber();
-        void SetRotationsComplete(bool rotations_compelete);
-        bool GetRotationsComplete();
-        void SetExtended(bool extended);
-        bool GetExtended();
     private:  
-        
+        frc::Color GetCurrentColor();
         WPI_TalonSRX *m_colorMotor;
-        frc::Solenoid *m_sol;
         rev::ColorSensorV3 *m_colorSensor;
         rev::ColorMatch *m_colorMatch;
         double confidence;
-        bool color_matched;
-
-        
-        enum WheelState{
-            NotSpinning,
-            InitSpinning,
-            Spinning    
-        };
-        WheelState spinState;
-        frc::Color colorState;
-        int NumSpins;
-        bool rotations_complete;
-};
+};*/

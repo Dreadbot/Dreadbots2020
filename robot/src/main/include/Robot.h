@@ -21,11 +21,14 @@
 #include "RamseteTimedFollower.h"
 #include "RobotUtilities.h"
 #include "SparkDrive.h"
+#include "Teleoperated.h"
 #include "TeleopFunctions.h"
 #include "TrajectoryGenerationUtility.h"
 #include "Manipulator.h"
 #include "Autonomous.h"
 #include "ColorWheel.h"
+#include "Ultra.h"
+#include "Climber.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -55,12 +58,23 @@ class Robot : public frc::TimedRobot {
 
   // Input Objects
   frc::Joystick *joystick_1;
+  frc::Joystick *joystick_2;
 
   // Drive Objects
   SparkDrive* spark_drive;
 
-  //Autonomous Objectss
+  //Autonomous Object Container
   Autonomous *autonomous;
+
+  // Teleoperated Object Container
+  Teleoperated* teleoperated;
+
+  //Ultrasonic Objecttss
+  Ultra *ultra;
+
+  //Shooting Objects
+  double position;
+  double P, I, D;
 
   // Trajectory Testing Variables
   double const kIterationSecondsRatio = 0.02;
@@ -76,14 +90,16 @@ class Robot : public frc::TimedRobot {
   int staleCount = 0;
 
   //ENABLED BOOLEANS
-  const bool kDriveEnabled = false;
+  const bool kDriveEnabled = true;
   const bool kClimbEnabled = false;
-  const bool kShooterEnabled = false;
-  const bool kRotateToAngleEnabled = false;
-  const bool kIntakeEnabled = false;
-  const bool kFeederEnabled = false;
+  const bool kShooterEnabled = true;
+  const bool kRotateToAngleEnabled = true;
+  const bool kIntakeEnabled = true;
+  const bool kFeederEnabled = true;
   const bool kTrajectoryEnabled = false;
   const bool kColorWheelEnabled = false;
+
+  int enabled_subsystems;
 
   // Teleop Objects
     //Manipulator Objects
@@ -92,11 +108,16 @@ class Robot : public frc::TimedRobot {
     rev::CANSparkMax *aim_motor;
     rev::CANSparkMax *geneva_motor;
     frc::Solenoid *punch;
+    frc::Solenoid *intake_pin;
     Intake *intake;
     Feeder *feeder;
     Shooter *shooter;
     Manipulator *manipulator;
+    double ContinuousShooterSpeed = 0.0;
   TeleopFunctions *teleop_functions;
+  Climber *climber;
+  rev::CANSparkMax *climb_winch;
+  rev::CANSparkMax *climb_telescope;
   ColorWheel *color_wheel;
   WPI_TalonSRX *color_motor;
   frc::Solenoid *color_sol;

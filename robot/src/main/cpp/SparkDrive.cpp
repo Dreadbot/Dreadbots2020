@@ -31,6 +31,12 @@ SparkDrive::SparkDrive(rev::CANSparkMax *left_front_,
   left_back = left_back_;
   right_back = right_back_;
   
+  // Reset Factory Defaults to Avoid Any Faulty Settings
+  left_front->RestoreFactoryDefaults();
+  right_front->RestoreFactoryDefaults();
+  left_back->RestoreFactoryDefaults();
+  right_back->RestoreFactoryDefaults();
+
   // Gyroscope Definition & 
   // Reset the Gyroscope to a 0 position.
   gyro = new AHRS(frc::SPI::Port::kMXP);
@@ -187,6 +193,33 @@ void SparkDrive::TankDrive(double y_axis,
   left_back->Set(left_final_speed);
   right_front->Set(right_final_speed);
   right_back->Set(right_final_speed);
+}
+
+void SparkDrive::Test(frc::Joystick *joystick){
+  if(joystick->GetRawButton(a_button)){
+    left_front->Set(0.5);
+  }
+  else{
+    left_front->Set(0);
+  }
+  if(joystick->GetRawButton(b_button)){
+    left_back->Set(0.5);
+  }
+  else{
+    left_back->Set(0);
+  }
+  if(joystick->GetRawButton(y_button)){
+    right_front->Set(0.5);
+  }
+  else{
+    right_front->Set(0);
+  }
+  if(joystick->GetRawButton(x_button)){
+    right_back->Set(0.5);
+  }
+  else{
+    right_back->Set(0);
+  }
 }
 
 double SparkDrive::GetGyroscopeHeading()

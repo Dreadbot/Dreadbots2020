@@ -7,7 +7,8 @@
 }
 void TeleopFunctions::TurnToAngle(double targetAngle, double proportion){
     //If a button is pressed, reset the counter, and signal that a turn is initiiated
-
+    min_rotation_speed = frc::SmartDashboard::GetNumber("Min Rot Speed", 0.15);
+    //frc::SmartDashboard::PutBoolean("turn complete?", turn_complete);
     //Find the difference between the current angle and the target angle, multiply by a set value, and use that to find the rate
     double error = ((double) m_sparkDrive->GetGyroscope()->GetYaw()) - targetAngle;
     //std::cout << "Error: " << error;
@@ -30,8 +31,9 @@ void TeleopFunctions::TurnToAngle(double targetAngle, double proportion){
     }
     
     //If the turn has made it within the allowable error constant, increment the count
-    if (fabs(error) < slop)
+    if (fabs(error) < slop){
        TURN_BUTTON_TIMEOUT++;
+    }
 
     frc::SmartDashboard::PutNumber("Error", error);
     frc::SmartDashboard::PutNumber("Current Rotation Rate", current_rotation_rate);
@@ -41,7 +43,7 @@ void TeleopFunctions::TurnToAngle(double targetAngle, double proportion){
     //controller input, but the rotation axis of the drive base based on the rotation rate found
     m_sparkDrive->TankDrive(
         js1->GetRawAxis(kPrimaryDriverJoystickID), 
-        current_rotation_rate, 
+        -current_rotation_rate, 
         js1->GetRawButton(right_bumper), 
         js1->GetRawButton(left_bumper),
         0.0
@@ -68,10 +70,10 @@ void TeleopFunctions::ShooterFunction(){
        // printf("joystick_addr = %d \n",js1);
         if(js1->GetRawButton(shooterButton)){
          //Hard coding power rn
-         shooter->Shoot(0.2);
+         shooter->Shoot(1000);
         }
         else{
-             shooter->Shoot(0.00);
+             shooter->Shoot(0);
          }
          
          

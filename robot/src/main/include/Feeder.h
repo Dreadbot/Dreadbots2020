@@ -1,19 +1,27 @@
 #pragma once
+#include  <frc/smartdashboard/SmartDashboard.h>
 #include "rev/CANSparkMax.h"
 #include "frc/Solenoid.h"
 #include "frc/DigitalInput.h"
-
+#include "RobotUtilities.h"
+#include <frc/Joystick.h>
+#include <thread>
+#include <chrono>
+#include <string.h>
 
 class Feeder
-{
+{    
     public:
-        Feeder(rev::CANSparkMax *geneva_drive, frc::Solenoid *punch);
-        void SetSpin(int rpm);
-        void GetSpin();
-        void AdvanceGeneva(int rots);
+        Feeder(rev::CANSparkMax *geneva_drive, frc::Solenoid *punch, frc::Joystick *joystick_1, frc::Joystick *joystick_2);
+        void SetSpin(double rpm);
+        // void SensorAdvanceGeneva(bool spin); //MOVED TO MANIPULATOR.CPP
         void SetPunchExtension(bool extended);
         bool GetPunchExtension();
-        bool GetLimitSwitchState();
+        bool GetGenevaSwitchState();
+        bool GetPunchSwitchState();
+        double GetGenevaPosition();
+        void ExtendRetract(int milliseconds_between);
+        int GetSensorAdvanceGenevaState();
         
 
     private:
@@ -22,7 +30,14 @@ class Feeder
         rev::CANEncoder *m_geneva_encoder;
         frc::Solenoid *m_punch;
         frc::DigitalInput *geneva_limit_switch;
-        const int kLimitSwitchPort = 0;
-        const double kGenevaGearRatio = (72/14);
-    
+        frc::DigitalInput *punch_limit_switch;
+        frc::Joystick *joystick_1;
+        frc::Joystick *joystick_2;
+        const int kGenevaSwitchPort = 9;
+        const int kPunchSwitchPort = 3;
+        const double kGenevaGearRatio = 100;
+           enum States{
+            move, moving, stopped
+        };
+        int state = stopped;
 };
