@@ -106,6 +106,7 @@ void Shooter::SetAdjusterPosition(double position){ //Takes number 0 to 1
     position = 0;
   }
   position = minHoodPosition + (position * range);
+  //std::cout << "Position: " << position << std::endl;
   aiming_motor_pid_controller->SetReference(position, rev::ControlType::kPosition);
 }
 

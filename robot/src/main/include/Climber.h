@@ -1,18 +1,16 @@
 #pragma once
 #include "rev/SparkMax.h"
 #include "rev/CANSparkMax.h"
+#include "frc/Solenoid.h"
 
 class Climber
 {
     public:
-        Climber(rev::CANSparkMax *telescopeMoter, rev::CANSparkMax *winchMotor);
-        void SetTelescope(double telescope_speed);
+        Climber(frc::Solenoid *telescope_sol, rev::CANSparkMax *winchMotor);
+        void SetTelescope(bool extended);
         void SetWinch(double winchspeed);
     private:
-    rev::CANSparkMax *m_telescopeMotor;
-    rev::CANPIDController *m_telescopePid;
-    rev::CANEncoder *m_telescopeEncoder;
-    
-    rev::CANSparkMax *m_winchMotor;
-    rev::CANPIDController *m_winchPid;
+        frc::Solenoid *m_telescope_sol;
+        rev::CANSparkMax *m_winchMotor;
+        rev::CANPIDController *m_winchPid;
 };

@@ -111,7 +111,7 @@ void Manipulator::ResetManipulatorElements(){
 
     //Once the punch is retracted, if the geneva is not at a limit switch, turn it slowly
     else if(!m_feeder->GetPunchExtension() && !m_feeder->GetGenevaSwitchState()){
-        m_feeder->SetSpin(0.2);
+        //m_feeder->SetSpin(0.2);
         std::cout << "spinning" << std::endl;
     }
 
@@ -137,11 +137,14 @@ void Manipulator::ResetManipulatorElements(){
 //             break;
 //     }
 // }
-void Manipulator::SensorAdvanceGeneva(bool spin){
+void Manipulator::SensorAdvanceGeneva(bool spin, bool forward){
     //std::cout<<"X button is: " << spin <<std::endl;
     //std::cout << "SensorAdvance state: " << genevaState << std::endl;
     if(genevaState == stopped && spin){
-        m_feeder->SetSpin(.4);
+        if(forward)
+            m_feeder->SetSpin(.4);
+        else
+            m_feeder->SetSpin(-.4);
         genevaState = move;
         //std::cout<<"Indexing"<<genevaState<<std::endl;
     }
@@ -157,7 +160,12 @@ void Manipulator::SensorAdvanceGeneva(bool spin){
 
     if(genevaState == move || genevaState == moving){
         //std::cout << "Moving" << std::endl;
-        m_feeder->SetSpin(0.4);
+        if(forward){
+            m_feeder->SetSpin(0.4);
+        }
+        else{
+            m_feeder->SetSpin(-0.4);
+        }
     }
 
 }

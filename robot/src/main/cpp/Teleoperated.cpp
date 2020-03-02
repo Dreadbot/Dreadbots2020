@@ -74,7 +74,13 @@ void Teleoperated::HandleShooterInputs()
     }
 
     // Internal Check for Advancing Geneva without Shooting
-    manipulator->SensorAdvanceGeneva(joystick_2->GetRawButton(kAdvanceGenevaButton));
+    if(joystick_2->GetRawButton(kAdvanceGenevaButton)){
+      manipulator->SensorAdvanceGeneva(joystick_2->GetRawButton(kAdvanceGenevaButton), true);
+    }
+    else if(joystick_2->GetRawButton(kRegressGenevaButton)){
+      manipulator->SensorAdvanceGeneva(joystick_2->GetRawButton(kRegressGenevaButton), false);
+    }
+    
 }
 
 void Teleoperated::HandleDriveInputs()
@@ -90,22 +96,19 @@ void Teleoperated::HandleDriveInputs()
   );
 }
 
-void Teleoperated::HandleClimbInputs()
+void Teleoperated::
+HandleClimbInputs()
 {
   if(joystick_1->GetRawButton(kExtendClimbButton))
   {
-    climber->SetTelescope(0.5);
+    climber->SetTelescope(true);
   }
   else if(joystick_1->GetRawButton(kRetractClimbButton))
   {
-    climber->SetTelescope(-0.5);
-  }
-  else
-  {
-    climber->SetTelescope(0.0);
+    climber->SetTelescope(false);
   }
 
-  if(joystick_1->GetRawButton(y_button))
+  if(joystick_1->GetRawButton(kWinchButton))
   {
     climber->SetWinch(0.2);
   }

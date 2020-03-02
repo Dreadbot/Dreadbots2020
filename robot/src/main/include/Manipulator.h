@@ -14,7 +14,7 @@ class Manipulator
         void ContinuousIntake();
         void ResetManipulatorElements();
         void GetState();
-        void SensorAdvanceGeneva(bool spin);
+        void SensorAdvanceGeneva(bool spin, bool forward);
         void GenevaSetSpin(double power);
         int GetSensorAdvanceGenevaState();
 
