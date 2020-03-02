@@ -158,7 +158,7 @@ void Robot::RobotInit()
     ++enabled_subsystems;
 
     // Define Internal Subsystems to Pass into Climber Container Class
-    climb_telescope = new rev::CANSparkMax(kClimbTelescopeMotorID, rev::CANSparkMax::MotorType::kBrushless);
+    climb_telescope = new frc::Solenoid(kClimbTelescopeSolenoidID);
     climb_winch = new rev::CANSparkMax(kClimbWinchMotorID, rev::CANSparkMax::MotorType::kBrushless);
 
     // Define Climber Object using Telescope & Winch Objects
@@ -267,7 +267,7 @@ void Robot::TeleopPeriodic()
     if(shooter->GetAimReadiness()){
       position = frc::SmartDashboard::GetNumber("Hood Position", 0.5);
       //std::cout << "Adjusting Position to: " << position << std::endl;
-      //shooter->SetAdjusterPosition(position);
+      shooter->SetAdjusterPosition(position);
     }
 
 
@@ -282,17 +282,20 @@ void Robot::TeleopPeriodic()
       manipulator->ContinuousShoot(0, 0.4, frc::SmartDashboard::GetNumber("Target Speed", 4000));
     }
     else if(joystick_2->GetRawButton(kAdvanceGenevaButton)){
-      manipulator->SensorAdvanceGeneva(true);
+      manipulator->SensorAdvanceGeneva(true, true);
+    }
+    else if(joystick_2->GetRawButton(kRegressGenevaButton)){
+      manipulator->SensorAdvanceGeneva(true, false);
     }
     else if(manipulator->GetSensorAdvanceGenevaState() == 2){
       manipulator->ResetManipulatorElements();
     }
     else{ 
-      manipulator->SensorAdvanceGeneva(false);
+      manipulator->SensorAdvanceGeneva(false, false);
     }
 
     // Internal Check for Advancing Geneva without Shooting
-    manipulator->SensorAdvanceGeneva(joystick_2->GetRawButton(kAdvanceGenevaButton));
+    //manipulator->SensorAdvanceGeneva(joystick_2->GetRawButton(kAdvanceGenevaButton));
   }
 
   //std::cout << "Drive Subsystem Teleoperated Periodic Call" << std::endl;
