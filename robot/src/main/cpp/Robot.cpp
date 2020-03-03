@@ -276,22 +276,8 @@ void Robot::TeleopPeriodic()
     // Utility for Adjusting Hood or Aim Motor.
 
     // B Button for Shoot
-    if(joystick_2->GetRawButton(kShootButton))
-    {
-      // Continually Shoot
-      manipulator->ContinuousShoot(0, 0.4, frc::SmartDashboard::GetNumber("Target Speed", 4000));
-    }
-    else if(joystick_2->GetRawButton(kAdvanceGenevaButton)){
-      manipulator->SensorAdvanceGeneva(true, true);
-    }
-    else if(joystick_2->GetRawButton(kRegressGenevaButton)){
-      manipulator->SensorAdvanceGeneva(true, false);
-    }
-    else if(manipulator->GetSensorAdvanceGenevaState() == 2){
-      manipulator->ResetManipulatorElements();
-    }
-    else{ 
-      manipulator->SensorAdvanceGeneva(false, false);
+    if(kShooterEnabled){
+      teleoperated->HandleShooterInputs();
     }
 
     // Internal Check for Advancing Geneva without Shooting
@@ -311,11 +297,11 @@ void Robot::TeleopPeriodic()
   }
 
   //std::cout << "Rotate To Angle Feature Teleoperated Periodic Call" << std::endl;
-  if(kRotateToAngleEnabled)
-  {
-    frc::SmartDashboard::PutBoolean("turn complete?", teleop_functions->GetTurnStatus());
-    teleoperated->HandleRotateToAngleInputs();
-  }
+  // if(kRotateToAngleEnabled)
+  // {
+  //   frc::SmartDashboard::PutBoolean("turn complete?", teleop_functions->GetTurnStatus());
+  //   teleoperated->HandleRotateToAngleInputs();
+  // }
 
   //std::cout << "Color Wheel Subsystem Teleoperated Periodic Call" << std::endl;
   if(kColorWheelEnabled)
