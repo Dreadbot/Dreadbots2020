@@ -13,11 +13,12 @@ enum WheelState{
 WheelState spinState = WheelState::NotSpinning;
 
 frc::Color CurrentColor;
+
+frc::Color PreviousColor;
+
 int NumSpins = 0;
 
 bool OnRed = false;
-
-bool OnTargetColor = false;
 
 double ColorConfidenceTarget = 0.9;
 
@@ -25,8 +26,8 @@ int NumColorSamples = 0;
 
 int CurrentButton = 0;
 
-//Notes after some research Saturday: We probably want to use the ColorMatch class to detect color rather than the 
-//ColorSensor. See example code https://github.com/REVrobotics/Color-Sensor-v3-Examples/blob/master/C%2B%2B/Color%20Match/src/main/cpp/Robot.cpp
+
+
 static constexpr auto i2cPort = frc::I2C::Port::kOnboard;
 rev::ColorSensorV3 m_colorSensor(i2cPort);
 rev::ColorMatch m_colorMatcher;
@@ -44,6 +45,62 @@ ColorWheel::ColorWheel(WPI_TalonSRX *motor, frc::Joystick *joystick, frc::Soleno
     colorsolenoid = solenoid;
  } 
 
+frc::Color ColorWheel::getPreviousColor(frc::Color color){
+    //Color order: Red, Yellow, Blue, Green
+    if (color == kGreenTarget)
+    {
+        return kBlueTarget;
+    }
+    else if (color == kBlueTarget)
+    {
+        return kYellowTarget;
+    }
+    else if (color == kYellowTarget)
+    {
+        return kRedTarget;
+    }
+    else if (color == kRedTarget)
+    {
+        return kGreenTarget;
+    }
+}
+frc::Color ColorWheel::getNextColor(frc::Color color){
+    if (color == kGreenTarget)
+    {
+        return kRedTarget;
+    }
+    else if (color == kBlueTarget)
+    {
+        return kGreenTarget;
+    }
+    else if (color == kYellowTarget)
+    {
+        return kBlueTarget;
+    }
+    else if (color == kRedTarget)
+    {
+        return kYellowTarget;
+    }
+}
+frc::Color ColorWheel::getSpinTargetColor(frc::Color color){
+    if (color == kGreenTarget)
+    {
+        return kYellowTarget;
+    }
+    else if (color == kBlueTarget)
+    {
+        return kRedTarget;
+    }
+    else if (color == kYellowTarget)
+    {
+        return kGreenTarget;
+    }
+    else if (color == kRedTarget)
+    {
+        return kBlueTarget;
+    }
+
+}
 void ColorWheel::ControlSolenoid(){
     if (colorjoystick->GetRawButtonPressed(3)){
         bool isup = colorsolenoid->Get();
@@ -58,17 +115,12 @@ void ColorWheel::ControlSolenoid(){
 
 }
 
-//Update RotateToNumber to not take in the sensor and get current color from m_colorMatch
-void ColorWheel::RotateToNumber(){
 
-    //Put in some smart dashboard output to be helpful for debugging
-    frc::SmartDashboard::PutNumber("SpinState", spinState);
-    
+void ColorWheel::RotateToNumber(){
     if (spinState == WheelState::NotSpinning && colorjoystick->GetRawButtonPressed(1))
     {
         spinState = WheelState::InitSpinning;
         CurrentButton = 1;
-        //colorsolenoid->Set(true);
 
     }
     if (spinState == WheelState::InitSpinning && CurrentButton == 1) 
@@ -85,7 +137,6 @@ void ColorWheel::RotateToNumber(){
             colormotor->Set(ControlMode::PercentOutput,0.0);
             spinState = WheelState::NotSpinning;
             CurrentButton = 0;
-            //colorsolenoid->Set(false);
             return;
         
         }
@@ -97,6 +148,7 @@ void ColorWheel::RotateToNumber(){
         PrintColor(matchedColor, colorConfidence);
         //do we need to check confidence number in this condition to see how confident the color matcher 
         //thinks the color is red? A value close to one means more confident. 
+
         if (matchedColor == kRedTarget && OnRed == false && colorConfidence >= ColorConfidenceTarget){
             NumSpins = NumSpins+1;
             OnRed = true;
@@ -111,6 +163,7 @@ void ColorWheel::RotateToNumber(){
 
 void ColorWheel::RotateToColor(frc::Color *targetcolor){
     double colorConfidence = 0.0;
+    frc::Color spinTargetColor = getSpinTargetColor(&targetcolor);
     frc::Color detectedColor = m_colorSensor.GetColor();
     frc::Color matchedColor = m_colorMatcher.MatchClosestColor(detectedColor, colorConfidence); 
     frc::SmartDashboard::PutNumber("SpinState", spinState);
@@ -118,35 +171,51 @@ void ColorWheel::RotateToColor(frc::Color *targetcolor){
     {
         spinState = WheelState::InitSpinning;
         CurrentButton = 2;
-        //colorsolenoid->Set(true);
     }
     if (spinState == WheelState::InitSpinning && CurrentButton == 2)
     {
         spinState = WheelState::Spinning;
         colormotor->Set(ControlMode::PercentOutput, 0.2);
+        //*********
+        // check to make sure we're getting a unique copy of matched color 
+        //*********
+        PreviousColor = getPreviousColor(matchedColor);
+        CurrentColor = matchedColor;
     }
     if (spinState == WheelState::Spinning && CurrentButton == 2)
     {
         PrintColor(matchedColor, colorConfidence);
-        if (matchedColor == *targetcolor && colorConfidence >= ColorConfidenceTarget){
-            if (NumColorSamples > 5){
-            spinState = WheelState::NotSpinning;
-            colormotor->Set(ControlMode::PercentOutput, 0.0);
-            NumColorSamples = 0;
-            CurrentButton = 0;
-            //colorsolenoid->Set(false);
+        if (!(matchedColor == CurrentColor))
+        {
+            if (matchedColor == getNextColor(PreviousColor))
+            {
+                if (matchedColor == *targetcolor && colorConfidence >= ColorConfidenceTarget)
+                {
+                    if (NumColorSamples > 1)
+                    {
+                        spinState = WheelState::NotSpinning;
+                        colormotor->Set(ControlMode::PercentOutput, 0.0);
+                        NumColorSamples = 0;
+                        CurrentButton = 0;
+                    }
+                    else 
+                    {
+                        NumColorSamples += 1;
+                    }
+                }
+                else 
+                {
+                    PreviousColor = getPreviousColor(matchedColor);
+                    CurrentColor = matchedColor;
+                }
             }
-            else {
-                NumColorSamples += 1;
-            }
- 
         }
+        
     }
    
 }
 
 void ColorWheel::PrintColor(frc::Color color, double colorConfidence){
-  
         if(color == kBlueTarget){
             frc::SmartDashboard::PutString("color","Blue"); 
             cout << "Blue\t" << colorConfidence << endl;
@@ -169,6 +238,7 @@ void ColorWheel::PrintColor(frc::Color color, double colorConfidence){
         }
         frc::SmartDashboard::PutNumber("NumSpins", NumSpins);
         frc::SmartDashboard::PutNumber("Confidence", colorConfidence);
+        frc::SmartDashboard::PutNumber("SpinState", spinState);
 
     }
 

@@ -17,6 +17,9 @@ class ColorWheel{
     private:
      void PrintColor(frc::Color color, double colorConfidence);
      frc::Solenoid *Solenoid;
+     frc::Color getNextColor(frc::Color color);
+     frc::Color getPreviousColor(frc::Color color);
+     frc::Color getSpinTargetColor(frc::Color color);
 
 };
 
