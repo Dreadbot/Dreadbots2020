@@ -2,33 +2,22 @@
 
 #include <map>
 
-#include "SparkDrive.h"
+#include "autonomous/DriveForwardAutonState.h"
 
-enum AutonState
-{
-  intake, feeder, shooter, 
-  rotate_to_angle, trajectory_following
-};
+#include "SparkDrive.h"
+#include "Intake.h"
 
 class Autonomous
 {
  public:
-  Autonomous(frc::Timer* timer_, SparkDrive *spark_drive_);
+  Autonomous(SparkDrive* spark_drive_, Intake* intake_);
 
-  void AutonomousInit(std::multimap<units::second_t, AutonState>* time_state_map_);
+  void AutonomousInit();
   void AutonomousPeriodic();
 
-  AutonState GetAutonStateFromCurrentTime();
-
  private:
-  frc::Timer* timer;
-
   SparkDrive* spark_drive;
+  Intake* intake;
 
-  std::multimap<units::second_t, AutonState>* time_state_map;
-
-  AutonState current_state;
-
-  units::time::second_t current_time;
-  units::time::second_t lower_bound_time;
+  DriveForwardAutonState* drive_auton;
 };

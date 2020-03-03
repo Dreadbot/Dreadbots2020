@@ -92,9 +92,9 @@ class Robot : public frc::TimedRobot {
   //ENABLED BOOLEANS
   const bool kDriveEnabled = true;
   const bool kClimbEnabled = true;
-  const bool kShooterEnabled = true;
+  const bool kShooterEnabled = false;
   const bool kRotateToAngleEnabled = true;
-  const bool kIntakeEnabled = true;
+  const bool kIntakeEnabled = false;
   const bool kFeederEnabled = true;
   const bool kTrajectoryEnabled = false;
   const bool kColorWheelEnabled = false;

@@ -166,7 +166,7 @@ void Robot::RobotInit()
   }
 
   // Define the Autonomous & Teleoperated Container Class using SparkDrive and Robot's Timer Object.
-  autonomous = new Autonomous(timer, spark_drive);
+  autonomous = new Autonomous(spark_drive, intake);
   teleop_functions = new TeleopFunctions(joystick_2, shooter, spark_drive);
   teleoperated = new Teleoperated(joystick_1, 
     joystick_2,
@@ -190,12 +190,8 @@ void Robot::AutonomousInit() {
   std::cout << "Auto selected: " << m_autoSelected << std::endl;
   // m_autoSelected = frc::SmartDashboard::GetString("Auto Selector",
   //     AutoDefault);
-
-  // Deploy the Intake Mechanism from its "Locked" State.
-  if(kIntakeEnabled)
-  {
-    intake->DeployIntake();
-  }
+  
+  autonomous->AutonomousInit();
 }
 
 void Robot::AutonomousPeriodic() 
