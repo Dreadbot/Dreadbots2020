@@ -51,9 +51,10 @@ const int kGenevaMotorID = 6;
 const int kFlyWheelMotorID = 7;
 const int kAimMotorID = 8;
 const int kColorWheelMotorID = 9;
-const int kClimbWinchMotorID = 11;
+const int kClimbWinchMotorID = 10; //10 on comp bot 11 on practice
 
 const int kIntakePinID = 0;
 const int kColorWheelSolenoidID = 1;
 const int kPunchSolenoidID = 2;
-const int kClimbTelescopeSolenoidID = 4;
+const int kClimbTelescopeSolenoidID = 3; //4 on practice, 3 on comp
+
