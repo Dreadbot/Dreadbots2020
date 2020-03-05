@@ -185,11 +185,11 @@ void Teleoperated::HandleColorWheelInputs()
   //To do: ColorWheel class is taking care of button presses, but we will need
   //To do: We also probably need to pass in the selenoid, we can consider passing all of these
   //into the colorwheel constructor which seems to be the pattern for the other classes
-  color_wheel->RotateToNumber(color_motor, joystick_2);
+  color_wheel->RotateToNumber();
   //To do: Get color target from smart dashboard, as this value will be given to us
   //from field during play
   frc::Color *targetcolor = new frc::Color(kGreenTarget);
-  color_wheel->RotateToColor(color_motor, joystick_2, targetcolor);
+  color_wheel->RotateToColor(targetcolor);
 
   //Old code left here for reference until we are sure we don't want any of it
   // color_wheel->GetCurrentColor();
