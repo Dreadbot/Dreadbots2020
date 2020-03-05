@@ -163,7 +163,7 @@ void ColorWheel::RotateToNumber(){
 
 void ColorWheel::RotateToColor(frc::Color *targetcolor){
     double colorConfidence = 0.0;
-    frc::Color spinTargetColor = getSpinTargetColor(&targetcolor);
+    frc::Color spinTargetColor = getSpinTargetColor(*targetcolor);
     frc::Color detectedColor = m_colorSensor.GetColor();
     frc::Color matchedColor = m_colorMatcher.MatchClosestColor(detectedColor, colorConfidence); 
     frc::SmartDashboard::PutNumber("SpinState", spinState);
@@ -189,7 +189,7 @@ void ColorWheel::RotateToColor(frc::Color *targetcolor){
         {
             if (matchedColor == getNextColor(PreviousColor))
             {
-                if (matchedColor == *targetcolor && colorConfidence >= ColorConfidenceTarget)
+                if (matchedColor == spinTargetColor && colorConfidence >= ColorConfidenceTarget)
                 {
                     if (NumColorSamples > 1)
                     {
