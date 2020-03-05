@@ -6,38 +6,39 @@ Manipulator::Manipulator(Intake *intake, Feeder *feeder, Shooter *shooter){
     m_shooter = shooter;
     shooterState = kRamping;
 }
-void Manipulator::PrepareShot(){
-    int rpm;
-    double aim_position;
+int Manipulator::Round(){
     distance = frc::SmartDashboard::GetNumber("selectedDistance", 100);
     if(distance <= 60 || (distance > 60 && distance <= 90)){
-        rpm = ShootingSpeeds[0];
-        aim_position = HoodPositions[0];
+        return 0;
     }
     else if(distance > 90 && distance <= 150){
-        rpm = ShootingSpeeds[1];
-        aim_position = HoodPositions[1];
+        return 1;
     }
     else if(distance > 150 && distance <= 210){
-        rpm = ShootingSpeeds[2];
-        aim_position = HoodPositions[2];
+        return 2;
     }
     else if(distance > 210 && distance <= 270){
-        rpm = ShootingSpeeds[3];
-        aim_position = HoodPositions[3];
+        return 3;
     }
-    else if(distance > 270){
-        rpm = ShootingSpeeds[4];
-        aim_position = HoodPositions[4];
+    else if(distance > 270){ 
+      return 4;
     }
-    else
-    {
-        rpm = 0;
-        aim_position = 0.5;
-    }
-    m_shooter->SetAdjusterPosition(aim_position);
-    m_shooter->Shoot(rpm);
+    return -1;
 }
+
+int Manipulator::GetSelectedRPM(int index){
+    if(index < sizeof(ShootingSpeeds)/sizeof(ShootingSpeeds[0])){
+      return ShootingSpeeds[index];
+    }
+    return -1;
+}
+double Manipulator::GetSelectedHoodPosition(int index){
+    if(index < sizeof(HoodPositions)/sizeof(HoodPositions[0])){
+      return HoodPositions[index];
+    }
+    return -1;
+}
+
 void Manipulator::ContinuousShoot(int aim_position, double geneva_speed, int shooting_rpm){
     //Finite State Machine logic to switch between states
     frc::SmartDashboard::PutNumber("GetShootingSpeed(): ", -m_shooter->GetShootingSpeed());
@@ -91,9 +92,10 @@ void Manipulator::ContinuousShoot(int aim_position, double geneva_speed, int sho
     }
     
     //Set the position of the aim plate and always drive the flywheel
-    //m_shooter->AimHeight(aim_position);
+    m_shooter->SetAdjusterPosition(aim_position);
     m_shooter->Shoot(-shooting_rpm);
 }
+
 void Manipulator::ContinuousIntake(){
     
 }
@@ -106,13 +108,11 @@ void Manipulator::ResetManipulatorElements(){
     //If the punch is extended, retract it
     if(m_feeder->GetPunchExtension()){
         m_feeder->SetPunchExtension(false);
-        std::cout << "retracted" << std::endl;
     }
 
     //Once the punch is retracted, if the geneva is not at a limit switch, turn it slowly
     else if(!m_feeder->GetPunchExtension() && !m_feeder->GetGenevaSwitchState()){
         //m_feeder->SetSpin(0.2);
-        std::cout << "spinning" << std::endl;
     }
 
     //Once the geneva drive reaches a limit switch, stop it

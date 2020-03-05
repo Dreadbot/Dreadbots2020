@@ -166,7 +166,7 @@ void Robot::RobotInit()
   }
 
   // Define the Autonomous & Teleoperated Container Class using SparkDrive and Robot's Timer Object.
-  autonomous = new Autonomous(timer, spark_drive);
+  autonomous = new Autonomous(spark_drive, intake);
   teleop_functions = new TeleopFunctions(joystick_2, shooter, spark_drive);
   teleoperated = new Teleoperated(joystick_1, 
     joystick_2,
@@ -190,12 +190,8 @@ void Robot::AutonomousInit() {
   std::cout << "Auto selected: " << m_autoSelected << std::endl;
   // m_autoSelected = frc::SmartDashboard::GetString("Auto Selector",
   //     AutoDefault);
-
-  // Deploy the Intake Mechanism from its "Locked" State.
-  if(kIntakeEnabled)
-  {
-    intake->DeployIntake();
-  }
+  
+  autonomous->AutonomousInit();
 }
 
 void Robot::AutonomousPeriodic() 
@@ -253,16 +249,16 @@ void Robot::TeleopPeriodic()
     if(shooter->GetLowerLimitSwitch() && !shooter->GetLowerLimitBool()){ 
       std::cout << "***************LOWER LIMIT TRIGGERED" << std::endl;
       shooter->SetLowerLimit(shooter->GetHoodPosition());
-      shooter->SetAdjusterPercentOutput(-0.75);
+      shooter->SetAdjusterPercentOutput(-0.2);
     }
     else if(shooter->GetUpperLimitSwitch() && !shooter->GetUpperLimitBool()){
       std::cout << "***************UPPER LIMIT TRIGGERED" << std::endl;
       shooter->SetUpperLimit(shooter->GetHoodPosition());
-      shooter->SetAdjusterPercentOutput(0.75);
+      shooter->SetAdjusterPercentOutput(0.2);
     }
     else if (shooter->GetUpperLimitBool() && shooter->GetLowerLimitBool() && !shooter->GetAimReadiness()){
       shooter->SetAimReadiness(true);
-      shooter->SetAdjusterPosition(0.5);
+      shooter->SetAdjusterPosition(-0.2);
     }
     if(shooter->GetAimReadiness()){
       position = frc::SmartDashboard::GetNumber("Hood Position", 0.5);
@@ -276,22 +272,8 @@ void Robot::TeleopPeriodic()
     // Utility for Adjusting Hood or Aim Motor.
 
     // B Button for Shoot
-    if(joystick_2->GetRawButton(kShootButton))
-    {
-      // Continually Shoot
-      manipulator->ContinuousShoot(0, 0.4, frc::SmartDashboard::GetNumber("Target Speed", 4000));
-    }
-    else if(joystick_2->GetRawButton(kAdvanceGenevaButton)){
-      manipulator->SensorAdvanceGeneva(true, true);
-    }
-    else if(joystick_2->GetRawButton(kRegressGenevaButton)){
-      manipulator->SensorAdvanceGeneva(true, false);
-    }
-    else if(manipulator->GetSensorAdvanceGenevaState() == 2){
-      manipulator->ResetManipulatorElements();
-    }
-    else{ 
-      manipulator->SensorAdvanceGeneva(false, false);
+    if(kShooterEnabled){
+      teleoperated->HandleShooterInputs();
     }
 
     // Internal Check for Advancing Geneva without Shooting
@@ -311,11 +293,11 @@ void Robot::TeleopPeriodic()
   }
 
   //std::cout << "Rotate To Angle Feature Teleoperated Periodic Call" << std::endl;
-  if(kRotateToAngleEnabled)
-  {
-    frc::SmartDashboard::PutBoolean("turn complete?", teleop_functions->GetTurnStatus());
-    teleoperated->HandleRotateToAngleInputs();
-  }
+  // if(kRotateToAngleEnabled)
+  // {
+  //   frc::SmartDashboard::PutBoolean("turn complete?", teleop_functions->GetTurnStatus());
+  //   teleoperated->HandleRotateToAngleInputs();
+  // }
 
   //std::cout << "Color Wheel Subsystem Teleoperated Periodic Call" << std::endl;
   if(kColorWheelEnabled)

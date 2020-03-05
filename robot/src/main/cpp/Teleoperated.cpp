@@ -15,7 +15,10 @@ Teleoperated::Teleoperated(
       climber( climber_ ),
       teleop_functions( teleop_functions_ ),
       color_wheel( color_wheel_ )
-{}
+{
+  aim_counts = 0;
+  int aim_shoot_state = kAiming;
+}
 
 void Teleoperated::HandleTeleopInitIntake()
 {
@@ -48,40 +51,40 @@ void Teleoperated::HandleIntakeInputs()
     }
 }
 
-void Teleoperated::HandleShooterInputs()
-{
-  // Utility for Adjusting Hood or Aim Motor.
-    //manipulator->GetShooter()->SetAdjusterPercentOutput(joystick_2->GetRawAxis(w_axis));
+// void Teleoperated::HandleShooterInputs()
+// {
+//   // Utility for Adjusting Hood or Aim Motor.
+//     //manipulator->GetShooter()->SetAdjusterPercentOutput(joystick_2->GetRawAxis(w_axis));
 
-    // B Button for Shoot
-    if(joystick_2->GetRawButton(kShootButton))
-    {
-      manipulator->GetShooter()->SetShootingPercentOutput(-0.8);
-      // Continually Shoot
-      manipulator->ContinuousShoot(0, 0.4, 5000);
-    }
-    else
-    {
-      // Default Shooting PercentOutput to Avoid Ramp-Up Time
-      manipulator->GetShooter()->SetShootingPercentOutput(0);
+//     // B Button for Shoot
+//     if(joystick_2->GetRawButton(kShootButton))
+//     {
+//       manipulator->GetShooter()->SetShootingPercentOutput(-0.8);
+//       // Continually Shoot
+//       manipulator->ContinuousShoot(0, 0.4, 5000);
+//     }
+//     else
+//     {
+//       // Default Shooting PercentOutput to Avoid Ramp-Up Time
+//       manipulator->GetShooter()->SetShootingPercentOutput(0);
 
-      // If The Geneva State is Stoppped, Stop the Spin.
-      if(manipulator->GetSensorAdvanceGenevaState() == 2)
-      {
-        // Set to 0 RPM
-        manipulator->GenevaSetSpin(0);
-      }
-    }
+//       // If The Geneva State is Stoppped, Stop the Spin.
+//       if(manipulator->GetSensorAdvanceGenevaState() == 2)
+//       {
+//         // Set to 0 RPM
+//         manipulator->GenevaSetSpin(0);
+//       }
+//     }
 
-    // Internal Check for Advancing Geneva without Shooting
-    if(joystick_2->GetRawButton(kAdvanceGenevaButton)){
-      manipulator->SensorAdvanceGeneva(joystick_2->GetRawButton(kAdvanceGenevaButton), true);
-    }
-    else if(joystick_2->GetRawButton(kRegressGenevaButton)){
-      manipulator->SensorAdvanceGeneva(joystick_2->GetRawButton(kRegressGenevaButton), false);
-    }
+//     // Internal Check for Advancing Geneva without Shooting
+//     if(joystick_2->GetRawButton(kAdvanceGenevaButton)){
+//       manipulator->SensorAdvanceGeneva(joystick_2->GetRawButton(kAdvanceGenevaButton), true);
+//     }
+//     else if(joystick_2->GetRawButton(kRegressGenevaButton)){
+//       manipulator->SensorAdvanceGeneva(joystick_2->GetRawButton(kRegressGenevaButton), false);
+//     }
     
-}
+// }
 
 void Teleoperated::HandleDriveInputs()
 {
@@ -122,7 +125,7 @@ HandleClimbInputs()
   }
 }
 
-void Teleoperated::HandleRotateToAngleInputs()
+void Teleoperated::HandleShooterInputs()
 {
   frc::SmartDashboard::PutNumber("Current Angle", spark_drive->GetGyroscope()->GetYaw());
   //std::cout << "Current Angle: " << spark_drive->GetGyroscope()->GetYaw() << std::endl;
@@ -144,22 +147,38 @@ void Teleoperated::HandleRotateToAngleInputs()
   {
     selectedAngle = (spark_drive->GetGyroscope()->GetYaw() + frc::SmartDashboard::GetNumber("selectedAngle", 0.0));
   }
-  //Only turn when we hold the button, and we have seen the target recently
-  if(joystick_2->GetRawButton(kAutoAimButton) && staleCount < 5)
-  {
-    double pValue = frc::SmartDashboard::GetNumber("Turn P Value", 0.002);
-    teleop_functions->TurnToAngle(selectedAngle, pValue);
-    staleCount = 0;
-    manipulator->PrepareShot();
-  }
-  else if(joystick_2->GetRawButtonReleased(kAutoAimButton))
-  {
+  //Only turn and shoot when we hold the button, and we have seen the target recently
+  if(joystick_2->GetRawButton(kShootButton))
+    {
+      // Continually Shoot
+      manipulator->ContinuousShoot(0, 0.4, frc::SmartDashboard::GetNumber("Target Speed", 4000));
+      std::cout << "Regular Shooting!" << std::endl;
+    }
+    else if(joystick_2->GetRawButton(kAimShootButton) && staleCount < 5){
+      AimingContinuousShoot(selectedAngle, 0.4);
+      staleCount = 0;
+      std::cout << "Aim Shooting!" << std::endl;
+    }
+    else if(joystick_2->GetRawButton(kAdvanceGenevaButton)){
+      std::cout << "Advancing Geneva!" << std::endl;
+      manipulator->SensorAdvanceGeneva(true, true);
+    }
+    else if(joystick_2->GetRawButton(kRegressGenevaButton)){\
+    std::cout << "Regressing Geneva!" << std::endl;
+      manipulator->SensorAdvanceGeneva(true, false);
+    }
+    else if(manipulator->GetSensorAdvanceGenevaState() == 2){
+      std::cout << "Reseting Elements!" << std::endl;
+      manipulator->ResetManipulatorElements();
+      teleop_functions->SetTurnStatus(true);
+      aim_counts = 0;
+      aim_shoot_state = kAiming;
+      manipulator->SensorAdvanceGeneva(false, false);
+    }
     //when we release the button, then set motors to zero
     //this eliminates the constant turn after turn is done.
-    //spark_drive->TankDrive(0,0,false,false);
-    teleop_functions->SetTurnStatus(true);
-  }
 }
+
 
 void Teleoperated::HandleColorWheelInputs()
 {
@@ -183,4 +202,27 @@ void Teleoperated::HandleColorWheelInputs()
   // else if(joystick_1->GetRawButton(kColorWheelColorControl)){
   //   color_wheel->TurnToColor(kRedTarget);
   // }
+}
+void Teleoperated::AimingContinuousShoot(double target_angle, double geneva_speed){
+    int index = manipulator->Round();
+    double hood_position = manipulator->GetSelectedHoodPosition(index);
+    int rpm = manipulator->GetSelectedRPM(index);
+    double pValue = frc::SmartDashboard::GetNumber("Turn P Value", 0.002);
+    //std::cout << "RPM: " << rpm << "Hood Position: " <<hood_position << std::endl;
+
+    if(aim_counts < max_aim_counts)
+        aim_shoot_state = kAiming;
+    if(aim_counts >= max_aim_counts)
+        aim_shoot_state = kShooting;
+    
+    switch(aim_shoot_state){
+        case(kAiming):
+            teleop_functions->TurnToAngle(target_angle, pValue);
+            break;
+        case(kShooting):
+            manipulator->ContinuousShoot(hood_position, geneva_speed, rpm);
+            break;
+    }
+    aim_counts++;
+    std::cout << "Aim counts:" << aim_counts << " Aim State: " << aim_shoot_state << std::endl;
 }

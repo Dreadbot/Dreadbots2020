@@ -46,6 +46,15 @@ class Teleoperated
 
   ColorWheel* color_wheel;
 
+  //Combination Aim/Shoot Functions/Variables
+  void AimingContinuousShoot(double target_angle, double geneva_speed);
+  int aim_shoot_state;
+  int aim_counts;
+  const int max_aim_counts = 50;
+  enum AimShootStates{
+    kAiming, kShooting
+  };
+
   //Rotate to angle variables
   double selectedAngle = 0;
   int lastCount = 0;

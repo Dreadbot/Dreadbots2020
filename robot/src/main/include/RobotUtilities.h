@@ -22,7 +22,7 @@ enum Joystick1Layout{
     kTurboButton = right_trigger
 }; 
 enum Joystick2Layout{
-    kShootButton = b_button, kIntakeButton = x_button, kOuttakeButton = a_button, kAutoAimButton = y_button,
+    kAimShootButton = b_button, kIntakeButton = x_button, kOuttakeButton = a_button, kShootButton = y_button,
     kRegressGenevaButton = left_bumper, kAdvanceGenevaButton = right_bumper, kRetractColorWheelButton = left_trigger,
     kDeployColorWheelButton = right_trigger, kColorWheelColorControl = start_button, kColorWheelRotationControl = back_button, 
     kIncreaseAimOffsetPOV = 90, kDecreaseAimOffsetPOV = 270,
@@ -51,9 +51,10 @@ const int kGenevaMotorID = 6;
 const int kFlyWheelMotorID = 7;
 const int kAimMotorID = 8;
 const int kColorWheelMotorID = 9;
-const int kClimbWinchMotorID = 11;
+const int kClimbWinchMotorID = 10; //10 on comp bot 11 on practice
 
 const int kIntakePinID = 0;
 const int kColorWheelSolenoidID = 1;
 const int kPunchSolenoidID = 2;
-const int kClimbTelescopeSolenoidID = 4;
+const int kClimbTelescopeSolenoidID = 3; //4 on practice, 3 on comp
+

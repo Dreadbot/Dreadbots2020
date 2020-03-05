@@ -9,7 +9,9 @@ class Manipulator
 {
     public:
         Manipulator(Intake *intake, Feeder *feeder, Shooter *shooter);
-        void PrepareShot();
+        int Round();
+        int GetSelectedRPM(int index);
+        double GetSelectedHoodPosition(int index);
         void ContinuousShoot(int aim_position, double geneva_speed, int shooting_rpm);
         void ContinuousIntake();
         void ResetManipulatorElements();
@@ -31,16 +33,17 @@ class Manipulator
         enum shooterStates{
             kRamping, kPunching, kRetracting, kAdvance, kAdvancing
         };
-        int shooterState = kRamping;
+        int shooterState;
         int state_change_counter = 0;
         const int kCountsToExtend = 5;
 
-           enum genevaStates{
+        enum genevaStates{
             move, moving, stopped
         };
         int genevaState = stopped;
         
-        int ShootingSpeeds [5] = {2500, 3000, 3500, 4500, 5600};
-        double HoodPositions [5] = {0, .2, .4, .6, 1};
+
+        int ShootingSpeeds [5] = {2500, 3750, 3750, 4000, 4250};
+        double HoodPositions [5] = {0.1, .46, .505, .53, .55};
         int distance;
 };
