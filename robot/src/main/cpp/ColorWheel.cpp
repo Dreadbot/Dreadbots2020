@@ -3,6 +3,7 @@
 #include <ColorWheel.h>
 #include <iostream>
 #include <string>
+#include <RobotUtilities.h>
 using namespace std;
 
 enum WheelState{
@@ -26,6 +27,11 @@ int NumColorSamples = 0;
 
 int CurrentButton = 0;
 
+// Joystick2Layout deployColorWheelButton = Joystick2Layout::kDeployColorWheelButton;
+
+//Joystick2Layout RotateToNumberButton = Joystick2Layout::kColorWheelRotationControl;
+
+//Joystick2Layout RotateToColorButton = Joystick2Layout::kColorWheelColorControl;
 
 
 static constexpr auto i2cPort = frc::I2C::Port::kOnboard;
@@ -102,7 +108,7 @@ frc::Color ColorWheel::getSpinTargetColor(frc::Color color){
 
 }
 void ColorWheel::ControlSolenoid(){
-    if (colorjoystick->GetRawButtonPressed(3)){
+    if (colorjoystick->GetRawButtonPressed(1)){
         bool isup = colorsolenoid->Get();
 
         if(isup == true){
@@ -117,7 +123,7 @@ void ColorWheel::ControlSolenoid(){
 
 
 void ColorWheel::RotateToNumber(){
-    if (spinState == WheelState::NotSpinning && colorjoystick->GetRawButtonPressed(1))
+    if (spinState == WheelState::NotSpinning && colorjoystick->GetRawButtonPressed (2))
     {
         spinState = WheelState::InitSpinning;
         CurrentButton = 1;
@@ -157,7 +163,7 @@ void ColorWheel::RotateToNumber(){
             OnRed = false;
         }
     }
-    
+    cout <<"Hi***************************"<< endl;
 }
 
 
@@ -167,7 +173,7 @@ void ColorWheel::RotateToColor(frc::Color *targetcolor){
     frc::Color detectedColor = m_colorSensor.GetColor();
     frc::Color matchedColor = m_colorMatcher.MatchClosestColor(detectedColor, colorConfidence); 
     frc::SmartDashboard::PutNumber("SpinState", spinState);
-    if (spinState == WheelState::NotSpinning && colorjoystick->GetRawButton(2))
+    if (spinState == WheelState::NotSpinning && colorjoystick->GetRawButton(3))
     {
         spinState = WheelState::InitSpinning;
         CurrentButton = 2;
@@ -212,6 +218,7 @@ void ColorWheel::RotateToColor(frc::Color *targetcolor){
         }
         
     }
+    cout <<"Hi***************************"<< endl;
    
 }
 
@@ -237,6 +244,8 @@ void ColorWheel::PrintColor(frc::Color color, double colorConfidence){
             cout << "no color detected" << endl;
         }
         frc::SmartDashboard::PutNumber("NumSpins", NumSpins);
+        cout << "Green\t" << colorConfidence << endl;
+        cout << "Yellow\t" << colorConfidence << endl;
         frc::SmartDashboard::PutNumber("Confidence", colorConfidence);
         frc::SmartDashboard::PutNumber("SpinState", spinState);
 

@@ -43,8 +43,8 @@ void Robot::RobotInit() {
   //frc::SmartDashboard::PutNumber("Aimpid",0.1);
 
   joystick_1 = new frc::Joystick(kPrimaryDriverJoystickID);
-  colorWheelmotor = new WPI_TalonSRX(4);
-  solenoid = new frc::Solenoid(4);
+  colorWheelmotor = new WPI_TalonSRX(9);
+  solenoid = new frc::Solenoid(1);
   colorWheel = new ColorWheel(colorWheelmotor, joystick_1, solenoid);
   targetcolor = new frc::Color(kGreenTarget);
 }

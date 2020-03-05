@@ -16,6 +16,17 @@ enum JoystickInputs
   left_bumper = 5, right_bumper = 6, left_trigger = 7, right_trigger = 8,
   back_button = 9, start_button = 10, l_trigger = 11, r_trigger = 12
 };
+enum Joystick1Layout{
+    kForwardBackwardAxis = y_axis, kRotAxis = z_axis, kExtendClimbButton = start_button, 
+    kRetractClimbButton = back_button, kWinchButton = x_button, kTurtleButton = right_bumper, 
+    kTurboButton = right_trigger
+}; 
+enum Joystick2Layout{
+    kAimShootButton = b_button, kIntakeButton = x_button, kOuttakeButton = a_button, kShootButton = y_button,
+    kRegressGenevaButton = left_bumper, kAdvanceGenevaButton = right_bumper, kRetractColorWheelButton = left_trigger,
+    kDeployColorWheelButton = right_trigger, kColorWheelColorControl = start_button, kColorWheelRotationControl = back_button, 
+    kIncreaseAimOffsetPOV = 90, kDecreaseAimOffsetPOV = 270,
+};
 
 const frc::Color kBlueTarget = frc::Color(0.143, 0.427, 0.429);
 const frc::Color kGreenTarget = frc::Color(0.197, 0.561, 0.240);
@@ -23,8 +34,26 @@ const frc::Color kRedTarget = frc::Color(0.561, 0.232, 0.114);
 const frc::Color kYellowTarget = frc::Color(0.361, 0.524, 0.113);
 
 const int kPrimaryDriverJoystickID = 0;
+const int kSecondaryDriverJoystickID = 1;
 
-const int kUltraLeftFrontMotorID = 10;
-const int kUltraRightFrontMotorID = 1;
-const int kUltraLeftBackMotorID = 2;
-const int kUltraRightBackMotorID = 3;
+const int kUltraLeftFrontMotorID = 1;
+const int kUltraRightFrontMotorID = 2;
+const int kUltraLeftBackMotorID = 3;
+const int kUltraRightBackMotorID = 4;
+
+const int kBigSlinkLeftFrontMotorID = 1;
+const int kBigSlinkRightFrontMotorID = 2;
+const int kBigSlinkLeftBackMotorID = 3;
+const int kBigSlinkRightBackMotorID = 4;
+
+const int kIntakeMotorID = 5;
+const int kGenevaMotorID = 6;
+const int kFlyWheelMotorID = 7;
+const int kAimMotorID = 8;
+const int kColorWheelMotorID = 9;
+const int kClimbWinchMotorID = 10; //10 on comp bot 11 on practice
+
+const int kIntakePinID = 0;
+const int kColorWheelSolenoidID = 1;
+const int kPunchSolenoidID = 2;
+const int kClimbTelescopeSolenoidID = 3; //4 on practice, 3 on comp
