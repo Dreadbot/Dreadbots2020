@@ -236,7 +236,7 @@ void Robot::TeleopPeriodic()
     teleoperated->HandleIntakeInputs();
   }
 
-  //std::cout << "Shooter Subsystem Teleoperated Periodic Call" << std::endl;
+  std::cout << "Shooter Subsystem Teleoperated Periodic Call" << std::endl;
   if(kShooterEnabled)
   {
     //frc::SmartDashboard::PutBoolean("Upper Limit Switch", shooter->GetUpperLimitSwitch());
@@ -263,7 +263,6 @@ void Robot::TeleopPeriodic()
     if(shooter->GetAimReadiness()){
       position = frc::SmartDashboard::GetNumber("Hood Position", 0.5);
       //std::cout << "Adjusting Position to: " << position << std::endl;
-      shooter->SetAdjusterPosition(position);
     }
 
 

@@ -100,14 +100,15 @@ int Shooter::GetShootingSpeed(){
   return shooter_encoder->GetVelocity();
 }
 void Shooter::SetAdjusterPosition(double position){ //Takes number 0 to 1
-  if(position > 1){
+  std::cout << "Passed position: " << position << " Min hood: " << minHoodPosition << " range: " << range << std::endl;
+  /*if(position > 1){
     position = 1;
   }
   else if (position < 0){
     position = 0;
-  }
+  }*/
   position = minHoodPosition + (position * range);
-  //std::cout << "Position: " << position << std::endl;
+  std::cout << "Position: " << position << std::endl;
   aiming_motor_pid_controller->SetReference(position, rev::ControlType::kPosition);
 }
 
