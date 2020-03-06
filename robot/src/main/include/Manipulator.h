@@ -10,9 +10,10 @@ class Manipulator
     public:
         Manipulator(Intake *intake, Feeder *feeder, Shooter *shooter);
         int Round();
-        int GetSelectedRPM(int index);
-        double GetSelectedHoodPosition(int index);
-        void ContinuousShoot(int aim_position, double geneva_speed, int shooting_rpm);
+        void PrepareShot(int rpm, double aimHeight);
+        int GetSelectedRPM(unsigned int index);
+        double GetSelectedHoodPosition(unsigned int index);
+        void ContinuousShoot(double aim_position, double geneva_speed, int shooting_rpm);
         void ContinuousIntake();
         void ResetManipulatorElements();
         void GetState();

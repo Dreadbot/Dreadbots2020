@@ -8,38 +8,44 @@ Manipulator::Manipulator(Intake *intake, Feeder *feeder, Shooter *shooter){
 }
 int Manipulator::Round(){
     distance = frc::SmartDashboard::GetNumber("selectedDistance", 100);
-    if(distance <= 60 || (distance > 60 && distance <= 90)){
+    if(distance <= 90){ //less than 7.5 ft
         return 0;
     }
-    else if(distance > 90 && distance <= 150){
+    else if(distance <= 150){ //less than 12.5 ft
         return 1;
     }
-    else if(distance > 150 && distance <= 210){
+    else if(distance <= 210){ //less than 17.5 ft
         return 2;
     }
-    else if(distance > 210 && distance <= 270){
+    else if(distance <= 270){ //less than 22.5 ft
         return 3;
     }
-    else if(distance > 270){ 
+    else if(distance > 270){ //less than 27.5ft
       return 4;
     }
-    return -1;
+    return -1; //If something messes up with getting the distance.
 }
 
-int Manipulator::GetSelectedRPM(int index){
+void Manipulator::PrepareShot(int rpm, double aimPosition){ //Should use round function to pass in values from vision
+    m_shooter->Shoot(rpm);
+    std::cout << "PREPARE SHOT: " << aimPosition << std::endl;
+    m_shooter->SetAdjusterPosition(aimPosition);
+}
+
+int Manipulator::GetSelectedRPM(unsigned int index){ //returns tested value at distance you pass in.
     if(index < sizeof(ShootingSpeeds)/sizeof(ShootingSpeeds[0])){
       return ShootingSpeeds[index];
     }
     return -1;
 }
-double Manipulator::GetSelectedHoodPosition(int index){
+double Manipulator::GetSelectedHoodPosition(unsigned int index){
     if(index < sizeof(HoodPositions)/sizeof(HoodPositions[0])){
       return HoodPositions[index];
     }
     return -1;
 }
 
-void Manipulator::ContinuousShoot(int aim_position, double geneva_speed, int shooting_rpm){
+void Manipulator::ContinuousShoot(double aim_position, double geneva_speed, int shooting_rpm){
     //Finite State Machine logic to switch between states
     frc::SmartDashboard::PutNumber("GetShootingSpeed(): ", -m_shooter->GetShootingSpeed());
     frc::SmartDashboard::PutNumber("ShooterState: ", shooterState);
@@ -92,8 +98,10 @@ void Manipulator::ContinuousShoot(int aim_position, double geneva_speed, int sho
     }
     
     //Set the position of the aim plate and always drive the flywheel
+    std::cout << "********Calling Adjuster position to: " << aim_position << std::endl;
     m_shooter->SetAdjusterPosition(aim_position);
     m_shooter->Shoot(-shooting_rpm);
+    m_shooter->SetLight(true);
 }
 
 void Manipulator::ContinuousIntake(){
@@ -122,6 +130,10 @@ void Manipulator::ResetManipulatorElements(){
     }
     shooterState = kRamping;
     m_shooter->SetShootingPercentOutput(0);
+    if(m_shooter->GetAimReadiness()){
+        m_shooter->SetAdjusterPosition(0);
+    }
+    m_shooter->SetLight(false);
 }
 // void Manipulator::GetState(){
 //     switch(state){

@@ -48,13 +48,14 @@ Shooter::Shooter(rev::CANSparkMax *shooterMotor, rev::CANSparkMax *aimMotor)
   aiming_motor_pid_controller = new rev::CANPIDController(aiming_motor->GetPIDController());
   aiming_motor_encoder = new rev::CANEncoder(aiming_motor->GetEncoder());
   //Needs to be calibrated
-  aiming_motor_pid_controller->SetP(0.1); //6e-5
+  aiming_motor_pid_controller->SetP(0.5); //6e-5
   aiming_motor_pid_controller->SetI(0); //1e-6
   aiming_motor_pid_controller->SetD(0);  //0.3
   aiming_motor_pid_controller->SetIZone(0);  
   aiming_motor_pid_controller->SetFF(0.000015);  //000015
   aiming_motor_pid_controller->SetOutputRange(-1.0, 1.0);
 
+  light = new frc::Solenoid(kLightID);
   upper_limit_switch = new frc::DigitalInput(1);
   //practice bot 4, comp bot 1
   lower_limit_switch = new frc::DigitalInput(2);
@@ -100,6 +101,7 @@ int Shooter::GetShootingSpeed(){
   return shooter_encoder->GetVelocity();
 }
 void Shooter::SetAdjusterPosition(double position){ //Takes number 0 to 1
+  std::cout << "Passed position: " << position << " Min hood: " << minHoodPosition << " range: " << range << std::endl;
   if(position > 1){
     position = 1;
   }
@@ -107,7 +109,8 @@ void Shooter::SetAdjusterPosition(double position){ //Takes number 0 to 1
     position = 0;
   }
   position = minHoodPosition + (position * range);
-  //std::cout << "Position: " << position << std::endl;
+  std::cout << "Going to Position: " << position << std::endl;
+  std::cout << "Current Encoder Value: " <<GetHoodPosition()<<std::endl;
   aiming_motor_pid_controller->SetReference(position, rev::ControlType::kPosition);
 }
 
@@ -162,4 +165,8 @@ void Shooter::SetPID(double P, double I, double D){
   shooting_motor_pid_controller->SetP(P);
   shooting_motor_pid_controller->SetI(I);
   shooting_motor_pid_controller->SetD(D);
+}
+
+void Shooter::SetLight(bool value){
+  light->Set(value);
 }

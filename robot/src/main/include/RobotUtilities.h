@@ -57,4 +57,5 @@ const int kIntakePinID = 0;
 const int kColorWheelSolenoidID = 1;
 const int kPunchSolenoidID = 2;
 const int kClimbTelescopeSolenoidID = 3; //4 on practice, 3 on comp
+const int kLightID = 7;
 

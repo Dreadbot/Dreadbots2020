@@ -2,7 +2,8 @@
 
 #include <frc/DigitalInput.h>
 #include <frc/smartdashboard/SmartDashboard.h>
-
+#include <frc/Solenoid.h>
+#include <RobotUtilities.h>
 #include "rev/CANSparkMax.h"
 
 class Shooter
@@ -61,6 +62,7 @@ class Shooter
   void SetUpperBool(bool value);
   void SetLowerBool(bool value);
   void SetPID(double P, double I, double D);
+  void SetLight(bool value);
 
  private:
   rev::CANSparkMax* shooting_motor;
@@ -75,6 +77,7 @@ class Shooter
 
   frc::DigitalInput* upper_limit_switch;
   frc::DigitalInput* lower_limit_switch;
+  frc::Solenoid *light;
   int minHoodPosition;
   int maxHoodPosition;
   bool readyToAim = false;

@@ -219,7 +219,7 @@ void Robot::TeleopInit()
   }
 
   if(kShooterEnabled){
-    shooter->SetAdjusterPercentOutput(0.75);
+    shooter->SetAdjusterPercentOutput(0.5);
     shooter->SetUpperBool(false);
     shooter->SetLowerBool(false);
     shooter->SetAimReadiness(false);
@@ -249,21 +249,20 @@ void Robot::TeleopPeriodic()
     if(shooter->GetLowerLimitSwitch() && !shooter->GetLowerLimitBool()){ 
       std::cout << "***************LOWER LIMIT TRIGGERED" << std::endl;
       shooter->SetLowerLimit(shooter->GetHoodPosition());
-      shooter->SetAdjusterPercentOutput(-0.2);
+      shooter->SetAdjusterPercentOutput(-0.5);
     }
     else if(shooter->GetUpperLimitSwitch() && !shooter->GetUpperLimitBool()){
       std::cout << "***************UPPER LIMIT TRIGGERED" << std::endl;
       shooter->SetUpperLimit(shooter->GetHoodPosition());
-      shooter->SetAdjusterPercentOutput(0.2);
-    }
+      shooter->SetAdjusterPercentOutput(0.5);
+    } 
     else if (shooter->GetUpperLimitBool() && shooter->GetLowerLimitBool() && !shooter->GetAimReadiness()){
       shooter->SetAimReadiness(true);
-      shooter->SetAdjusterPosition(-0.2);
+      shooter->SetAdjusterPosition(0.2);
     }
     if(shooter->GetAimReadiness()){
       position = frc::SmartDashboard::GetNumber("Hood Position", 0.5);
       //std::cout << "Adjusting Position to: " << position << std::endl;
-      shooter->SetAdjusterPosition(position);
     }
 
 
