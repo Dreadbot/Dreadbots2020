@@ -166,8 +166,8 @@ void Robot::RobotInit()
   }
 
   // Define the Autonomous & Teleoperated Container Class using SparkDrive and Robot's Timer Object.
-  autonomous = new Autonomous(spark_drive, intake);
   teleop_functions = new TeleopFunctions(joystick_2, shooter, spark_drive);
+  autonomous = new Autonomous(teleop_functions, spark_drive, manipulator);
   teleoperated = new Teleoperated(joystick_1, 
     joystick_2,
     manipulator,
@@ -199,9 +199,10 @@ void Robot::AutonomousInit() {
 
 void Robot::AutonomousPeriodic() 
 {
-  std::cout << "Auto selected: " << m_autoSelected << std::endl;
-  std::cout << "AutoRightRight: " << AutoRightRight << std::endl;
+  // std::cout << "Auto selected: " << m_autoSelected << std::endl;
+  // std::cout << "AutoRightRight: " << AutoRightRight << std::endl;
 
+  std::cout << "Autonomous Periodic Robot Call" << std::endl;
   autonomous->AutonomousPeriodic();
 }
 
