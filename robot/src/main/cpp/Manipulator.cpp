@@ -98,7 +98,7 @@ void Manipulator::ContinuousShoot(int aim_position, double geneva_speed, int sho
     }
     
     //Set the position of the aim plate and always drive the flywheel
-    std::cout << "********Calling Adjuster position to: " << aim_position << std::endl;
+    //std::cout << "********Calling Adjuster position to: " << aim_position << std::endl;
     m_shooter->SetAdjusterPosition(aim_position);
     m_shooter->Shoot(-shooting_rpm);
 }
