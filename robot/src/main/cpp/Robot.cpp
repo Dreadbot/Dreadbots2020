@@ -204,7 +204,7 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit() 
 {
-  shooter_motor->RestoreFactoryDefaults();
+  //shooter_motor->RestoreFactoryDefaults();
   std::cout << "Robot Entering Teleoperated Mode..." << std::endl;
   
   // Zero Yaw on Gyro
@@ -245,8 +245,8 @@ void Robot::TeleopPeriodic()
     //frc::SmartDashboard::PutNumber("Current Hood Position", shooter->GetHoodPosition());
     P = frc::SmartDashboard::GetNumber("P value", 6e-5);
     I = frc::SmartDashboard::GetNumber("I value", 1e-6);
-    D= frc::SmartDashboard::GetNumber("D value", 0);
-    shooter->SetPID(6e-5, 1e-6, 0);
+    D = frc::SmartDashboard::GetNumber("D value", 0);
+    shooter->SetPID(P, I, D);
     if(shooter->GetLowerLimitSwitch() && !shooter->GetLowerLimitBool()){ 
       std::cout << "***************LOWER LIMIT TRIGGERED" << std::endl;
       shooter->SetLowerLimit(shooter->GetHoodPosition());

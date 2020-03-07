@@ -101,25 +101,16 @@ int Shooter::GetShootingSpeed(){
   return shooter_encoder->GetVelocity();
 }
 void Shooter::SetAdjusterPosition(double position){ //Takes number 0 to 1
-<<<<<<< Updated upstream
-  std::cout << "Passed position: " << position << " Min hood: " << minHoodPosition << " range: " << range << std::endl;
-  /*if(position > 1){
-=======
   //std::cout << "Passed position: " << position << " Min hood: " << minHoodPosition << " range: " << range << std::endl;
   if(position > 1){
->>>>>>> Stashed changes
     position = 1;
   }
   else if (position < 0){
     position = 0;
-  }*/
+  }
   position = minHoodPosition + (position * range);
-<<<<<<< Updated upstream
-  std::cout << "Position: " << position << std::endl;
-=======
   //std::cout << "Going to Position: " << position << std::endl;
   //std::cout << "Current Encoder Value: " <<GetHoodPosition()<<std::endl;
->>>>>>> Stashed changes
   aiming_motor_pid_controller->SetReference(position, rev::ControlType::kPosition);
 }
 
