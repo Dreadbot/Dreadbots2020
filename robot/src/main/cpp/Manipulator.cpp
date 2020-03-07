@@ -32,20 +32,20 @@ void Manipulator::PrepareShot(int rpm, double aimPosition){
     m_shooter->SetAdjusterPosition(aimPosition);
 }
 
-int Manipulator::GetSelectedRPM(int index){
+int Manipulator::GetSelectedRPM(unsigned int index){
     if(index < sizeof(ShootingSpeeds)/sizeof(ShootingSpeeds[0])){
       return ShootingSpeeds[index];
     }
     return -1;
 }
-double Manipulator::GetSelectedHoodPosition(int index){
+double Manipulator::GetSelectedHoodPosition(unsigned int index){
     if(index < sizeof(HoodPositions)/sizeof(HoodPositions[0])){
       return HoodPositions[index];
     }
     return -1;
 }
 
-void Manipulator::ContinuousShoot(int aim_position, double geneva_speed, int shooting_rpm){
+void Manipulator::ContinuousShoot(double aim_position, double geneva_speed, int shooting_rpm){
     //Finite State Machine logic to switch between states
     frc::SmartDashboard::PutNumber("GetShootingSpeed(): ", -m_shooter->GetShootingSpeed());
     frc::SmartDashboard::PutNumber("ShooterState: ", shooterState);

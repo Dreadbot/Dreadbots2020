@@ -48,9 +48,9 @@ void Robot::RobotInit()
   //frc::SmartDashboard::PutNumber("Aimpid",0.1);
   frc::SmartDashboard::PutNumber("Hood Position", 0);
   frc::SmartDashboard::PutNumber("Target Speed", 4000);
-  frc::SmartDashboard::PutNumber("P value", 6e-5);
-  frc::SmartDashboard::PutNumber("I value", 6e-5);
-  frc::SmartDashboard::PutNumber("D value", 6e-5);
+  frc::SmartDashboard::PutNumber("P value", .009);
+  frc::SmartDashboard::PutNumber("I value", 0.0000005);
+  frc::SmartDashboard::PutNumber("D value", 0);
 
   // Initialize Timer Object
   timer = new frc::Timer();
@@ -192,6 +192,9 @@ void Robot::AutonomousInit() {
   //     AutoDefault);
   
   autonomous->AutonomousInit();
+  frc::SmartDashboard::PutNumber("P value", .009);
+  frc::SmartDashboard::PutNumber("I value", 0.0000005);
+  frc::SmartDashboard::PutNumber("D value", 0);
 }
 
 void Robot::AutonomousPeriodic() 
@@ -204,7 +207,7 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit() 
 {
-  //shooter_motor->RestoreFactoryDefaults();
+  shooter_motor->RestoreFactoryDefaults();
   std::cout << "Robot Entering Teleoperated Mode..." << std::endl;
   
   // Zero Yaw on Gyro
@@ -225,7 +228,9 @@ void Robot::TeleopInit()
     shooter->SetLowerBool(false);
     shooter->SetAimReadiness(false);
   }
-
+  frc::SmartDashboard::PutNumber("P value", .009);
+  frc::SmartDashboard::PutNumber("I value", 0.0000005);
+  frc::SmartDashboard::PutNumber("D value", 0);
   //ContinuousShooterSpeed = frc::SmartDashboard::GetNumber("ContinuousShoot() shooter_rpm", 0.0);
 }
 
@@ -243,23 +248,23 @@ void Robot::TeleopPeriodic()
     //frc::SmartDashboard::PutBoolean("Upper Limit Switch", shooter->GetUpperLimitSwitch());
     //frc::SmartDashboard::PutBoolean("Lower Limit Switch", shooter->GetLowerLimitSwitch());
     //frc::SmartDashboard::PutNumber("Current Hood Position", shooter->GetHoodPosition());
-    P = frc::SmartDashboard::GetNumber("P value", 6e-5);
-    I = frc::SmartDashboard::GetNumber("I value", 1e-6);
+    P = frc::SmartDashboard::GetNumber("P value", 9e-3);
+    I = frc::SmartDashboard::GetNumber("I value", 5e-7);
     D = frc::SmartDashboard::GetNumber("D value", 0);
     shooter->SetPID(P, I, D);
     if(shooter->GetLowerLimitSwitch() && !shooter->GetLowerLimitBool()){ 
       std::cout << "***************LOWER LIMIT TRIGGERED" << std::endl;
       shooter->SetLowerLimit(shooter->GetHoodPosition());
-      shooter->SetAdjusterPercentOutput(-0.2);
+      shooter->SetAdjusterPercentOutput(-0.5);
     }
     else if(shooter->GetUpperLimitSwitch() && !shooter->GetUpperLimitBool()){
       std::cout << "***************UPPER LIMIT TRIGGERED" << std::endl;
       shooter->SetUpperLimit(shooter->GetHoodPosition());
-      shooter->SetAdjusterPercentOutput(0.2);
+      shooter->SetAdjusterPercentOutput(0.5);
     }
     else if (shooter->GetUpperLimitBool() && shooter->GetLowerLimitBool() && !shooter->GetAimReadiness()){
       shooter->SetAimReadiness(true);
-      shooter->SetAdjusterPosition(-0.2);
+      shooter->SetAdjusterPosition(0.5);
     }
     if(shooter->GetAimReadiness()){
       position = frc::SmartDashboard::GetNumber("Hood Position", 0.5);

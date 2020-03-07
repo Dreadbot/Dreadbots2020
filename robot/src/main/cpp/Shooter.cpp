@@ -36,8 +36,8 @@ Shooter::Shooter(rev::CANSparkMax *shooterMotor, rev::CANSparkMax *aimMotor)
   shooter_encoder = new rev::CANEncoder(shooting_motor->GetEncoder());
   //Needs to be calibrated
   //shooting_motor->RestoreFactoryDefaults();
-  shooting_motor_pid_controller->SetP(6e-5);
-  shooting_motor_pid_controller->SetI(1e-5);
+  shooting_motor_pid_controller->SetP(9e-3);
+  shooting_motor_pid_controller->SetI(5e-7);
   shooting_motor_pid_controller->SetD(0);
   shooting_motor_pid_controller->SetIZone(0);  
   shooting_motor_pid_controller->SetFF(0.000015);
@@ -113,6 +113,7 @@ void Shooter::SetAdjusterPosition(double position){ //Takes number 0 to 1
   //std::cout << "Current Encoder Value: " <<GetHoodPosition()<<std::endl;
   aiming_motor_pid_controller->SetReference(position, rev::ControlType::kPosition);
 }
+
 
 void Shooter::SetLowerLimit(int position){
   minHoodPosition = position;
