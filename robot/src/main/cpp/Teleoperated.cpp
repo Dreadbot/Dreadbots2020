@@ -179,6 +179,20 @@ void Teleoperated::HandleShooterInputs()
       aim_shoot_state = kAiming;
       manipulator->SensorAdvanceGeneva(false, false);
     }
+
+    if(joystick_2->GetPOV() == 0)
+    {
+      manipulator->GetShooter()->SetAdjusterPercentOutput(-.4);
+    }
+    else if(joystick_2->GetPOV() == 180)
+    {
+      manipulator->GetShooter()->SetAdjusterPercentOutput(.4);
+    }
+    else
+    {
+      manipulator->GetShooter()->SetAdjusterPercentOutput(0.0);
+    }
+    
     //when we release the button, then set motors to zero
     //this eliminates the constant turn after turn is done.
 }

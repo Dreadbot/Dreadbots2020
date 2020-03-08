@@ -14,13 +14,14 @@ void DriveForwardAutonState::AutonomousInit()
 
 void DriveForwardAutonState::AutonomousPeriodic()
 {
+  std::cout << "Yippeee!" << std::endl;
   spark_drive->TankDrive(-0.3, 0.0, false, false);
 }
 
 void DriveForwardAutonState::CheckState()
 {
-  double goal = encoder_determinant + left_front_encoder_zero_value;
-  double current = encoder_determinant + spark_drive->GetLeftFrontEncoder().GetPosition();
+  double goal = encoder_determinant;
+  double current = spark_drive->GetLeftFrontEncoder().GetPosition() - left_front_encoder_zero_value;
 
   if(fabs(current - goal) < 1)
   {
