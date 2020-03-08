@@ -130,8 +130,9 @@ void Teleoperated::HandleShooterInputs()
   frc::SmartDashboard::PutNumber("Current Angle", spark_drive->GetGyroscope()->GetYaw());
     int index = manipulator->Round();
     double hood_position = frc::SmartDashboard::GetNumber("Hood Position", 0.5);
+    double distance = frc::SmartDashboard::GetNumber("selectedDistance", 120);
     //manipulator->GetSelectedHoodPosition(index);
-    int rpm = manipulator->GetSelectedRPM(index);
+    //int rpm = manipulator->GetSelectedRPM(index);
     double pValue = frc::SmartDashboard::GetNumber("Turn P Value", 0.002);
 
   //std::cout << "Current Angle: " << spark_drive->GetGyroscope()->GetYaw() << std::endl;
@@ -164,7 +165,7 @@ void Teleoperated::HandleShooterInputs()
   }
   else if(joystick_2->GetRawButton(kAimShootButton) && staleCount < 5){
     std::cout << "Aim Cont Shooting" << std::endl;
-    AimingContinuousShoot(hood_position, rpm, pValue, selectedAngle, 0.4);
+    AimingContinuousShoot(distance, pValue, selectedAngle, 0.4);
     staleCount = 0;
   }
   else if(joystick_2->GetRawButton(kAimShootButton)){
@@ -222,9 +223,15 @@ void Teleoperated::HandleColorWheelInputs()
   //   color_wheel->TurnToColor(kRedTarget);
   // }
 }
-void Teleoperated::AimingContinuousShoot(double hood_position, int rpm, double pValue, double target_angle, double geneva_speed){
+void Teleoperated::AimingContinuousShoot(double distance, double pValue, double target_angle, double geneva_speed){
     //std::cout << "RPM: " << rpm << "Hood Position: " <<hood_position << std::endl;
     frc::SmartDashboard::PutNumber("aim counts", aim_counts);
+    double rpm = manipulator->GetSelectedRPM(distance);
+    double hoodPosition = manipulator->GetSelectedHoodPosition(distance);
+
+    frc::SmartDashboard::PutNumber("Rotpermin", rpm);
+    frc::SmartDashboard::PutNumber("hoodpos", hoodPosition);
+
     if(aim_counts < max_aim_counts){
         aim_shoot_state = kAiming;
     }
@@ -234,11 +241,11 @@ void Teleoperated::AimingContinuousShoot(double hood_position, int rpm, double p
     switch(aim_shoot_state){
         case(kAiming):
             teleop_functions->WPITurnToAngle(target_angle);
-            manipulator->PrepareShot(rpm, hood_position);
+            manipulator->PrepareShot(rpm, hoodPosition);
             break;
         case(kShooting):
             spark_drive->TankDrive(0,0,false,false);
-            manipulator->ContinuousShoot(hood_position, geneva_speed, rpm);
+            manipulator->ContinuousShoot(hoodPosition, geneva_speed, rpm);
             break;
     }
     aim_counts++;

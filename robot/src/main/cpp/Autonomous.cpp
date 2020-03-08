@@ -24,3 +24,13 @@ void Autonomous::AutonomousPeriodic()
     break;
   }
 }
+
+// void Autonomous::AutonomousShooting(int num_shots)
+// {
+
+// }
+
+// void Autonomous::AutonomousDriving(int distance)
+// {
+
+// }
