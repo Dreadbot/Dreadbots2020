@@ -31,17 +31,14 @@ void Manipulator::PrepareShot(int rpm, double aimPosition){
     m_shooter->SetAdjusterPosition(aimPosition);
 }
 
-int Manipulator::GetSelectedRPM(unsigned int index){
-    if(index < sizeof(ShootingSpeeds)/sizeof(ShootingSpeeds[0])){
-      return ShootingSpeeds[index];
-    }
-    return -1;
+int Manipulator::GetSelectedRPM(double inches){
+    inches /= 12;
+    return (-0.0029 * inches * inches) + (0.188026 * inches) + 1.7676;
 }
-double Manipulator::GetSelectedHoodPosition(unsigned int index){
-    if(index < sizeof(HoodPositions)/sizeof(HoodPositions[0])){
-      return HoodPositions[index];
-    }
-    return -1;
+
+double Manipulator::GetSelectedHoodPosition(double inches){
+    inches /= 12;
+    return (-0.0941 * inches * inches) + (4.96271 * inches) + 2.08;
 }
 
 void Manipulator::ContinuousShoot(double aim_position, double geneva_speed, int shooting_rpm){

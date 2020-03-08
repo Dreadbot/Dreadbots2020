@@ -11,8 +11,8 @@ class Manipulator
         Manipulator(Intake *intake, Feeder *feeder, Shooter *shooter);
         int Round();
         void PrepareShot(int rpm, double aimHeight);
-        int GetSelectedRPM(unsigned int index);
-        double GetSelectedHoodPosition(unsigned int index);
+        int GetSelectedRPM(double inches);
+        double GetSelectedHoodPosition(double inches);
         void ContinuousShoot(double aim_position, double geneva_speed, int shooting_rpm);
         void ContinuousIntake();
         void ResetManipulatorElements();
