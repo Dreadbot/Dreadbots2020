@@ -1,5 +1,6 @@
 #pragma once
 
+#include <rev/CANSparkMax.h>
 #include <rev/ColorSensorV3.h>
 #include <rev/ColorMatch.h>
 #include <frc/I2C.h>
@@ -10,10 +11,11 @@
 
 class ColorWheel{
     public:
-     ColorWheel(WPI_TalonSRX *motor, frc::Joystick *joystick, frc::Solenoid *solenoid);
+     ColorWheel(rev::CANSparkMax *motor, frc::Joystick *joystick, frc::Solenoid *solenoid);
      void RotateToNumber();
      void RotateToColor(frc::Color *targetcolor);
      void ControlSolenoid();
+     void SetRotationState(int state);
     private:
      void PrintColor(frc::Color color, double colorConfidence);
      frc::Solenoid *Solenoid;

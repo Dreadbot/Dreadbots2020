@@ -27,8 +27,7 @@ int Manipulator::Round(){
 }
 
 void Manipulator::PrepareShot(int rpm, double aimPosition){
-    m_shooter->Shoot(rpm);
-    std::cout << "PREPARE SHOT: " << aimPosition << std::endl;
+    m_shooter->Shoot(-rpm);
     m_shooter->SetAdjusterPosition(aimPosition);
 }
 
@@ -53,7 +52,7 @@ void Manipulator::ContinuousShoot(double aim_position, double geneva_speed, int 
     //frc::SmartDashboard::PutBoolean("If Statement", (shooterState == kRamping && abs(abs(m_shooter->GetShootingSpeed()) - shooting_rpm) < 100));
 
     int speedDifference = abs(m_shooter->GetShootingSpeed()) - shooting_rpm;
-    if(shooterState == kRamping && speedDifference < 500 && speedDifference > 0){
+    if(shooterState == kRamping && speedDifference < 300 && speedDifference > 0){
         shooterState = kPunching;
     }
     else if(shooterState == kRamping && speedDifference > -100 && speedDifference < 0){
@@ -72,13 +71,13 @@ void Manipulator::ContinuousShoot(double aim_position, double geneva_speed, int 
     }
 
     //Change state if the geneva drive has rotated away from the limit switch
-    else if(shooterState == kAdvance && !m_feeder->GetGenevaSwitchState())
+    else if(shooterState == kAdvance && !m_feeder->GetGenevaSwitchState()){
         shooterState = kAdvancing;
-
+    }
     //Change state back to the start once the geneva drive has made it back to the limit switch
-    else if(shooterState == kAdvancing && m_feeder->GetGenevaSwitchState())
+    else if(shooterState == kAdvancing && m_feeder->GetGenevaSwitchState()){
         shooterState = kRamping;
-
+    }
     //Choose behavior based on the FSM
     switch(shooterState){
         case(kRamping):
@@ -98,9 +97,10 @@ void Manipulator::ContinuousShoot(double aim_position, double geneva_speed, int 
     }
     
     //Set the position of the aim plate and always drive the flywheel
-    //std::cout << "********Calling Adjuster position to: " << aim_position << std::endl;
+    std::cout << "********Calling Adjuster position to: " << aim_position << std::endl;
     m_shooter->SetAdjusterPosition(aim_position);
     m_shooter->Shoot(-shooting_rpm);
+    m_shooter->SetVisionLight(true);
 }
 
 void Manipulator::ContinuousIntake(){
@@ -129,6 +129,10 @@ void Manipulator::ResetManipulatorElements(){
     }
     shooterState = kRamping;
     m_shooter->SetShootingPercentOutput(0);
+    if(m_shooter->GetAimReadiness()){
+        m_shooter->SetAdjusterPosition(0);
+    }
+    m_shooter->SetVisionLight(true);
 }
 // void Manipulator::GetState(){
 //     switch(state){
@@ -147,11 +151,16 @@ void Manipulator::ResetManipulatorElements(){
 void Manipulator::SensorAdvanceGeneva(bool spin, bool forward){
     //std::cout<<"X button is: " << spin <<std::endl;
     //std::cout << "SensorAdvance state: " << genevaState << std::endl;
+    double genevaSpeed = 0.4;
     if(genevaState == stopped && spin){
-        if(forward)
-            m_feeder->SetSpin(.4);
-        else
-            m_feeder->SetSpin(-.4);
+        if(forward){
+            m_feeder->SetSpin(-genevaSpeed);
+            genevaDirection = kForward;
+        }
+        else{
+            m_feeder->SetSpin(genevaSpeed);
+            genevaDirection = kBackward;
+        }
         genevaState = move;
         //std::cout<<"Indexing"<<genevaState<<std::endl;
     }
@@ -167,11 +176,11 @@ void Manipulator::SensorAdvanceGeneva(bool spin, bool forward){
 
     if(genevaState == move || genevaState == moving){
         //std::cout << "Moving" << std::endl;
-        if(forward){
-            m_feeder->SetSpin(0.4);
+        if(genevaDirection == kForward){
+            m_feeder->SetSpin(-genevaSpeed);
         }
         else{
-            m_feeder->SetSpin(-0.4);
+            m_feeder->SetSpin(genevaSpeed);
         }
     }
 

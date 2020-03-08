@@ -91,13 +91,13 @@ class Robot : public frc::TimedRobot {
 
   //ENABLED BOOLEANS
   const bool kDriveEnabled = true;
-  const bool kClimbEnabled = true;
+  const bool kClimbEnabled = false;
   const bool kShooterEnabled = true;
   const bool kRotateToAngleEnabled = true;
   const bool kIntakeEnabled = true;
   const bool kFeederEnabled = true;
   const bool kTrajectoryEnabled = false;
-  const bool kColorWheelEnabled = false;
+  const bool kColorWheelEnabled = true;
 
   int enabled_subsystems;
 
@@ -119,8 +119,10 @@ class Robot : public frc::TimedRobot {
   rev::CANSparkMax *climb_winch;
   frc::Solenoid *climb_telescope;
   ColorWheel *color_wheel;
-  WPI_TalonSRX *color_motor;
+  rev::CANSparkMax *color_motor;
   frc::Solenoid *color_sol;
   Diagnostic* test;
+
+
 
 };

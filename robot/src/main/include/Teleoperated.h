@@ -50,7 +50,7 @@ class Teleoperated
   void AimingContinuousShoot(double hood_position, int rpm, double pValue, double target_angle, double geneva_speed);
   int aim_shoot_state;
   int aim_counts;
-  const int max_aim_counts = 50;
+  const int max_aim_counts = 150;
   enum AimShootStates{
     kAiming, kShooting
   };
@@ -61,6 +61,6 @@ class Teleoperated
   int staleCount = 0;
 
   // Color Wheel Robot Objects
-  WPI_TalonSRX *color_motor;
+  rev::CANSparkMax *color_motor;
   frc::Solenoid *color_sol;
 };

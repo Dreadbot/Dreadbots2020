@@ -39,9 +39,10 @@ class Manipulator
         const int kCountsToExtend = 5;
 
         enum genevaStates{
-            move, moving, stopped
+            move, moving, stopped, kForward, kBackward
         };
         int genevaState = stopped;
+        int genevaDirection = kForward;
         
 
         int ShootingSpeeds [5] = {2500, 3750, 3750, 4000, 4250};

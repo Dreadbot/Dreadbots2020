@@ -51,6 +51,7 @@ void Robot::RobotInit()
   frc::SmartDashboard::PutNumber("P value", .009);
   frc::SmartDashboard::PutNumber("I value", 0.0000005);
   frc::SmartDashboard::PutNumber("D value", 0);
+      frc::SmartDashboard::PutNumber("Turn Fudge Factor", 0.0);
 
   // Initialize Timer Object
   timer = new frc::Timer();
@@ -138,17 +139,17 @@ void Robot::RobotInit()
   // Setup ColorWheel System
   // std::cout << "Color Wheel Subsystem Setup..." << std::endl;
   // std::cout << " ---> ENABLED: " << std::boolalpha << kColorWheelEnabled << std::endl;
-  // if(kColorWheelEnabled)
-  // {
-  //   ++enabled_subsystems;
+  if(kColorWheelEnabled)
+  {
+    ++enabled_subsystems;
 
-  //   // Define Internal Subsystems to Pass into ColorWheel Container Class
-  //   color_motor = new WPI_TalonSRX(kColorWheelMotorID);
-  //   color_sol = new frc::Solenoid(kColorWheelSolenoidID);
+    // Define Internal Subsystems to Pass into ColorWheel Container Class
+    color_motor = new rev::CANSparkMax(kColorWheelMotorID, rev::CANSparkMax::MotorType::kBrushless);
+    color_sol = new frc::Solenoid(kColorWheelSolenoidID);
 
-  //   // Define ColorWheel Object
-  //   color_wheel = new ColorWheel();
-  // }
+    // Define ColorWheel Object
+    color_wheel = new ColorWheel(color_motor, joystick_2, color_sol);
+  }
 
   // Setup Climber System
   std::cout << "Climb Subsystem Setup..." << std::endl;
@@ -237,13 +238,19 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic() 
 {
+  // if(joystick_2->GetPOV(kCameraSwitchPOV)){
+  //   frc::SmartDashboard::PutNumber("camNumber", kGenevaCam);
+  // }
+  // else{
+  //   frc::SmartDashboard::PutNumber("camNumber", kDriveCam);
+  // }
   //std::cout << "Intake Subsystem Teleoperated Periodic Call" << std::endl;
   if(kIntakeEnabled)
   {
     teleoperated->HandleIntakeInputs();
   }
 
-  std::cout << "Shooter Subsystem Teleoperated Periodic Call" << std::endl;
+  //std::cout << "Shooter Subsystem Teleoperated Periodic Call" << std::endl;
   if(kShooterEnabled)
   {
     //frc::SmartDashboard::PutBoolean("Upper Limit Switch", shooter->GetUpperLimitSwitch());

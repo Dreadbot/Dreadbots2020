@@ -25,7 +25,10 @@ enum Joystick2Layout{
     kAimShootButton = b_button, kIntakeButton = x_button, kOuttakeButton = a_button, kShootButton = y_button,
     kRegressGenevaButton = left_bumper, kAdvanceGenevaButton = right_bumper, kRetractColorWheelButton = left_trigger,
     kDeployColorWheelButton = right_trigger, kColorWheelColorControl = start_button, kColorWheelRotationControl = back_button, 
-    kIncreaseAimOffsetPOV = 90, kDecreaseAimOffsetPOV = 270,
+    kIncreaseAimOffsetPOV = 270, kDecreaseAimOffsetPOV = 90, kCameraSwitchPOV = 0
+};
+enum CameraView{
+  kVisionCam, kGenevaCam, kIntakeCam, kDriveCam
 };
 
 const frc::Color kBlueTarget = frc::Color(0.143, 0.427, 0.429);

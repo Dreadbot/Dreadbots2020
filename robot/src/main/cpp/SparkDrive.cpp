@@ -39,7 +39,7 @@ SparkDrive::SparkDrive(rev::CANSparkMax *left_front_,
 
   // Gyroscope Definition & 
   // Reset the Gyroscope to a 0 position.
-  gyro = new AHRS(frc::SPI::Port::kMXP);
+  gyro = new AHRS(frc::SerialPort::kUSB);
   gyro->Reset();
 
   // PID Settings
@@ -114,7 +114,7 @@ void SparkDrive::TankDrive(double y_axis,
   // takes more force to turn due to friction, so we
   // use twice the speed.
   y_speed = y_axis * current_speed;
-  rot_speed = -1.5 * rot_axis * current_speed;
+  rot_speed = -1 * rot_axis * current_speed;
 
   // Calculating Final Speed by adding both the
   // Forward/Backward speed (y_speed) and Rotation

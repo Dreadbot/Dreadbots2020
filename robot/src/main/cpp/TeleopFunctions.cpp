@@ -6,23 +6,26 @@
     m_sparkDrive = sparkDrive;
 }
 void TeleopFunctions::TurnToAngle(double targetAngle, double proportion){
+    targetAngle += frc::SmartDashboard::GetNumber("Turn Fudge Factor", 0.0);
     //If a button is pressed, reset the counter, and signal that a turn is initiiated
     min_rotation_speed = frc::SmartDashboard::GetNumber("Min Rot Speed", 0.15);
     //frc::SmartDashboard::PutBoolean("turn complete?", turn_complete);
     //Find the difference between the current angle and the target angle, multiply by a set value, and use that to find the rate
-    double error = ((double) m_sparkDrive->GetGyroscope()->GetYaw()) - targetAngle;
-    //std::cout << "Error: " << error;
+    double error = (double)m_sparkDrive->GetGyroscope()->GetYaw() - targetAngle;
+    std::cout << "Error: " << error;
     current_rotation_rate = error * proportion;
+    std::cout << " 1: " << current_rotation_rate; 
     
     //Set the lower bound of the rotation speed so it is not less than the power necessary to turn the robot
     if(current_rotation_rate > 0)
         current_rotation_rate += min_rotation_speed;
     else if(current_rotation_rate < 0)
         current_rotation_rate -= min_rotation_speed;
-    
+    std::cout << " 2: " << current_rotation_rate;
     //Set the upper bound of the rotation rate
     current_rotation_rate = (current_rotation_rate > 1)? 1 : current_rotation_rate;
     current_rotation_rate = (current_rotation_rate < -1)? -1 : current_rotation_rate;
+    std::cout << " 3: " << current_rotation_rate;
 
     //if we are not within the slop, then we are not done with the turn
     if(fabs(error) > slop){
@@ -43,7 +46,7 @@ void TeleopFunctions::TurnToAngle(double targetAngle, double proportion){
     //controller input, but the rotation axis of the drive base based on the rotation rate found
     m_sparkDrive->TankDrive(
         js1->GetRawAxis(kPrimaryDriverJoystickID), 
-        -current_rotation_rate, 
+            -current_rotation_rate, 
         js1->GetRawButton(right_bumper), 
         js1->GetRawButton(left_bumper),
         0.0
