@@ -6,25 +6,6 @@ Manipulator::Manipulator(Intake *intake, Feeder *feeder, Shooter *shooter){
     m_shooter = shooter;
     shooterState = kRamping;
 }
-int Manipulator::Round(){
-    distance = frc::SmartDashboard::GetNumber("selectedDistance", 100);
-    if(distance <= 60 || (distance > 60 && distance <= 90)){
-        return 0;
-    }
-    else if(distance > 90 && distance <= 150){
-        return 1;
-    }
-    else if(distance > 150 && distance <= 210){
-        return 2;
-    }
-    else if(distance > 210 && distance <= 270){
-        return 3;
-    }
-    else if(distance > 270){ 
-      return 4;
-    }
-    return -1;
-}
 
 void Manipulator::PrepareShot(int rpm, double aimPosition){
     m_shooter->Shoot(-rpm);
@@ -33,12 +14,12 @@ void Manipulator::PrepareShot(int rpm, double aimPosition){
 
 int Manipulator::GetSelectedRPM(double inches){
     inches /= 12;
-    return (-0.0029 * inches * inches) + (0.188026 * inches) + 1.7676;
+    return ((-0.0029 * inches * inches) + (0.188026 * inches) + 1.7676)*1000.;
 }
 
 double Manipulator::GetSelectedHoodPosition(double inches){
     inches /= 12;
-    return (-0.0941 * inches * inches) + (4.96271 * inches) + 2.08;
+    return ((-0.0941 * inches * inches) + (4.96271 * inches) + 2.08)/100.;
 }
 
 void Manipulator::ContinuousShoot(double aim_position, double geneva_speed, int shooting_rpm){
@@ -94,7 +75,7 @@ void Manipulator::ContinuousShoot(double aim_position, double geneva_speed, int 
     }
     
     //Set the position of the aim plate and always drive the flywheel
-    std::cout << "********Calling Adjuster position to: " << aim_position << std::endl;
+    //std::cout << "********Calling Adjuster position to: " << aim_position << std::endl;
     m_shooter->SetAdjusterPosition(aim_position);
     m_shooter->Shoot(-shooting_rpm);
     m_shooter->SetVisionLight(true);

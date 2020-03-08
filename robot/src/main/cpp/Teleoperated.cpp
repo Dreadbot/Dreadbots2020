@@ -128,9 +128,7 @@ HandleClimbInputs()
 void Teleoperated::HandleShooterInputs()
 {
   frc::SmartDashboard::PutNumber("Current Angle", spark_drive->GetGyroscope()->GetYaw());
-    int index = manipulator->Round();
     double hood_position = frc::SmartDashboard::GetNumber("Hood Position", 0.5);
-    double distance = frc::SmartDashboard::GetNumber("selectedDistance", 120);
     //manipulator->GetSelectedHoodPosition(index);
     //int rpm = manipulator->GetSelectedRPM(index);
     double pValue = frc::SmartDashboard::GetNumber("Turn P Value", 0.002);
@@ -145,6 +143,10 @@ void Teleoperated::HandleShooterInputs()
   {
     //if vision does see a target, then the count is no longer stale
     staleCount = 0;
+  }
+
+  if(aim_shoot_state == kAiming){
+    distance = frc::SmartDashboard::GetNumber("selectedDistance", 120);
   }
   //update the latest count, for use on next loop iteration
   lastCount = frc::SmartDashboard::GetNumber("detectionCount", lastCount);
@@ -164,7 +166,6 @@ void Teleoperated::HandleShooterInputs()
     manipulator->ContinuousShoot(shooting_hood_position, 0.4, frc::SmartDashboard::GetNumber("Target Speed", 0));
   }
   else if(joystick_2->GetRawButton(kAimShootButton) && staleCount < 5){
-    std::cout << "Aim Cont Shooting" << std::endl;
     AimingContinuousShoot(distance, pValue, selectedAngle, 0.4);
     staleCount = 0;
   }
@@ -231,6 +232,32 @@ void Teleoperated::AimingContinuousShoot(double distance, double pValue, double 
 
     frc::SmartDashboard::PutNumber("Rotpermin", rpm);
     frc::SmartDashboard::PutNumber("hoodpos", hoodPosition);
+
+    if(aim_counts < max_aim_counts){
+        aim_shoot_state = kAiming;
+    }
+    if(aim_counts >= max_aim_counts){
+        aim_shoot_state = kShooting;
+    }
+    switch(aim_shoot_state){
+        case(kAiming):
+            teleop_functions->WPITurnToAngle(target_angle);
+            manipulator->PrepareShot(rpm, hoodPosition);
+            break;
+        case(kShooting):
+            spark_drive->TankDrive(0,0,false,false);
+            manipulator->ContinuousShoot(hoodPosition, geneva_speed, rpm);
+            break;
+    }
+    aim_counts++;
+    std::cout << "Aim counts:" << aim_counts << " Aim State: " << aim_shoot_state << std::endl;
+}
+
+void Teleoperated::AimingContinuousShoot(double rpm, double hoodPosition, double pValue, double target_angle, double geneva_speed){
+    //std::cout << "RPM: " << rpm << "Hood Position: " <<hood_position << std::endl;
+    frc::SmartDashboard::PutNumber("aim counts", aim_counts);
+    // frc::SmartDashboard::PutNumber("Rotpermin", rpm);
+    // frc::SmartDashboard::PutNumber("hoodpos", hoodPosition);
 
     if(aim_counts < max_aim_counts){
         aim_shoot_state = kAiming;

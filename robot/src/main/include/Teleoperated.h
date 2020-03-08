@@ -48,6 +48,7 @@ class Teleoperated
 
   //Combination Aim/Shoot Functions/Variables
   void AimingContinuousShoot(double distance, double pValue, double target_angle, double geneva_speed);
+  void AimingContinuousShoot(double rpm, double hoodPosition, double pValue, double target_angle, double geneva_speed);
   int aim_shoot_state;
   int aim_counts;
   const int max_aim_counts = 150;
@@ -59,6 +60,7 @@ class Teleoperated
   double selectedAngle = 0;
   int lastCount = 0;
   int staleCount = 0;
+  double distance = 120;
 
   // Color Wheel Robot Objects
   rev::CANSparkMax *color_motor;

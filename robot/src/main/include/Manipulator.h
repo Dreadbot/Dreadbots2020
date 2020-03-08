@@ -9,7 +9,6 @@ class Manipulator
 {
     public:
         Manipulator(Intake *intake, Feeder *feeder, Shooter *shooter);
-        int Round();
         void PrepareShot(int rpm, double aimHeight);
         int GetSelectedRPM(double inches);
         double GetSelectedHoodPosition(double inches);
