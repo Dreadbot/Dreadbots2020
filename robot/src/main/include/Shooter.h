@@ -2,7 +2,7 @@
 
 #include <frc/DigitalInput.h>
 #include <frc/smartdashboard/SmartDashboard.h>
-
+#include <frc/Solenoid.h>
 #include "rev/CANSparkMax.h"
 
 class Shooter
@@ -61,11 +61,13 @@ class Shooter
   void SetUpperBool(bool value);
   void SetLowerBool(bool value);
   void SetPID(double P, double I, double D);
+  void SetVisionLight(bool value);
 
  private:
   rev::CANSparkMax* shooting_motor;
   rev::CANPIDController* shooting_motor_pid_controller;
   rev::CANEncoder *shooter_encoder;
+  frc::Solenoid *vision_light;
   double speed;
 
   rev::CANSparkMax* aiming_motor; 

@@ -59,6 +59,7 @@ Shooter::Shooter(rev::CANSparkMax *shooterMotor, rev::CANSparkMax *aimMotor)
   upper_limit_switch = new frc::DigitalInput(1);
   //practice bot 4, comp bot 1
   lower_limit_switch = new frc::DigitalInput(2);
+  vision_light = new frc::Solenoid(7);
 }
 
 void Shooter::Shoot(int rpm){
@@ -111,6 +112,9 @@ void Shooter::SetAdjusterPosition(double position){ //Takes number 0 to 1
   position = minHoodPosition + (position * range);
   //std::cout << "Going to Position: " << position << std::endl;
   //std::cout << "Current Encoder Value: " <<GetHoodPosition()<<std::endl;
+
+  frc::SmartDashboard::PutNumber("Adjuster Position", GetHoodPosition());
+
   aiming_motor_pid_controller->SetReference(position, rev::ControlType::kPosition);
 }
 
@@ -163,8 +167,11 @@ bool Shooter::GetLowerLimitBool(){
 } 
 
 void Shooter::SetPID(double P, double I, double D){
-  std::cout<<"P value: " << P << "I value: " << I << "D value " << D << std::endl;
+  //std::cout<<"P value: " << P << "I value: " << I << "D value " << D << std::endl;
   shooting_motor_pid_controller->SetP(P);
   shooting_motor_pid_controller->SetI(I);
   shooting_motor_pid_controller->SetD(D);
+}
+void Shooter::SetVisionLight(bool value){
+  vision_light->Set(value);
 }
