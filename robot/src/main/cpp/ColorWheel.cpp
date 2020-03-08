@@ -172,8 +172,6 @@ void ColorWheel::PrintColor(frc::Color color, double colorConfidence){
             frc::SmartDashboard::PutString("color","No color detected");
             cout << "no color detected" << endl;
         }
-        frc::SmartDashboard::PutNumber("NumSpins", NumSpins);
         frc::SmartDashboard::PutNumber("Confidence", colorConfidence);
 
     }
-

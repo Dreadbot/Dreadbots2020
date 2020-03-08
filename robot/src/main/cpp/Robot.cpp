@@ -48,9 +48,9 @@ void Robot::RobotInit()
   //frc::SmartDashboard::PutNumber("Aimpid",0.1);
   frc::SmartDashboard::PutNumber("Hood Position", 0);
   frc::SmartDashboard::PutNumber("Target Speed", 4000);
-  frc::SmartDashboard::PutNumber("P value", .009);
-  frc::SmartDashboard::PutNumber("I value", 0.0000005);
-  frc::SmartDashboard::PutNumber("D value", 0);
+  frc::SmartDashboard::PutNumber("Shoot P value", .009);
+  frc::SmartDashboard::PutNumber("Shoot I value", 0.0000005);
+  frc::SmartDashboard::PutNumber("Shoot D value", 0);
       frc::SmartDashboard::PutNumber("Turn Fudge Factor", 0.0);
 
   // Initialize Timer Object
@@ -179,7 +179,6 @@ void Robot::RobotInit()
 
   std::cout << "Robot Intialized with " << enabled_subsystems << " Subsystems." << std::endl;
   frc::SmartDashboard::PutNumber("Min Rot Speed", 0.01);
-  frc::SmartDashboard::PutNumber("Turn P Value", 0.008);
 }
 
 void Robot::RobotPeriodic() {}
@@ -193,9 +192,6 @@ void Robot::AutonomousInit() {
   //     AutoDefault);
   
   autonomous->AutonomousInit();
-  frc::SmartDashboard::PutNumber("P value", .009);
-  frc::SmartDashboard::PutNumber("I value", 0.0000005);
-  frc::SmartDashboard::PutNumber("D value", 0);
 }
 
 void Robot::AutonomousPeriodic() 
@@ -229,9 +225,6 @@ void Robot::TeleopInit()
     shooter->SetLowerBool(false);
     shooter->SetAimReadiness(false);
   }
-  frc::SmartDashboard::PutNumber("P value", .009);
-  frc::SmartDashboard::PutNumber("I value", 0.0000005);
-  frc::SmartDashboard::PutNumber("D value", 0);
   //ContinuousShooterSpeed = frc::SmartDashboard::GetNumber("ContinuousShoot() shooter_rpm", 0.0);
 }
 
@@ -255,9 +248,9 @@ void Robot::TeleopPeriodic()
     //frc::SmartDashboard::PutBoolean("Upper Limit Switch", shooter->GetUpperLimitSwitch());
     //frc::SmartDashboard::PutBoolean("Lower Limit Switch", shooter->GetLowerLimitSwitch());
     //frc::SmartDashboard::PutNumber("Current Hood Position", shooter->GetHoodPosition());
-    P = frc::SmartDashboard::GetNumber("P value", 9e-3);
-    I = frc::SmartDashboard::GetNumber("I value", 5e-7);
-    D = frc::SmartDashboard::GetNumber("D value", 0);
+    P = frc::SmartDashboard::GetNumber("Shoot P value", 9e-3);
+    I = frc::SmartDashboard::GetNumber("Shoot I value", 5e-7);
+    D = frc::SmartDashboard::GetNumber("Shoot D value", 0);
     shooter->SetPID(P, I, D);
     if(shooter->GetLowerLimitSwitch() && !shooter->GetLowerLimitBool()){ 
       std::cout << "***************LOWER LIMIT TRIGGERED" << std::endl;

@@ -5,13 +5,13 @@
     this->shooter = shooter;
     m_sparkDrive = sparkDrive;
 
-    p = 0.0;
+    p = 5;
     i = 0.0;
     d = 0.0;
 
-    frc::SmartDashboard::PutNumber("P Value", p);
-    frc::SmartDashboard::PutNumber("I Value", i);
-    frc::SmartDashboard::PutNumber("D Value", d);
+    frc::SmartDashboard::PutNumber("Turn P Value", p);
+    frc::SmartDashboard::PutNumber("Turn I Value", i);
+    frc::SmartDashboard::PutNumber("Turn D Value", d);
 
     pid_controller = new frc2::PIDController(p, i, d, 20 * 1_ms);
 
@@ -77,7 +77,6 @@ void TeleopFunctions::TurnToAngle(double targetAngle, double proportion){
 void TeleopFunctions::WPITurnToAngle(double target_angle)
 {
   //If a button is pressed, reset the counter, and signal that a turn is initiiated
-  min_rotation_speed = frc::SmartDashboard::GetNumber("Min Rot Speed", 0.15);
   //frc::SmartDashboard::PutBoolean("turn complete?", turn_complete);
   //Find the difference between the current angle and the target angle, multiply by a set value, and use that to find the rate
   double error = ((double) m_sparkDrive->GetGyroscope()->GetYaw()) - target_angle;
@@ -86,11 +85,6 @@ void TeleopFunctions::WPITurnToAngle(double target_angle)
   UpdatePIDController();
 
   current_rotation_rate = pid_controller->Calculate(error);
-
-  if(current_rotation_rate > 0)
-    current_rotation_rate += min_rotation_speed;
-  else if(current_rotation_rate < 0)
-    current_rotation_rate -= min_rotation_speed;
     
   //Set the upper bound of the rotation rate
   current_rotation_rate = (current_rotation_rate > 1)? 1 : current_rotation_rate;
@@ -122,9 +116,9 @@ void TeleopFunctions::WPITurnToAngle(double target_angle)
 
 void TeleopFunctions::UpdatePIDController()
 {
-  p = frc::SmartDashboard::GetNumber("P Value", 0.0);
-  i = frc::SmartDashboard::GetNumber("I Value", 0.0);
-  d = frc::SmartDashboard::GetNumber("D Value", 0.0); 
+  p = frc::SmartDashboard::GetNumber("Turn P Value", 0.0);
+  i = frc::SmartDashboard::GetNumber("Turn I Value", 0.0);
+  d = frc::SmartDashboard::GetNumber("Turn D Value", 0.0); 
 
   pid_controller->SetP(p);
   pid_controller->SetI(i);

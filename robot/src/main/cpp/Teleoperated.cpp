@@ -226,12 +226,8 @@ void Teleoperated::HandleColorWheelInputs()
 }
 void Teleoperated::AimingContinuousShoot(double distance, double pValue, double target_angle, double geneva_speed){
     //std::cout << "RPM: " << rpm << "Hood Position: " <<hood_position << std::endl;
-    frc::SmartDashboard::PutNumber("aim counts", aim_counts);
     double rpm = manipulator->GetSelectedRPM(distance);
     double hoodPosition = manipulator->GetSelectedHoodPosition(distance);
-
-    frc::SmartDashboard::PutNumber("Rotpermin", rpm);
-    frc::SmartDashboard::PutNumber("hoodpos", hoodPosition);
 
     if(aim_counts < max_aim_counts){
         aim_shoot_state = kAiming;
