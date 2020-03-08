@@ -114,6 +114,47 @@ void TeleopFunctions::WPITurnToAngle(double target_angle)
   }
 }
 
+double TeleopFunctions::CalculateTurnToAngle(double target_angle){
+    //If a button is pressed, reset the counter, and signal that a turn is initiiated
+  //frc::SmartDashboard::PutBoolean("turn complete?", turn_complete);
+  //Find the difference between the current angle and the target angle, multiply by a set value, and use that to find the rate
+  double error = ((double) m_sparkDrive->GetGyroscope()->GetYaw()) - target_angle;
+  //std::cout << "Error: " << error;
+
+  UpdatePIDController();
+
+  current_rotation_rate = pid_controller->Calculate(error);
+    
+  //Set the upper bound of the rotation rate
+  current_rotation_rate = (current_rotation_rate > 1)? 1 : current_rotation_rate;
+  current_rotation_rate = (current_rotation_rate < -1)? -1 : current_rotation_rate;
+  
+  frc::SmartDashboard::PutNumber("Error", error);
+  frc::SmartDashboard::PutNumber("Current Rotation Rate", current_rotation_rate);
+  frc::SmartDashboard::PutNumber("Target Angle", target_angle);
+
+  //Drive the robot using the SparkDrive::TankDrive function, with the forward/backward axis still based on
+  //controller input, but the rotation axis of the drive base based on the rotation rate found
+//   m_sparkDrive->TankDrive(
+//       js1->GetRawAxis(kPrimaryDriverJoystickID), 
+//       -current_rotation_rate, 
+//       js1->GetRawButton(right_bumper), 
+//       js1->GetRawButton(left_bumper),
+//       0.0
+//   );
+
+  //If the difference between the current angle and the target angle is within an allowable constant, 
+  //and enough time has elapsed in while within that bound to allow for the turning to settle, 
+  //declare the turn finished and reset the gyro
+  if(fabs(error) < slop && TURN_BUTTON_TIMEOUT > timeToAdjust){
+      turn_complete = true;
+      //m_sparkDrive->GetGyroscope()->ZeroYaw();
+    current_rotation_rate = 0;
+  }
+
+  return current_rotation_rate;
+}
+
 void TeleopFunctions::UpdatePIDController()
 {
   p = frc::SmartDashboard::GetNumber("Turn P Value", 0.0);
