@@ -202,8 +202,7 @@ void Robot::AutonomousPeriodic()
 {
   // std::cout << "Auto selected: " << m_autoSelected << std::endl;
   // std::cout << "AutoRightRight: " << AutoRightRight << std::endl;
-
-  std::cout << "Autonomous Periodic Robot Call" << std::endl;
+  
   autonomous->AutonomousPeriodic();
 }
 

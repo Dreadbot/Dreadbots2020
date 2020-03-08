@@ -171,7 +171,7 @@ void SparkDrive::TankDrive(double y_axis,
   // takes more force to turn due to friction, so we
   // use twice the speed.
   y_speed = y_axis * current_speed;
-  rot_speed = -1.5 * rot_axis * current_speed;
+  rot_speed = -1 * rot_axis * current_speed;
 
   // Calculating Final Speed by adding both the
   // Forward/Backward speed (y_speed) and Rotation

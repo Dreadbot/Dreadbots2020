@@ -109,6 +109,8 @@ void Manipulator::ContinuousIntake(){
 void Manipulator::ResetManipulatorElements(){
     //std::cout << "Switch State" << std::boolalpha << m_feeder->GetPunchExtension() << std::endl;
     
+    GetShooter()->SetVisionLight(true);
+
     //This function should be called continuously if the system is not shooting power cells or collecting power cells
     //The function will get the system back into a state where the punch is retracted and the geneva drive is lined up
 

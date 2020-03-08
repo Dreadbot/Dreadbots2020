@@ -156,48 +156,6 @@ void Teleoperated::HandleShooterInputs()
   //Only turn and shoot when we hold the button, and we have seen the target recently
 
   if(joystick_2->GetRawButton(kShootButton))
-<<<<<<< Updated upstream
-    {
-      // Continually Shoot
-      std::cout << "Cont Shooting" << std::endl;
-      manipulator->ContinuousShoot(frc::SmartDashboard::GetNumber("Hood Position", 0.5), 0.4, frc::SmartDashboard::GetNumber("Target Speed", 0));
-    }
-    else if(joystick_2->GetRawButton(kAimShootButton) && staleCount < 5){
-      std::cout << "Aim Cont Shooting" << std::endl;
-      AimingContinuousShoot(hood_position, rpm, pValue, selectedAngle, 0.4);
-      staleCount = 0;
-    }
-    else if(joystick_2->GetRawButton(kAdvanceGenevaButton)){
-      manipulator->SensorAdvanceGeneva(true, true);
-    }
-    else if(joystick_2->GetRawButton(kRegressGenevaButton)){
-      manipulator->SensorAdvanceGeneva(true, false);
-    }
-    else if(manipulator->GetSensorAdvanceGenevaState() == 2){
-      std::cout << "Reseting" << std::endl;
-      manipulator->ResetManipulatorElements();
-      teleop_functions->SetTurnStatus(true);
-      aim_counts = 0;
-      aim_shoot_state = kAiming;
-      manipulator->SensorAdvanceGeneva(false, false);
-    }
-
-    if(joystick_2->GetPOV() == 0)
-    {
-      manipulator->GetShooter()->SetAdjusterPercentOutput(-.4);
-    }
-    else if(joystick_2->GetPOV() == 180)
-    {
-      manipulator->GetShooter()->SetAdjusterPercentOutput(.4);
-    }
-    else
-    {
-      manipulator->GetShooter()->SetAdjusterPercentOutput(0.0);
-    }
-    
-    //when we release the button, then set motors to zero
-    //this eliminates the constant turn after turn is done.
-=======
   {
     // Continually Shoot
     double shooting_hood_position  = frc::SmartDashboard::GetNumber("Hood Position", 0.5);
@@ -228,7 +186,6 @@ void Teleoperated::HandleShooterInputs()
   }
   //when we release the button, then set motors to zero
   //this eliminates the constant turn after turn is done.
->>>>>>> Stashed changes
 }
 
 
@@ -276,7 +233,7 @@ void Teleoperated::AimingContinuousShoot(double hood_position, int rpm, double p
     }
     switch(aim_shoot_state){
         case(kAiming):
-            teleop_functions->TurnToAngle(target_angle, pValue);
+            teleop_functions->WPITurnToAngle(target_angle);
             manipulator->PrepareShot(rpm, hood_position);
             break;
         case(kShooting):

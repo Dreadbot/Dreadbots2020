@@ -1,14 +1,16 @@
 #pragma once
 
-#include <map>
-
-#include "autonomous/DriveForwardAutonState.h"
-#include "autonomous/RotateToAngleAutonState.h"
-#include "autonomous/RotateShootAutonState.h"
+#include <vector>
 
 #include "SparkDrive.h"
-#include "Intake.h"
+#include "Manipulator.h"
 #include "TeleopFunctions.h"
+
+enum AutonState
+{
+  shooting = 0,
+  driving = 1
+};
 
 class Autonomous
 {
@@ -23,6 +25,6 @@ class Autonomous
   SparkDrive* spark_drive;
   Manipulator* manipulator;
 
-  std::vector<AutonState>* auton_routine;
-  unsigned int current_auton_index = 0;
+  std::vector<std::pair<AutonState, int>>* state_by_index;
+  unsigned int current_index;
 };

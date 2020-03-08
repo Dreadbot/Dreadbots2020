@@ -5,6 +5,10 @@
 #include <frc/Solenoid.h>
 #include "rev/CANSparkMax.h"
 
+// These Values are from Calculated 
+const double kFeetToRPMFunctionAValue = 2.97394;
+const double kFeetToRPMFunctionBValue = 1.01794;
+
 class Shooter
 {
  public:
