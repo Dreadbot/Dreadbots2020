@@ -1,4 +1,4 @@
-Startup
+Startup - ONLY IF VISION ISN'T ALREADY RUNNING, IT SHOULD BE ON FROM REBOOT
 
 Step 1: Make sure the robot is on
 
