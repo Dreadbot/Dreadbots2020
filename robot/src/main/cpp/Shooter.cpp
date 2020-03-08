@@ -55,7 +55,8 @@ Shooter::Shooter(rev::CANSparkMax *shooterMotor, rev::CANSparkMax *aimMotor)
   aiming_motor_pid_controller->SetFF(0.000015);  //000015
   aiming_motor_pid_controller->SetOutputRange(-1.0, 1.0);
 
-  upper_limit_switch = new frc::DigitalInput(4);
+  upper_limit_switch = new frc::DigitalInput(1);
+  //practice bot 4, comp bot 1
   lower_limit_switch = new frc::DigitalInput(2);
 }
 
@@ -106,6 +107,7 @@ void Shooter::SetAdjusterPosition(double position){ //Takes number 0 to 1
     position = 0;
   }
   position = minHoodPosition + (position * range);
+  //std::cout << "Position: " << position << std::endl;
   aiming_motor_pid_controller->SetReference(position, rev::ControlType::kPosition);
 }
 

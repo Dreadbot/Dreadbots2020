@@ -10,9 +10,10 @@
 
 class ColorWheel{
     public:
-     ColorWheel();
-     void RotateToNumber(WPI_TalonSRX *motor, frc::Joystick *joystick);
-     void RotateToColor(WPI_TalonSRX *motor, frc::Joystick *joystick, frc::Color *targetcolor);
+     ColorWheel(WPI_TalonSRX *motor, frc::Joystick *joystick, frc::Solenoid *solenoid);
+     void RotateToNumber();
+     void RotateToColor(frc::Color *targetcolor);
+     void ControlSolenoid();
     private:
      void PrintColor(frc::Color color, double colorConfidence);
      frc::Solenoid *Solenoid;

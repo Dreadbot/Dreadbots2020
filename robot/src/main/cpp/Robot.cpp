@@ -158,7 +158,7 @@ void Robot::RobotInit()
     ++enabled_subsystems;
 
     // Define Internal Subsystems to Pass into Climber Container Class
-    climb_telescope = new rev::CANSparkMax(kClimbTelescopeMotorID, rev::CANSparkMax::MotorType::kBrushless);
+    climb_telescope = new frc::Solenoid(kClimbTelescopeSolenoidID);
     climb_winch = new rev::CANSparkMax(kClimbWinchMotorID, rev::CANSparkMax::MotorType::kBrushless);
 
     // Define Climber Object using Telescope & Winch Objects
@@ -166,7 +166,8 @@ void Robot::RobotInit()
   }
 
   // Define the Autonomous & Teleoperated Container Class using SparkDrive and Robot's Timer Object.
-  autonomous = new Autonomous(timer, spark_drive);
+  autonomous = new Autonomous(spark_drive, intake);
+  teleop_functions = new TeleopFunctions(joystick_2, shooter, spark_drive);
   teleoperated = new Teleoperated(joystick_1, 
     joystick_2,
     manipulator,
@@ -176,6 +177,8 @@ void Robot::RobotInit()
     color_wheel);
 
   std::cout << "Robot Intialized with " << enabled_subsystems << " Subsystems." << std::endl;
+  frc::SmartDashboard::PutNumber("Min Rot Speed", 0.01);
+  frc::SmartDashboard::PutNumber("Turn P Value", 0.008);
 }
 
 void Robot::RobotPeriodic() {}
@@ -187,12 +190,8 @@ void Robot::AutonomousInit() {
   std::cout << "Auto selected: " << m_autoSelected << std::endl;
   // m_autoSelected = frc::SmartDashboard::GetString("Auto Selector",
   //     AutoDefault);
-
-  // Deploy the Intake Mechanism from its "Locked" State.
-  if(kIntakeEnabled)
-  {
-    intake->DeployIntake();
-  }
+  
+  autonomous->AutonomousInit();
 }
 
 void Robot::AutonomousPeriodic() 
@@ -250,15 +249,16 @@ void Robot::TeleopPeriodic()
     if(shooter->GetLowerLimitSwitch() && !shooter->GetLowerLimitBool()){ 
       std::cout << "***************LOWER LIMIT TRIGGERED" << std::endl;
       shooter->SetLowerLimit(shooter->GetHoodPosition());
-      shooter->SetAdjusterPercentOutput(-0.75);
+      shooter->SetAdjusterPercentOutput(-0.2);
     }
     else if(shooter->GetUpperLimitSwitch() && !shooter->GetUpperLimitBool()){
       std::cout << "***************UPPER LIMIT TRIGGERED" << std::endl;
       shooter->SetUpperLimit(shooter->GetHoodPosition());
-      shooter->SetAdjusterPercentOutput(0.75);
+      shooter->SetAdjusterPercentOutput(0.2);
     }
-    else if (shooter->GetUpperLimitBool() && shooter->GetLowerLimitBool()){
+    else if (shooter->GetUpperLimitBool() && shooter->GetLowerLimitBool() && !shooter->GetAimReadiness()){
       shooter->SetAimReadiness(true);
+      shooter->SetAdjusterPosition(-0.2);
     }
     if(shooter->GetAimReadiness()){
       position = frc::SmartDashboard::GetNumber("Hood Position", 0.5);
@@ -272,27 +272,16 @@ void Robot::TeleopPeriodic()
     // Utility for Adjusting Hood or Aim Motor.
 
     // B Button for Shoot
-    if(joystick_2->GetRawButton(kShootButton))
-    {
-      // Continually Shoot
-      manipulator->ContinuousShoot(0, 0.4, frc::SmartDashboard::GetNumber("Target Speed", 4000));
-    }
-    else if(joystick_2->GetRawButton(kAdvanceGenevaButton)){
-      manipulator->SensorAdvanceGeneva(true);
-    }
-    else if(manipulator->GetSensorAdvanceGenevaState() == 2){
-      manipulator->ResetManipulatorElements();
-    }
-    else{ 
-      manipulator->SensorAdvanceGeneva(false);
+    if(kShooterEnabled){
+      teleoperated->HandleShooterInputs();
     }
 
     // Internal Check for Advancing Geneva without Shooting
-    manipulator->SensorAdvanceGeneva(joystick_2->GetRawButton(kAdvanceGenevaButton));
+    //manipulator->SensorAdvanceGeneva(joystick_2->GetRawButton(kAdvanceGenevaButton));
   }
 
   //std::cout << "Drive Subsystem Teleoperated Periodic Call" << std::endl;
-  if(kDriveEnabled)
+  if(kDriveEnabled && teleop_functions->GetTurnStatus())
   {
     teleoperated->HandleDriveInputs();
   }
@@ -304,14 +293,16 @@ void Robot::TeleopPeriodic()
   }
 
   //std::cout << "Rotate To Angle Feature Teleoperated Periodic Call" << std::endl;
-  if(kRotateToAngleEnabled)
-  {
-    teleoperated->HandleRotateToAngleInputs();
-  }
+  // if(kRotateToAngleEnabled)
+  // {
+  //   frc::SmartDashboard::PutBoolean("turn complete?", teleop_functions->GetTurnStatus());
+  //   teleoperated->HandleRotateToAngleInputs();
+  // }
 
   //std::cout << "Color Wheel Subsystem Teleoperated Periodic Call" << std::endl;
   if(kColorWheelEnabled)
   {
+    teleoperated->HandleColorWheelInputs();
     //To do: ColorWheel class is taking care of button presses, but we will need
     //To do: We also probably need to pass in the selenoid, we can consider passing all of these
     //into the colorwheel constructor which seems to be the pattern for the other classes
