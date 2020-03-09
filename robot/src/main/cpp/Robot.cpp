@@ -328,6 +328,7 @@ void Robot::TeleopPeriodic()
   //std::cout << "Color Wheel Subsystem Teleoperated Periodic Call" << std::endl;
   if(kColorWheelEnabled)
   {
+    teleoperated->HandleColorWheelInputs();
     //To do: ColorWheel class is taking care of button presses, but we will need
     //To do: We also probably need to pass in the selenoid, we can consider passing all of these
     //into the colorwheel constructor which seems to be the pattern for the other classes

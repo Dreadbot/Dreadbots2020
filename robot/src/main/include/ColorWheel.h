@@ -7,10 +7,11 @@
 #include <ctre/Phoenix.h>
 #include <RobotUtilities.h>
 #include <frc/Solenoid.h>
+#include <rev/CANSparkMax.h>
 
 class ColorWheel{
     public:
-     ColorWheel(WPI_TalonSRX *motor, frc::Joystick *joystick, frc::Solenoid *solenoid);
+     ColorWheel(rev::CANSparkMax *motor, frc::Joystick *joystick, frc::Solenoid *solenoid);
      void RotateToNumber();
      void RotateToColor(frc::Color *targetcolor);
      void ControlSolenoid();

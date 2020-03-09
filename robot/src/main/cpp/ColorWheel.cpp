@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <RobotUtilities.h>
+#include <rev/CANSparkMax.h>
 using namespace std;
 
 enum WheelState{
@@ -37,11 +38,11 @@ int CurrentButton = 0;
 static constexpr auto i2cPort = frc::I2C::Port::kOnboard;
 rev::ColorSensorV3 m_colorSensor(i2cPort);
 rev::ColorMatch m_colorMatcher;
-WPI_TalonSRX *colormotor;
+rev::CANSparkMax *colormotor;
 frc::Joystick *colorjoystick;
 frc::Solenoid *colorsolenoid;
 
-ColorWheel::ColorWheel(WPI_TalonSRX *motor, frc::Joystick *joystick, frc::Solenoid *solenoid){
+ColorWheel::ColorWheel(rev::CANSparkMax *motor, frc::Joystick *joystick, frc::Solenoid *solenoid){
     m_colorMatcher.AddColorMatch(kBlueTarget);
     m_colorMatcher.AddColorMatch(kGreenTarget);
     m_colorMatcher.AddColorMatch(kRedTarget);
@@ -81,7 +82,7 @@ void ColorWheel::RotateToNumber(){
     if (spinState == WheelState::InitSpinning && CurrentButton == 1) 
     {
         NumSpins = 0;
-        colormotor->Set(ControlMode::PercentOutput,0.7);
+        colormotor->Set(0.7);
         spinState = WheelState::Spinning;
     }
     if (spinState == WheelState::Spinning && CurrentButton == 1)
@@ -89,7 +90,7 @@ void ColorWheel::RotateToNumber(){
 
         if (colorjoystick->GetRawButtonPressed(1) || NumSpins>7)
         {
-            colormotor->Set(ControlMode::PercentOutput,0.0);
+            colormotor->Set(0.0);
             spinState = WheelState::NotSpinning;
             CurrentButton = 0;
             //colorsolenoid->Set(false);
@@ -130,7 +131,7 @@ void ColorWheel::RotateToColor(frc::Color *targetcolor){
     if (spinState == WheelState::InitSpinning && CurrentButton == 2)
     {
         spinState = WheelState::Spinning;
-        colormotor->Set(ControlMode::PercentOutput, 0.2);
+        colormotor->Set(0.2);
     }
     if (spinState == WheelState::Spinning && CurrentButton == 2)
     {
@@ -138,7 +139,7 @@ void ColorWheel::RotateToColor(frc::Color *targetcolor){
         if (matchedColor == *targetcolor && colorConfidence >= ColorConfidenceTarget){
             if (NumColorSamples > 5){
             spinState = WheelState::NotSpinning;
-            colormotor->Set(ControlMode::PercentOutput, 0.0);
+            colormotor->Set(0.0);
             NumColorSamples = 0;
             CurrentButton = 0;
             //colorsolenoid->Set(false);
