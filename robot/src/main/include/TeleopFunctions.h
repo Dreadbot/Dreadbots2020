@@ -14,7 +14,6 @@ class TeleopFunctions
         TeleopFunctions(frc::Joystick *joystick_1, Shooter *shooter, SparkDrive *sparkDrive);
         void TurnToAngle(double targetAngle, double proportion);//Autonomously turn to an angle for use with vision targeting. Must be continuously called until the turn is finished
         void WPITurnToAngle(double target_angle);
-        double CalculateTurnToAngle(double target_angle);
         void UpdatePIDController();
         void ShooterFunction();
         bool GetTurnStatus();//Returns true if the turn if the turn is completed. Used to help call the TelopFunctions::TurnToAngle function.

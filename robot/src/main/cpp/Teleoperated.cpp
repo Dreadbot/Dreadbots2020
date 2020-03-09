@@ -92,7 +92,7 @@ void Teleoperated::HandleDriveInputs()
   spark_drive->TankDrive
   (
     joystick_1->GetRawAxis(kForwardBackwardAxis), 
-    (joystick_1->GetRawAxis(kRotAxis) - rotSpeed), 
+    joystick_1->GetRawAxis(kRotAxis), 
     joystick_1->GetRawButton(kTurboButton), 
     joystick_1->GetRawButton(kTurtleButton),
     0.05
@@ -184,7 +184,6 @@ void Teleoperated::HandleShooterInputs()
     teleop_functions->SetTurnStatus(true);
     aim_counts = 0;
     aim_shoot_state = kAiming;
-    rotSpeed = 0;
     manipulator->SensorAdvanceGeneva(false, false);
   }
   //when we release the button, then set motors to zero
@@ -238,7 +237,7 @@ void Teleoperated::AimingContinuousShoot(double distance, double pValue, double 
     }
     switch(aim_shoot_state){
         case(kAiming):
-            rotSpeed = teleop_functions->CalculateTurnToAngle(target_angle);
+            teleop_functions->WPITurnToAngle(target_angle);
             manipulator->PrepareShot(rpm, hoodPosition);
             break;
         case(kShooting):
