@@ -1,6 +1,5 @@
 import numpy as np
 import cv2
-from matplotlib import pyplot as plt
 import os, math
 from networktables import NetworkTables
 import threading
@@ -28,15 +27,18 @@ print("Connected!")
 #Set table variable
 tbl = NetworkTables.getTable('SmartDashboard')
 
-#Set drivecam int
-tbl.putNumber("camNumber", 1.0)
-# 0 = Vision
+tbl.putNumber("camNumber", 0)
+
+geneva_bool = True
+floor_bool = False
+drive_bool = False
 
 #Get feed from camera/img
-vision_cap = cv2.VideoCapture(0)
-geneva_cap = cv2.VideoCapture(2)
-floor_cap = cv2.VideoCapture(4)
-drive_cap = cv2.VideoCapture(6)
+vision_cap = cv2.VideoCapture(2)
+if geneva_bool: geneva_cap = cv2.VideoCapture(0)
+if floor_bool: floor_cap = cv2.VideoCapture(4)
+if drive_bool: drive_cap = cv2.VideoCapture(6)
+
 
 #Setting the exposure
 vision_cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.25)
@@ -46,7 +48,6 @@ vision_cap.set(cv2.CAP_PROP_EXPOSURE, -15)
 hue = [25, 90]    #'''DONT TOUCH'''
 sat = [75, 255]    #'''DONT TOUCH'''
 lum = [35, 150]    #'''DONT TOUCH'''
-
 
 #Iterations for the erode function
 erode_iters = 0
@@ -65,10 +66,10 @@ dub_window = 30
 skip_val = 1
 
 #Height to target  Inches / 12 for feet
-target_height = 69
+target_height = 72
 
 #Camera offset angle for subtraction
-cam_offset = 14
+cam_offset = 22
 
 #Focal length 
 flength = 544
@@ -76,11 +77,11 @@ flength = 544
 #cs_str = input("Start cameraserver? (y/n): ")
 cs_str = 'y'
 if cs_str == 'y':
-    cs_bool = True
+    cs = True
 else:
-    cs_bool = False
-#Hey bucko
-if cs_bool:
+    cs = False
+
+if cs:
     #Start cameraserver instance
     cs = CameraServer.getInstance()
     cs.enableLogging()
@@ -89,10 +90,8 @@ if cs_bool:
     outputStream = cs.putVideo("OpenCV Camera", 320, 580)
 
 def resImg(img, factor):
-    scale_factor = factor
-
-    width = int(img.shape[1] * scale_factor / 100)
-    height = int(img.shape[0] * scale_factor / 100)
+    width = int(img.shape[1] * factor / 100)
+    height = int(img.shape[0] * factor / 100)
     dim = (width, height)
     img_resized = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
 
@@ -103,7 +102,7 @@ while(True):
     t_error = False
     i_error = False
     target_found = False
-
+    
     #LED Pet project
     big_dub_x = False
     big_dub_y = False
@@ -128,42 +127,25 @@ while(True):
     img_dilate = cv2.dilate(bw_img, None, dil_iters)
     img_closing = cv2.morphologyEx(img_dilate, cv2.MORPH_CLOSE, None)
 
-    #Find contours
+       #Find contours
     _, contours, hierarchy = cv2.findContours(img_closing, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
-    img_to_push = cv2.add(img, np.array([150.0]))
+    img_to_push = cv2.add(img, np.array([50.]))
+
     #Loop through found contours
     for c in contours:
         #Set the contour bounding box dimensions
         bounds = cv2.boundingRect(c)
         x, y, w, h = bounds
 
-        #Check if width of the contour is above 40, if not skip
-    
-
         #Loop vars
         tot_pixels = w*h
         filled_pixels = 0
         checked_pixels = 0
         #Contour filtration
-        if w>30 and w<300 and h>10 and h<150:
-            confidence = 0
-            wh_ratio = w/h
-            wh_ratio_offset = abs(2.3 - wh_ratio)
-            wh_ratio_rating = (-51.510*(wh_ratio_offset**2)) + (0.144*wh_ratio_offset) + 1.025
-            if wh_ratio_rating > 0.2:
-                blue = 0
-                green = 255
-                red = 0
-            else:
-                blue = 0
-                green = 255
-                red = 0
-
-	    #Draw the bounding box with a point in the center
-            #img_to_push = cv2.add(img, np.array([75.0]))
-
-            cv2.rectangle(img_to_push, (x,y), (x+w,y+h), (red, green, blue), 2) #Thank you moth
+        if w>30 and w<300 and h>10 and h < 150:
+            #Draw the bounding box with a point in the center
+            cv2.rectangle(img_to_push, (x,y), (x+w,y+h), (0,255,0), 2) #Thank you moth
             cv2.circle(img_to_push, (int(x+(w/2)),int(y+(h/2))), 5, (255,0,0))
             target = [int(x+(w/2)), int(y+(h/2))]
 
@@ -173,81 +155,57 @@ while(True):
             if x > cx-dub_window and x < cx+dub_window:
                 big_dub_x = True
             if y > cy-dub_window and y < cy+dub_window:
-                big_dub_y = True
+               big_dub_y = True
 
             #Calculate angle to turn to
             fin_angle_hori = ((math.atan((target[0]-(img_w/2))/flength)))*(180/math.pi)
-
+            
             #Calculate vertical angle for distance calculations
-	    #                 arctan(centerline - targety) * 180/pi     all + camera offset
             fin_angle_raw_rad = math.atan((240 - target[1])/flength)
             fin_angle_deg = math.degrees(fin_angle_raw_rad) + cam_offset
             fin_angle_rad = math.radians(fin_angle_deg)
-            distance_raw = target_height / math.tan(fin_angle_rad)
-            distance = distance_raw - 32#Should be - 32
-            print("FARR:", fin_angle_raw_rad)
-            print("FAD:", fin_angle_deg)
-            print("FAR:", fin_angle_rad)
-            print("DIST_RAW:", distance_raw)
-            print("DIST:", distance)
-
-            #fin_angle_vert = math.degrees(math.atan((img_h/2) - target[1])/flength) + cam_offset
-            #distance = target_height * 1/ math.tan(radians(fin_angle_vert))
+            distance = target_height / math.tan(fin_angle_rad)
             target_found = True
-
-        else:
-            print("No contour")
-            #img_to_push = cv2.add(img, np.array([75.0]))
-
-        #BEGIN PC DETECTION
-        #Values
-
-
+            
     if target_found:
         #Push final angle to shuffleboard
         tbl.putNumber("selectedAngle", fin_angle_hori)
-        tbl.putNumber("selectedDistance", distance)
         tbl.putNumber("detectionCount", counter)
-    counter += 1
-    print("Passed target found")
+        tbl.putNumber("selectedDistance", distance)
+        counter += 1
+    
     #Draw circle on center of screen
     cv2.circle(img, (cx, cy), 5, (255, 0, 0))
 
-    if cs_bool:
-        print("Drive cam is ", tbl.getNumber("camNumber", 0))
-        if tbl.getNumber("camNumber", 0) == 0:
-            outputStream.putFrame(resImg(img_to_push, 50))
-        elif tbl.getNumber("camNumber", 0) == 1.0:
-            ret, geneva_frame = geneva_cap.read()
-            print("Got cap")
-            outputStream.putFrame(resImg(geneva_frame, 10))
-        elif tbl.getNumber("camNumber", 0) == 2.0:
-            ret, floor_frame = floor_cap.read()
-            print("Got cap")
-            outputStream.putFrame(resImg(floor_frame, 10))
-        elif tbl.getNumber("camNumber", 0) == 3.0:
-            ret, drive_frame = drive_cap.read()
-            print("Got cap")
-            outputStream.putFrame(resImg(drive_frame, 10))
-        else:
-            outputStream.putFrame(resImg(img_to_push, 30))
-    
-    print("Passed cs bool")
+    curCam = tbl.getNumber("camNumber", 0)
+    if curCam == 0:
+        outputStream.putFrame(img_to_push)
+    elif curCam == 1 and geneva_bool:
+        geneva_ret, geneva_frame = geneva_cap.read()
+        outputStream.putFrame(resImg(geneva_frame, 30))
+        #cv2.imwrite('test', geneva_frame)
+    elif curCam == 2 and floor_bool:
+        floor_ret, floor_frame = floor_cap.read()
+        #outputStream.putFrame(resImg(floor_frame, 30))
+    elif curCam == 3 and drive_bool:
+        drive_ret, drive_frame = drive_cap.read()
+        #outputStream.putFrame(resImg(drive_frame, 45))
 
-    os.system('clear')
+    #Print statements
+    #os.system('clear')
     print("Loop #: ", counter)
     tbl.putBoolean("Mega dub?", mega_dub)
     if mega_dub:
         print("MEGA FREAKING DUB")
 
     if target_found:
-        print("Turn to ", fin_angle_hori, " Distance:", distance, " Calculated angle:", fin_angle_deg, " (X, Y):", target[0], target[1], " (CX, CY):", img_w/2, img_h/2)
-        print("CONFIDENCE CRITERIA  w/h ratio conf:", wh_ratio_rating)
-    # if t_error:
-    #     print("TypeError")
+        print("Turn to ", fin_angle_hori, " Distance:", distance)
 
-    # if i_error:
-    #     print("IndexError")
+    if t_error:
+        print("TypeError")
+
+    if i_error:
+        print("IndexError")
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
