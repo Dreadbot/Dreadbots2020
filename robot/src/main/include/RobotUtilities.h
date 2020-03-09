@@ -22,7 +22,7 @@ enum Joystick1Layout{
     kTurboButton = right_trigger
 }; 
 enum Joystick2Layout{
-    kShootButton = b_button, kIntakeButton = x_button, kOuttakeButton = a_button, kAutoAimButton = y_button,
+    kAimShootButton = b_button, kIntakeButton = x_button, kOuttakeButton = a_button, kShootButton = y_button,
     kRegressGenevaButton = left_bumper, kAdvanceGenevaButton = right_bumper, kRetractColorWheelButton = left_trigger,
     kDeployColorWheelButton = right_trigger, kColorWheelColorControl = start_button, kColorWheelRotationControl = back_button, 
     kIncreaseAimOffsetPOV = 90, kDecreaseAimOffsetPOV = 270,

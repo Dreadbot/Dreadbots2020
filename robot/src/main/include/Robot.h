@@ -72,6 +72,10 @@ class Robot : public frc::TimedRobot {
   //Ultrasonic Objecttss
   Ultra *ultra;
 
+  //Shooting Objects
+  double position;
+  double P, I, D;
+
   // Trajectory Testing Variables
   double const kIterationSecondsRatio = 0.02;
 
@@ -87,13 +91,13 @@ class Robot : public frc::TimedRobot {
 
   //ENABLED BOOLEANS
   const bool kDriveEnabled = true;
-  const bool kClimbEnabled = false;
+  const bool kClimbEnabled = true;
   const bool kShooterEnabled = true;
   const bool kRotateToAngleEnabled = false;
   const bool kIntakeEnabled = true;
   const bool kFeederEnabled = true;
   const bool kTrajectoryEnabled = false;
-  const bool kColorWheelEnabled = false;
+  const bool kColorWheelEnabled = true;
 
   int enabled_subsystems;
 
@@ -113,7 +117,7 @@ class Robot : public frc::TimedRobot {
   TeleopFunctions *teleop_functions;
   Climber *climber;
   rev::CANSparkMax *climb_winch;
-  rev::CANSparkMax *climb_telescope;
+  frc::Solenoid *climb_telescope;
   ColorWheel *color_wheel;
   WPI_TalonSRX *color_motor;
   frc::Solenoid *color_sol;

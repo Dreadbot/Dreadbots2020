@@ -7,7 +7,8 @@
 }
 void TeleopFunctions::TurnToAngle(double targetAngle, double proportion){
     //If a button is pressed, reset the counter, and signal that a turn is initiiated
-
+    min_rotation_speed = frc::SmartDashboard::GetNumber("Min Rot Speed", 0.15);
+    //frc::SmartDashboard::PutBoolean("turn complete?", turn_complete);
     //Find the difference between the current angle and the target angle, multiply by a set value, and use that to find the rate
     double error = ((double) m_sparkDrive->GetGyroscope()->GetYaw()) - targetAngle;
     //std::cout << "Error: " << error;
@@ -30,8 +31,9 @@ void TeleopFunctions::TurnToAngle(double targetAngle, double proportion){
     }
     
     //If the turn has made it within the allowable error constant, increment the count
-    if (fabs(error) < slop)
+    if (fabs(error) < slop){
        TURN_BUTTON_TIMEOUT++;
+    }
 
     frc::SmartDashboard::PutNumber("Error", error);
     frc::SmartDashboard::PutNumber("Current Rotation Rate", current_rotation_rate);

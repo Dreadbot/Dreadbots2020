@@ -3,6 +3,7 @@
 #include <ColorWheel.h>
 #include <iostream>
 #include <string>
+#include <RobotUtilities.h>
 using namespace std;
 
 enum WheelState{
@@ -11,6 +12,12 @@ enum WheelState{
     Spinning
 };
 WheelState spinState = WheelState::NotSpinning;
+
+Joystick2Layout deployColorWheelButton = Joystick2Layout::kDeployColorWheelButton;
+
+Joystick2Layout RotateToNumberButton = Joystick2Layout::kColorWheelRotationControl;
+
+Joystick2Layout RotateToColorButton = Joystick2Layout::kColorWheelColorControl;
 
 frc::Color CurrentColor;
 int NumSpins = 0;
@@ -30,43 +37,62 @@ int CurrentButton = 0;
 static constexpr auto i2cPort = frc::I2C::Port::kOnboard;
 rev::ColorSensorV3 m_colorSensor(i2cPort);
 rev::ColorMatch m_colorMatcher;
+WPI_TalonSRX *colormotor;
+frc::Joystick *colorjoystick;
+frc::Solenoid *colorsolenoid;
 
-ColorWheel::ColorWheel(){
+ColorWheel::ColorWheel(WPI_TalonSRX *motor, frc::Joystick *joystick, frc::Solenoid *solenoid){
     m_colorMatcher.AddColorMatch(kBlueTarget);
     m_colorMatcher.AddColorMatch(kGreenTarget);
     m_colorMatcher.AddColorMatch(kRedTarget);
     m_colorMatcher.AddColorMatch(kYellowTarget);
-    Solenoid = new frc::Solenoid(4);
- }
+    colormotor = motor;
+    colorjoystick = joystick;
+    colorsolenoid = solenoid;
+ } 
+
+void ColorWheel::ControlSolenoid(){
+    if (colorjoystick->GetRawButtonPressed(deployColorWheelButton)){
+        bool isup = colorsolenoid->Get();
+
+        if(isup == true){
+            colorsolenoid->Set(false);
+        }
+        else{
+            colorsolenoid->Set(true);
+        }
+    }
+
+}
 
 //Update RotateToNumber to not take in the sensor and get current color from m_colorMatch
-void ColorWheel::RotateToNumber(WPI_TalonSRX *motor, frc::Joystick *joystick){
+void ColorWheel::RotateToNumber(){
 
     //Put in some smart dashboard output to be helpful for debugging
     frc::SmartDashboard::PutNumber("SpinState", spinState);
     
-    if (spinState == WheelState::NotSpinning && joystick->GetRawButtonPressed(1))
+    if (spinState == WheelState::NotSpinning && colorjoystick->GetRawButtonPressed(RotateToNumberButton))
     {
         spinState = WheelState::InitSpinning;
         CurrentButton = 1;
-        Solenoid->Set(true);
+        //colorsolenoid->Set(true);
 
     }
     if (spinState == WheelState::InitSpinning && CurrentButton == 1) 
     {
         NumSpins = 0;
-        motor->Set(ControlMode::PercentOutput,0.7);
+        colormotor->Set(ControlMode::PercentOutput,0.7);
         spinState = WheelState::Spinning;
     }
     if (spinState == WheelState::Spinning && CurrentButton == 1)
     {   
 
-        if (joystick->GetRawButtonPressed(1) || NumSpins>7)
+        if (colorjoystick->GetRawButtonPressed(1) || NumSpins>7)
         {
-            motor->Set(ControlMode::PercentOutput,0.0);
+            colormotor->Set(ControlMode::PercentOutput,0.0);
             spinState = WheelState::NotSpinning;
             CurrentButton = 0;
-            Solenoid->Set(false);
+            //colorsolenoid->Set(false);
             return;
         
         }
@@ -90,21 +116,21 @@ void ColorWheel::RotateToNumber(WPI_TalonSRX *motor, frc::Joystick *joystick){
 }
 
 
-void ColorWheel::RotateToColor(WPI_TalonSRX *motor, frc::Joystick *joystick, frc::Color *targetcolor){
+void ColorWheel::RotateToColor(frc::Color *targetcolor){
     double colorConfidence = 0.0;
     frc::Color detectedColor = m_colorSensor.GetColor();
     frc::Color matchedColor = m_colorMatcher.MatchClosestColor(detectedColor, colorConfidence); 
     frc::SmartDashboard::PutNumber("SpinState", spinState);
-    if (spinState == WheelState::NotSpinning && joystick->GetRawButton(2))
+    if (spinState == WheelState::NotSpinning && colorjoystick->GetRawButton(RotateToColorButton))
     {
         spinState = WheelState::InitSpinning;
         CurrentButton = 2;
-        Solenoid->Set(true);
+        //colorsolenoid->Set(true);
     }
     if (spinState == WheelState::InitSpinning && CurrentButton == 2)
     {
         spinState = WheelState::Spinning;
-        motor->Set(ControlMode::PercentOutput, 0.7);
+        colormotor->Set(ControlMode::PercentOutput, 0.2);
     }
     if (spinState == WheelState::Spinning && CurrentButton == 2)
     {
@@ -112,10 +138,10 @@ void ColorWheel::RotateToColor(WPI_TalonSRX *motor, frc::Joystick *joystick, frc
         if (matchedColor == *targetcolor && colorConfidence >= ColorConfidenceTarget){
             if (NumColorSamples > 5){
             spinState = WheelState::NotSpinning;
-            motor->Set(ControlMode::PercentOutput, 0.0);
+            colormotor->Set(ControlMode::PercentOutput, 0.0);
             NumColorSamples = 0;
             CurrentButton = 0;
-            Solenoid->Set(false);
+            //colorsolenoid->Set(false);
             }
             else {
                 NumColorSamples += 1;
@@ -149,5 +175,7 @@ void ColorWheel::PrintColor(frc::Color color, double colorConfidence){
             cout << "no color detected" << endl;
         }
         frc::SmartDashboard::PutNumber("NumSpins", NumSpins);
+        frc::SmartDashboard::PutNumber("Confidence", colorConfidence);
 
     }
+
