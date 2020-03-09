@@ -31,6 +31,9 @@ class Teleoperated
   void HandleClimbInputs();
   void HandleRotateToAngleInputs();
   void HandleColorWheelInputs();
+
+  void AimingContinuousShoot(double distance, double pValue, double target_angle, double geneva_speed);
+  void AimingContinuousShoot(double rpm, double hoodPosition, double pValue, double target_angle, double geneva_speed);
  
  private:
   frc::Joystick* joystick_1;
@@ -47,8 +50,6 @@ class Teleoperated
   ColorWheel* color_wheel;
 
   //Combination Aim/Shoot Functions/Variables
-  void AimingContinuousShoot(double distance, double pValue, double target_angle, double geneva_speed);
-  void AimingContinuousShoot(double rpm, double hoodPosition, double pValue, double target_angle, double geneva_speed);
   int aim_shoot_state;
   int aim_counts;
   const int max_aim_counts = 150;
