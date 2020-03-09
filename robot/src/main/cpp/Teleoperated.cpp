@@ -92,7 +92,7 @@ void Teleoperated::HandleDriveInputs()
   spark_drive->TankDrive
   (
     joystick_1->GetRawAxis(kForwardBackwardAxis), 
-    joystick_1->GetRawAxis(kRotAxis), 
+    (joystick_1->GetRawAxis(kRotAxis)-rotSpeed), 
     joystick_1->GetRawButton(kTurboButton), 
     joystick_1->GetRawButton(kTurtleButton),
     0.05
@@ -185,6 +185,7 @@ void Teleoperated::HandleShooterInputs()
     aim_counts = 0;
     aim_shoot_state = kAiming;
     manipulator->SensorAdvanceGeneva(false, false);
+    rotSpeed = 0;
   }
   //when we release the button, then set motors to zero
   //this eliminates the constant turn after turn is done.
@@ -228,7 +229,7 @@ void Teleoperated::AimingContinuousShoot(double distance, double pValue, double 
     //std::cout << "RPM: " << rpm << "Hood Position: " <<hood_position << std::endl;
     double rpm = manipulator->GetSelectedRPM(distance);
     double hoodPosition = manipulator->GetSelectedHoodPosition(distance);
-    std::cout << "rpm: " << rpm << " HoodPostion: " << hoodPosition << std::endl;
+    //std::cout << "rpm: " << rpm << " HoodPostion: " << hoodPosition << std::endl;
     if(aim_counts < max_aim_counts){
         aim_shoot_state = kAiming;
     }
@@ -237,7 +238,7 @@ void Teleoperated::AimingContinuousShoot(double distance, double pValue, double 
     }
     switch(aim_shoot_state){
         case(kAiming):
-            teleop_functions->WPITurnToAngle(target_angle);
+            rotSpeed = teleop_functions->CalculateTurnToAngle(target_angle);
             manipulator->PrepareShot(rpm, hoodPosition);
             break;
         case(kShooting):
@@ -246,7 +247,7 @@ void Teleoperated::AimingContinuousShoot(double distance, double pValue, double 
             break;
     }
     aim_counts++;
-    std::cout << "Aim counts:" << aim_counts << " Aim State: " << aim_shoot_state << std::endl;
+    //std::cout << "Aim counts:" << aim_counts << " Aim State: " << aim_shoot_state << std::endl;
 }
 
 void Teleoperated::AimingContinuousShoot(double rpm, double hoodPosition, double pValue, double target_angle, double geneva_speed){

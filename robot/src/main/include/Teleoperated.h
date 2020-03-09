@@ -64,6 +64,9 @@ class Teleoperated
   int staleCount = 0;
   double distance = 120;
 
+  //Drive Variables
+  double rotSpeed = 0;
+
   // Color Wheel Robot Objects
   rev::CANSparkMax *color_motor;
   frc::Solenoid *color_sol;

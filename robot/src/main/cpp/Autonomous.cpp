@@ -61,6 +61,7 @@ void Autonomous::AutonomousShooting(int num_shots)
   if(manipulator->GetNumPunches() >= num_shots)
   {
     ++current_index;
+    manipulator->ResetManipulatorElements();
   }
 
   //std::cout << "I am done with this shoot method" << std::endl;
@@ -77,7 +78,7 @@ void Autonomous::AutonomousDriving(int distance)
   current_value = spark_drive->GetLeftFrontEncoder().GetPosition();
   target = zero_value + distance;
 
-  if(current_value < target)
+  if(fabs(current_value) < fabs(target))
   {
     spark_drive->TankDrive(0.3, 0.0, false, false);
   } 
@@ -90,5 +91,6 @@ void Autonomous::AutonomousDriving(int distance)
   {
     ++current_index;
     started_driving = false;
+    spark_drive->TankDrive(0.0, 0.0, false, false);
   }
 }

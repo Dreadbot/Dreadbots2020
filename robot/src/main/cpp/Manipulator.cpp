@@ -64,14 +64,14 @@ void Manipulator::ContinuousShoot(double aim_position, double geneva_speed, int 
              m_feeder->SetSpin(0);
              break;
         case(kPunching):
-            if(lastShooterState != kPunching)
-            {
-                ++num_punches;
-            }
             m_feeder->SetPunchExtension(true);//Extend the punch
             state_change_counter++;
             break;
         case(kRetracting):
+            if(lastShooterState != kRetracting)
+            {
+                ++num_punches;
+            }
             m_feeder->SetPunchExtension(false);//Retract the punch
             break;
         case(kAdvance):

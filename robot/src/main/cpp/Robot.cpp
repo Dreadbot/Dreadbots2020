@@ -227,7 +227,7 @@ void Robot::AutonomousInit() {
 
   // Default Autonomous State Routine
   default_state->push_back(std::pair<AutonState, int>(autonomous_shoot_by_number_of_punches, 3));
-  //default_state->push_back(std::pair<AutonState, int>(autonomous_drive_forward_default, 5));
+  default_state->push_back(std::pair<AutonState, int>(autonomous_drive_forward_default, -5));
   
   std::cout << "Starting Autonomous" << std::endl;
   autonomous->AutonomousInit(default_state);
