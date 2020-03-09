@@ -184,6 +184,27 @@ void Robot::RobotInit()
 
 void Robot::RobotPeriodic() {}
 
+void Robot::HoodCalibration(){
+    if(shooter->GetLowerLimitSwitch() && !shooter->GetLowerLimitBool()){ 
+      std::cout << "***************LOWER LIMIT TRIGGERED" << std::endl;
+      shooter->SetLowerLimit(shooter->GetHoodPosition());
+      shooter->SetAdjusterPercentOutput(-0.5);
+    }
+    else if(shooter->GetUpperLimitSwitch() && !shooter->GetUpperLimitBool()){
+      std::cout << "***************UPPER LIMIT TRIGGERED" << std::endl;
+      shooter->SetUpperLimit(shooter->GetHoodPosition());
+      shooter->SetAdjusterPercentOutput(0.5);
+    }
+    else if (shooter->GetUpperLimitBool() && shooter->GetLowerLimitBool() && !shooter->GetAimReadiness()){
+      shooter->SetAimReadiness(true);
+      shooter->SetAdjusterPosition(0.5);
+    }
+    if(shooter->GetAimReadiness()){
+      position = frc::SmartDashboard::GetNumber("Hood Position", 0.5);
+      //std::cout << "Adjusting Position to: " << position << std::endl;
+    }
+}
+
 void Robot::AutonomousInit() {
   std::cout << "Robot Entering Autonomous Mode..." << std::endl;
   
@@ -194,7 +215,7 @@ void Robot::AutonomousInit() {
 
   std::cout << "Constructing Autonomous Routine..." << std::endl;
   std::vector<std::pair<AutonState, int>>* default_state = 
-    new std::vector<std::pair<AutonState, int>>();
+    new std::vector<std::pair<AutonState, int>>(0);
 
   std::cout << "Adding Autonomous States..." << std::endl;
 
@@ -206,7 +227,7 @@ void Robot::AutonomousInit() {
 
   // Default Autonomous State Routine
   default_state->push_back(std::pair<AutonState, int>(autonomous_shoot_by_number_of_punches, 3));
-  default_state->push_back(std::pair<AutonState, int>(autonomous_drive_forward_default, 5));
+  //default_state->push_back(std::pair<AutonState, int>(autonomous_drive_forward_default, 5));
   
   std::cout << "Starting Autonomous" << std::endl;
   autonomous->AutonomousInit(default_state);
@@ -215,13 +236,27 @@ void Robot::AutonomousInit() {
   frc::SmartDashboard::PutNumber("P value", .009);
   frc::SmartDashboard::PutNumber("I value", 0.0000005);
   frc::SmartDashboard::PutNumber("D value", 0);
+
+  shooter_motor->RestoreFactoryDefaults();
+  shooter->SetAdjusterPercentOutput(0.75);
+  shooter->SetUpperBool(false);
+  shooter->SetLowerBool(false);
+  shooter->SetAimReadiness(false);
+  teleoperated->ResetAimCounts();
+
+  shooter->SetVisionLight(true);
 }
 
 void Robot::AutonomousPeriodic() 
 {
   // std::cout << "Auto selected: " << m_autoSelected << std::endl;
   // std::cout << "AutoRightRight: " << AutoRightRight << std::endl;
-  
+  HoodCalibration();
+  P = frc::SmartDashboard::GetNumber("Shoot P value", 9e-3);
+  I = frc::SmartDashboard::GetNumber("Shoot I value", 5e-7);
+  D = frc::SmartDashboard::GetNumber("Shoot D value", 0);
+  shooter->SetPID(P, I, D);
+
   autonomous->AutonomousPeriodic();
 }
 
@@ -275,24 +310,7 @@ void Robot::TeleopPeriodic()
     I = frc::SmartDashboard::GetNumber("Shoot I value", 5e-7);
     D = frc::SmartDashboard::GetNumber("Shoot D value", 0);
     shooter->SetPID(P, I, D);
-    if(shooter->GetLowerLimitSwitch() && !shooter->GetLowerLimitBool()){ 
-      std::cout << "***************LOWER LIMIT TRIGGERED" << std::endl;
-      shooter->SetLowerLimit(shooter->GetHoodPosition());
-      shooter->SetAdjusterPercentOutput(-0.5);
-    }
-    else if(shooter->GetUpperLimitSwitch() && !shooter->GetUpperLimitBool()){
-      std::cout << "***************UPPER LIMIT TRIGGERED" << std::endl;
-      shooter->SetUpperLimit(shooter->GetHoodPosition());
-      shooter->SetAdjusterPercentOutput(0.5);
-    }
-    else if (shooter->GetUpperLimitBool() && shooter->GetLowerLimitBool() && !shooter->GetAimReadiness()){
-      shooter->SetAimReadiness(true);
-      shooter->SetAdjusterPosition(0.5);
-    }
-    if(shooter->GetAimReadiness()){
-      position = frc::SmartDashboard::GetNumber("Hood Position", 0.5);
-      //std::cout << "Adjusting Position to: " << position << std::endl;
-    }
+    HoodCalibration();
 
 
 

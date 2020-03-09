@@ -34,6 +34,7 @@ class Teleoperated
 
   void AimingContinuousShoot(double distance, double pValue, double target_angle, double geneva_speed);
   void AimingContinuousShoot(double rpm, double hoodPosition, double pValue, double target_angle, double geneva_speed);
+  void ResetAimCounts();
  
  private:
   frc::Joystick* joystick_1;

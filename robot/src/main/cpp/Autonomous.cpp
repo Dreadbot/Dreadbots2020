@@ -20,47 +20,50 @@ void Autonomous::AutonomousInit(std::vector<std::pair<AutonState, int>>* state_b
 
 void Autonomous::AutonomousPeriodic()
 {
-  std::cout << "index check" << std::endl;
-  if(current_index >= state_by_index->capacity())
+  std::cout << "index check" << current_index << std::endl;
+  std::cout << "size of vector check" << state_by_index->size() << std::endl;
+  if(current_index == state_by_index->size())
   {
     return;
   }
 
-  std::cout << "state machine check" << std::endl;
+  ////std::cout << "state machine check" << std::endl;
   switch(state_by_index->at(current_index).first)
   {
   case autonomous_shoot_by_number_of_punches:
+  if(manipulator->GetShooter()->GetAimReadiness()){
     AutonomousShooting(state_by_index->at(current_index).second);
+  }
     break;
   case autonomous_drive_forward_default:
     AutonomousDriving(state_by_index->at(current_index).second);
     break;
   }
 
-  std::cout << "I am done" << std::endl;
+    ////std::cout << "I am in state: " << state_by_index->at(current_index).first << std::endl;
 }
 
 void Autonomous::AutonomousShooting(int num_shots)
 {
-  std::cout << "Getting shuffleboard values" << std::endl;
+  ////std::cout << "Getting shuffleboard values" << std::endl;
   // Get Input Data from Shuffleboard
   double hood_position = frc::SmartDashboard::GetNumber("Hood Position", 0.5);
   double distance = frc::SmartDashboard::GetNumber("selectedDistance", 120);
   double pValue = frc::SmartDashboard::GetNumber("Turn P Value", 0.002);
   double selectedAngle = (spark_drive->GetGyroscope()->GetYaw() - frc::SmartDashboard::GetNumber("selectedAngle", 0.0));
 
-  std::cout << "calling teleoperated method" << std::endl;
+  ////std::cout << "calling teleoperated method" << std::endl;
   // Call the Preset Auton Method
   teleoperated->AimingContinuousShoot(distance, pValue, selectedAngle, 0.4);
 
-  std::cout << "checking punches" << std::endl;
+  ////std::cout << "checking punches" << std::endl;
   // If the number of punches has been reached, cycle through the next state.
   if(manipulator->GetNumPunches() >= num_shots)
   {
     ++current_index;
   }
 
-  std::cout << "I am done with this shoot method" << std::endl;
+  //std::cout << "I am done with this shoot method" << std::endl;
 }
 
 void Autonomous::AutonomousDriving(int distance)

@@ -30,7 +30,7 @@ void Manipulator::ContinuousShoot(double aim_position, double geneva_speed, int 
     frc::SmartDashboard::PutNumber("ShooterState: ", shooterState);
     //frc::SmartDashboard::PutBoolean("Geneva Limit Switch", m_feeder->GetGenevaSwitchState());
     //frc::SmartDashboard::PutBoolean("If Statement", (shooterState == kRamping && abs(abs(m_shooter->GetShootingSpeed()) - shooting_rpm) < 100));
-
+    std::cout << "I am in Continuous Shoot" << std::endl;
     int speedDifference = abs(m_shooter->GetShootingSpeed()) - shooting_rpm;
     if(shooterState == kRamping && speedDifference < 300 && speedDifference > 0){
         shooterState = kPunching;

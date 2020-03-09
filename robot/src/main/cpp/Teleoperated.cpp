@@ -228,7 +228,7 @@ void Teleoperated::AimingContinuousShoot(double distance, double pValue, double 
     //std::cout << "RPM: " << rpm << "Hood Position: " <<hood_position << std::endl;
     double rpm = manipulator->GetSelectedRPM(distance);
     double hoodPosition = manipulator->GetSelectedHoodPosition(distance);
-
+    std::cout << "rpm: " << rpm << " HoodPostion: " << hoodPosition << std::endl;
     if(aim_counts < max_aim_counts){
         aim_shoot_state = kAiming;
     }
@@ -273,4 +273,8 @@ void Teleoperated::AimingContinuousShoot(double rpm, double hoodPosition, double
     }
     aim_counts++;
     //std::cout << "Aim counts:" << aim_counts << " Aim State: " << aim_shoot_state << std::endl;
+}
+
+void Teleoperated::ResetAimCounts(){
+  aim_counts = 0;
 }

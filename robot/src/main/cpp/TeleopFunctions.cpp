@@ -5,7 +5,7 @@
     this->shooter = shooter;
     m_sparkDrive = sparkDrive;
 
-    p = 5;
+    p = 0.007;
     i = 0.0;
     d = 0.0;
 
