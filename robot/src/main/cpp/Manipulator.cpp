@@ -5,6 +5,8 @@ Manipulator::Manipulator(Intake *intake, Feeder *feeder, Shooter *shooter){
     m_feeder = feeder;
     m_shooter = shooter;
     shooterState = kRamping;
+
+    num_punches = 0;
 }
 
 void Manipulator::PrepareShot(int rpm, double aimPosition){
@@ -62,6 +64,10 @@ void Manipulator::ContinuousShoot(double aim_position, double geneva_speed, int 
              m_feeder->SetSpin(0);
              break;
         case(kPunching):
+            if(lastShooterState != kPunching)
+            {
+                ++num_punches;
+            }
             m_feeder->SetPunchExtension(true);//Extend the punch
             state_change_counter++;
             break;
@@ -79,6 +85,13 @@ void Manipulator::ContinuousShoot(double aim_position, double geneva_speed, int 
     m_shooter->SetAdjusterPosition(aim_position);
     m_shooter->Shoot(-shooting_rpm);
     m_shooter->SetVisionLight(true);
+
+    lastShooterState = shooterState;
+}
+
+int Manipulator::GetNumPunches()
+{
+    return this->num_punches;
 }
 
 void Manipulator::ContinuousIntake(){
@@ -87,6 +100,8 @@ void Manipulator::ContinuousIntake(){
 void Manipulator::ResetManipulatorElements(){
     //std::cout << "Switch State" << std::boolalpha << m_feeder->GetPunchExtension() << std::endl;
     
+    num_punches = 0;
+
     GetShooter()->SetVisionLight(true);
 
     //This function should be called continuously if the system is not shooting power cells or collecting power cells

@@ -168,7 +168,6 @@ void Robot::RobotInit()
 
   // Define the Autonomous & Teleoperated Container Class using SparkDrive and Robot's Timer Object.
   teleop_functions = new TeleopFunctions(joystick_2, shooter, spark_drive);
-  autonomous = new Autonomous(teleop_functions, spark_drive, manipulator);
   teleoperated = new Teleoperated(joystick_1, 
     joystick_2,
     manipulator,
@@ -176,6 +175,8 @@ void Robot::RobotInit()
     climber,
     teleop_functions,
     color_wheel);
+
+  autonomous = new Autonomous(teleoperated, teleop_functions, spark_drive, manipulator);
 
   std::cout << "Robot Intialized with " << enabled_subsystems << " Subsystems." << std::endl;
   frc::SmartDashboard::PutNumber("Min Rot Speed", 0.01);
@@ -190,8 +191,30 @@ void Robot::AutonomousInit() {
   std::cout << "Auto selected: " << m_autoSelected << std::endl;
   // m_autoSelected = frc::SmartDashboard::GetString("Auto Selector",
   //     AutoDefault);
+
+  std::cout << "Constructing Autonomous Routine..." << std::endl;
+  std::vector<std::pair<AutonState, int>>* default_state = 
+    new std::vector<std::pair<AutonState, int>>();
+
+  std::cout << "Adding Autonomous States..." << std::endl;
+
+  // Move Forward State Routine
+  //default_state->push_back(std::pair<AutonState, int>(autonomous_drive_forward_default, 5));
+
+  // Move Backward State Routine
+  //default_state->push_back(std::pair<AutonState, int>(autonomous_drive_forward_default, -5));
+
+  // Default Autonomous State Routine
+  default_state->push_back(std::pair<AutonState, int>(autonomous_shoot_by_number_of_punches, 3));
+  default_state->push_back(std::pair<AutonState, int>(autonomous_drive_forward_default, 5));
   
-  autonomous->AutonomousInit();
+  std::cout << "Starting Autonomous" << std::endl;
+  autonomous->AutonomousInit(default_state);
+
+  std::cout << "Done With Autonomous Init..." << std::endl;
+  frc::SmartDashboard::PutNumber("P value", .009);
+  frc::SmartDashboard::PutNumber("I value", 0.0000005);
+  frc::SmartDashboard::PutNumber("D value", 0);
 }
 
 void Robot::AutonomousPeriodic() 

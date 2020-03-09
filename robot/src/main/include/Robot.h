@@ -97,7 +97,7 @@ class Robot : public frc::TimedRobot {
   const bool kIntakeEnabled = true;
   const bool kFeederEnabled = true;
   const bool kTrajectoryEnabled = false;
-  const bool kColorWheelEnabled = true;
+  const bool kColorWheelEnabled = false;
 
   int enabled_subsystems;
 

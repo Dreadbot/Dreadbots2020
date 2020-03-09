@@ -16,6 +16,7 @@ class Manipulator
         void ContinuousIntake();
         void ResetManipulatorElements();
         void GetState();
+        int GetNumPunches();
         void SensorAdvanceGeneva(bool spin, bool forward);
         void GenevaSetSpin(double power);
         int GetSensorAdvanceGenevaState();
@@ -33,6 +34,7 @@ class Manipulator
         enum shooterStates{
             kRamping, kPunching, kRetracting, kAdvance, kAdvancing
         };
+        int lastShooterState;
         int shooterState;
         int state_change_counter = 0;
         const int kCountsToExtend = 5;
@@ -43,6 +45,7 @@ class Manipulator
         int genevaState = stopped;
         int genevaDirection = kForward;
         
+        int num_punches;
 
         int ShootingSpeeds [5] = {2500, 3750, 3750, 4000, 4250};
         double HoodPositions [5] = {0.1, .46, .505, .53, .55};
