@@ -109,6 +109,7 @@ frc::Color ColorWheel::getSpinTargetColor(frc::Color color){
 }
 void ColorWheel::ControlSolenoid(){
     if (colorjoystick->GetRawButtonPressed(1)){
+        cout <<"button 1 pressed"<< endl;
         bool isup = colorsolenoid->Get();
 
         if(isup == true){
@@ -125,6 +126,7 @@ void ColorWheel::ControlSolenoid(){
 void ColorWheel::RotateToNumber(){
     if (spinState == WheelState::NotSpinning && colorjoystick->GetRawButtonPressed (2))
     {
+        cout <<"button 2 pressed"<< endl;
         spinState = WheelState::InitSpinning;
         CurrentButton = 1;
 
@@ -136,9 +138,8 @@ void ColorWheel::RotateToNumber(){
         spinState = WheelState::Spinning;
     }
     if (spinState == WheelState::Spinning && CurrentButton == 1)
-    {   
-
-        if (colorjoystick->GetRawButtonPressed(1) || NumSpins>7)
+    { 
+        if (colorjoystick->GetRawButtonPressed(2) || NumSpins>7)
         {
             colormotor->Set(ControlMode::PercentOutput,0.0);
             spinState = WheelState::NotSpinning;
@@ -163,7 +164,6 @@ void ColorWheel::RotateToNumber(){
             OnRed = false;
         }
     }
-    cout <<"Hi***************************"<< endl;
 }
 
 
@@ -177,6 +177,7 @@ void ColorWheel::RotateToColor(frc::Color *targetcolor){
     {
         spinState = WheelState::InitSpinning;
         CurrentButton = 2;
+        cout <<"button 3 pressed"<< endl;
     }
     if (spinState == WheelState::InitSpinning && CurrentButton == 2)
     {
@@ -218,8 +219,6 @@ void ColorWheel::RotateToColor(frc::Color *targetcolor){
         }
         
     }
-    cout <<"Hi***************************"<< endl;
-   
 }
 
 void ColorWheel::PrintColor(frc::Color color, double colorConfidence){
