@@ -5,8 +5,8 @@
     this->shooter = shooter;
     m_sparkDrive = sparkDrive;
 
-    p = 0.015;
-    i = 0.0;
+    p = 0.021;
+    i = 0.019;
     d = 0.0;
 
     frc::SmartDashboard::PutNumber("Turn P Value", p);
