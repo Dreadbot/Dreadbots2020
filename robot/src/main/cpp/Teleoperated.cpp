@@ -164,13 +164,16 @@ void Teleoperated::HandleShooterInputs()
     double shooting_hood_position  = frc::SmartDashboard::GetNumber("Hood Position", 0.5);
     std::cout << "Cont Shooting" << std::endl;
     manipulator->ContinuousShoot(shooting_hood_position, 0.4, frc::SmartDashboard::GetNumber("Target Speed", 0));
+    frc::SmartDashboard::PutNumber("camNumber", 0);
   }
   else if(joystick_2->GetRawButton(kAimShootButton) && staleCount < 5){
     AimingContinuousShoot(distance, pValue, selectedAngle, 0.4);
+    frc::SmartDashboard::PutNumber("camNumber", 0);
     staleCount = 0;
   }
   else if(joystick_2->GetRawButton(kAimShootButton)){
     manipulator->GetShooter()->SetVisionLight(true);
+    frc::SmartDashboard::PutNumber("camNumber", 0);
   }
   else if(joystick_2->GetRawButton(kAdvanceGenevaButton)){
     manipulator->SensorAdvanceGeneva(true, true);
@@ -187,6 +190,11 @@ void Teleoperated::HandleShooterInputs()
     manipulator->SensorAdvanceGeneva(false, false);
     rotSpeed = 0;
   }
+  else
+  {
+    frc::SmartDashboard::PutNumber("camNumber", 1);
+  }
+  
   //when we release the button, then set motors to zero
   //this eliminates the constant turn after turn is done.
 }

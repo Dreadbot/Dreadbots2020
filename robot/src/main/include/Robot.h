@@ -49,6 +49,10 @@ class Robot : public frc::TimedRobot {
   const std::string AutoRightLeft = "RightLeft";
   std::string m_autoSelected;
 
+  void AddAutonomousLogic(AutonState auton_state_, double auxiliary_value_);
+
+  std::vector<std::pair<AutonState, double>>* auton_tasklist;
+
   // Timer Object
   frc::Timer* timer;
 

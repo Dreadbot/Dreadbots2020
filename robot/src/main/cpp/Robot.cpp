@@ -41,13 +41,13 @@ void Robot::RobotInit()
 
   std::cout << "SmartDashboard Setup..." << std::endl;
   m_chooser.SetDefaultOption(AutoDefault, AutoDefault);
-  m_chooser.AddOption(AutoRightRight, AutoRightRight);
-  m_chooser.AddOption(AutoRightCenter, AutoRightCenter);
-  m_chooser.AddOption(AutoRightLeft, AutoRightLeft);
+  m_chooser.AddOption("Straight Shoot", "Straight Shoot");
+  m_chooser.AddOption("Move Backwards", "Move Backwards");
+  m_chooser.AddOption("Shoot Right Side", "Shoot Right Side");
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   //frc::SmartDashboard::PutNumber("Aimpid",0.1);
-  frc::SmartDashboard::PutNumber("Hood Position", 0);
-  frc::SmartDashboard::PutNumber("Target Speed", 4000);
+  frc::SmartDashboard::PutNumber("Hood Position", 0.3);
+  frc::SmartDashboard::PutNumber("Target Speed", 3550);
   frc::SmartDashboard::PutNumber("Shoot P value", .009);
   frc::SmartDashboard::PutNumber("Shoot I value", 0.0000005);
   frc::SmartDashboard::PutNumber("Shoot D value", 0);
@@ -214,23 +214,30 @@ void Robot::AutonomousInit() {
   //     AutoDefault);
 
   std::cout << "Constructing Autonomous Routine..." << std::endl;
-  std::vector<std::pair<AutonState, int>>* default_state = 
-    new std::vector<std::pair<AutonState, int>>(0);
+  auton_tasklist = new std::vector<std::pair<AutonState, double>>(0);
 
   std::cout << "Adding Autonomous States..." << std::endl;
 
-  // Move Forward State Routine
-  //default_state->push_back(std::pair<AutonState, int>(autonomous_drive_forward_default, 5));
+  if(!m_autoSelected.compare("Straight Shoot"))
+  {
+    AddAutonomousLogic(autonomous_blind_shoot_by_number_of_punches, 3);
+    AddAutonomousLogic(autonomous_drive_forward_default, -5.0);
+  }
+  
+  if(!m_autoSelected.compare("Move Backwards"))
+  {
+    AddAutonomousLogic(autonomous_drive_forward_default, -5.0);
+  }
 
-  // Move Backward State Routine
-  //default_state->push_back(std::pair<AutonState, int>(autonomous_drive_forward_default, -5));
-
-  // Default Autonomous State Routine
-  default_state->push_back(std::pair<AutonState, int>(autonomous_shoot_by_number_of_punches, 3));
-  default_state->push_back(std::pair<AutonState, int>(autonomous_drive_forward_default, -5));
+  if(!m_autoSelected.compare("Shoot Right Side"))
+  {
+    AddAutonomousLogic(autonomous_vision_aided_shoot_by_number_of_punches, 3);
+    AddAutonomousLogic(autonomous_absolute_rotate, 0.0);
+    AddAutonomousLogic(autonomous_drive_forward_default, -5.0);
+  }
   
   std::cout << "Starting Autonomous" << std::endl;
-  autonomous->AutonomousInit(default_state);
+  autonomous->AutonomousInit(auton_tasklist);
 
   std::cout << "Done With Autonomous Init..." << std::endl;
   frc::SmartDashboard::PutNumber("P value", .009);
@@ -377,6 +384,12 @@ void Robot::TestPeriodic()
   // test->run();
   spark_drive->Test(joystick_1);
 }
+
+void Robot::AddAutonomousLogic(AutonState auton_state_, double auxiliary_value_)
+{
+  auton_tasklist->push_back(std::pair<AutonState, double>(auton_state_, auxiliary_value_));
+}
+
 #ifndef RUNNING_FRC_TESTS
 int main() { return frc::StartRobot<Robot>(); }
 #endif

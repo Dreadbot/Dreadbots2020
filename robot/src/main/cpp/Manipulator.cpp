@@ -178,7 +178,7 @@ void Manipulator::SensorAdvanceGeneva(bool spin, bool forward){
             m_feeder->SetSpin(genevaSpeed);
         }
     }
-
+    frc::SmartDashboard::PutNumber("camNumber", 1);
 }
 
 void Manipulator::GenevaSetSpin(double power){
