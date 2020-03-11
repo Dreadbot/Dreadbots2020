@@ -99,9 +99,9 @@ void Robot::RobotInit()
     // Intialize Internal Subsystems to Pass into Intake Container Class
     intake_motor = new rev::CANSparkMax(kIntakeMotorID, rev::CANSparkMax::MotorType::kBrushless);
     intake_pin = new frc::Solenoid(kIntakePinID);
-    
+    intake_arms = new frc::Solenoid(kIntakeArmsID);
     // Initialize Intake System Container Object using Intake Motor & Intake Holding Solenoid
-    intake = new Intake(intake_motor, intake_pin);
+    intake = new Intake(intake_motor, intake_pin, intake_arms);
   }
 
   // Set up Shooter System

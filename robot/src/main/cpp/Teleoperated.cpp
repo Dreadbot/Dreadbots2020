@@ -23,6 +23,7 @@ Teleoperated::Teleoperated(
 void Teleoperated::HandleTeleopInitIntake()
 {
   manipulator->GetIntake()->DeployIntake();
+  manipulator->GetIntake()->SetIntakeArms(false);
 }
 
 void Teleoperated::HandleTeleopInitDrive()
@@ -48,6 +49,13 @@ void Teleoperated::HandleIntakeInputs()
     {
       // When no Intake/Outtake Buttons Are Pressed, Set Intake Motor to 0 RPM.
       manipulator->GetIntake()->SetPercentOutput(0);
+    }
+
+    if(joystick_2->GetRawButton(kDeployColorWheelButton)){
+      manipulator->GetIntake()->SetIntakeArms(true);
+    }
+    else if(joystick_2->GetRawButton(kRetractColorWheelButton)){
+      manipulator->GetIntake()->SetIntakeArms(false);
     }
 }
 

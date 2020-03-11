@@ -18,6 +18,7 @@ void Autonomous::AutonomousInit(std::vector<std::pair<AutonState, double>>* stat
   started_rotating = false;
 
   manipulator->GetIntake()->DeployIntake();
+  manipulator->GetIntake()->SetIntakeArms(false);
 
   current_drive_value = 0.0;
 }

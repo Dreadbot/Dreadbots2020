@@ -102,7 +102,7 @@ class Robot : public frc::TimedRobot {
   const bool kIntakeEnabled = true;
   const bool kFeederEnabled = true;
   const bool kTrajectoryEnabled = false;
-  const bool kColorWheelEnabled = true;
+  const bool kColorWheelEnabled = false;
 
   int enabled_subsystems;
 
@@ -114,6 +114,7 @@ class Robot : public frc::TimedRobot {
     rev::CANSparkMax *geneva_motor;
     frc::Solenoid *punch;
     frc::Solenoid *intake_pin;
+    frc::Solenoid *intake_arms;
     Intake *intake;
     Feeder *feeder;
     Shooter *shooter;

@@ -57,7 +57,8 @@ const int kColorWheelMotorID = 9;
 const int kClimbWinchMotorID = 10; //10 on comp bot 11 on practice
 
 const int kIntakePinID = 0;
-const int kColorWheelSolenoidID = 1;
+const int kIntakeArmsID = 1;
+const int kColorWheelSolenoidID = 1; //Needs to change
 
 const int kPunchSolenoidID = 2;
 const int kClimbTelescopeSolenoidID = 3; //4 on practice, 3 on comp

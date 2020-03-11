@@ -1,9 +1,10 @@
 #include "Intake.h"
 
-Intake::Intake(rev::CANSparkMax *intake_motor, frc::Solenoid *intake_pin)
+Intake::Intake(rev::CANSparkMax *intake_motor, frc::Solenoid *intake_pin, frc::Solenoid *intake_arms)
     : m_intake_motor( intake_motor ),
       m_pidController( m_intake_motor->GetPIDController() ),
-      m_intake_pin( intake_pin )
+      m_intake_pin( intake_pin ),
+      m_intake_arms(intake_arms)
 { 
   m_pidController.SetP(6e-5);
   m_pidController.SetI(1e-6);
@@ -28,6 +29,9 @@ void Intake::DeployIntake()
   // This is true because true flips the solenoid from what is default, 
   // and the pin should be physically connected to be extended by default
   m_intake_pin->Set(true);
+}
+void Intake::SetIntakeArms(bool value){
+  m_intake_arms->Set(value);
 }
 
 void Intake::Start()
