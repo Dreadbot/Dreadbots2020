@@ -71,7 +71,6 @@ class Shooter
   rev::CANSparkMax* shooting_motor;
   rev::CANPIDController* shooting_motor_pid_controller;
   rev::CANEncoder *shooter_encoder;
-  frc::Solenoid *vision_light;
   double speed;
 
   rev::CANSparkMax* aiming_motor; 
@@ -81,10 +80,12 @@ class Shooter
 
   frc::DigitalInput* upper_limit_switch;
   frc::DigitalInput* lower_limit_switch;
-  int minHoodPosition;
-  int maxHoodPosition;
-  bool readyToAim = false;
-  bool lowerLimitHit = false;
-  bool upperLimitHit = false;
+  int min_hood_position;
+  int max_hood_position;
+  bool ready_to_aim;
+  bool lower_limit_hit;
+  bool upper_limit_hit;
   double range;
+
+  frc::Solenoid *vision_light;
 };

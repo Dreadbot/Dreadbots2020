@@ -1,127 +1,86 @@
 #include <TeleopFunctions.h>
 
- TeleopFunctions::TeleopFunctions( frc::Joystick *joystick_1, Shooter *shooter, SparkDrive *sparkDrive){
-    this->js1 = joystick_1;
-    this->shooter = shooter;
-    m_sparkDrive = sparkDrive;
-
-    p = 0.021;
-    i = 0.019;
-    d = 0.0;
-
-    frc::SmartDashboard::PutNumber("Turn P Value", p);
-    frc::SmartDashboard::PutNumber("Turn I Value", i);
-    frc::SmartDashboard::PutNumber("Turn D Value", d);
-
-    pid_controller = new frc2::PIDController(p, i, d, 20 * 1_ms);
-
-    pid_controller->SetSetpoint(0.0);
-}
-void TeleopFunctions::TurnToAngle(double targetAngle, double proportion){
-    targetAngle += frc::SmartDashboard::GetNumber("Turn Fudge Factor", 0.0);
-    //If a button is pressed, reset the counter, and signal that a turn is initiiated
-    min_rotation_speed = frc::SmartDashboard::GetNumber("Min Rot Speed", 0.15);
-    //frc::SmartDashboard::PutBoolean("turn complete?", turn_complete);
-    //Find the difference between the current angle and the target angle, multiply by a set value, and use that to find the rate
-    double error = (double)m_sparkDrive->GetGyroscope()->GetYaw() - targetAngle;
-    std::cout << "Error: " << error;
-    current_rotation_rate = error * proportion;
-    std::cout << " 1: " << current_rotation_rate; 
-    
-    //Set the lower bound of the rotation speed so it is not less than the power necessary to turn the robot
-    if(current_rotation_rate > 0)
-        current_rotation_rate += min_rotation_speed;
-    else if(current_rotation_rate < 0)
-        current_rotation_rate -= min_rotation_speed;
-    std::cout << " 2: " << current_rotation_rate;
-    //Set the upper bound of the rotation rate
-    current_rotation_rate = (current_rotation_rate > 1)? 1 : current_rotation_rate;
-    current_rotation_rate = (current_rotation_rate < -1)? -1 : current_rotation_rate;
-    std::cout << " 3: " << current_rotation_rate;
-
-    //if we are not within the slop, then we are not done with the turn
-    if(fabs(error) > slop){
-        turn_complete = false;
-        TURN_BUTTON_TIMEOUT = 0;
-    }
-    
-    //If the turn has made it within the allowable error constant, increment the count
-    if (fabs(error) < slop){
-       TURN_BUTTON_TIMEOUT++;
-    }
-
-    frc::SmartDashboard::PutNumber("Error", error);
-    frc::SmartDashboard::PutNumber("Current Rotation Rate", current_rotation_rate);
-    frc::SmartDashboard::PutNumber("Target Angle", targetAngle);
-    
-    //Drive the robot using the SparkDrive::TankDrive function, with the forward/backward axis still based on
-    //controller input, but the rotation axis of the drive base based on the rotation rate found
-    m_sparkDrive->TankDrive(
-        js1->GetRawAxis(kPrimaryDriverJoystickID), 
-            -current_rotation_rate, 
-        js1->GetRawButton(right_bumper), 
-        js1->GetRawButton(left_bumper),
-        0.0
-    );
-
-    //If the difference between the current angle and the target angle is within an allowable constant, 
-    //and enough time has elapsed in while within that bound to allow for the turning to settle, 
-    //declare the turn finished and reset the gyro
-    if(fabs(error) < slop && TURN_BUTTON_TIMEOUT > timeToAdjust){
-        turn_complete = true;
-        //m_sparkDrive->GetGyroscope()->ZeroYaw();
-        m_sparkDrive->TankDrive(0,0,false,false);
-    }
-}
-
-void TeleopFunctions::WPITurnToAngle(double target_angle)
+TeleopFunctions::TeleopFunctions( frc::Joystick *joystick_1, Shooter *shooter, SparkDrive *spark_drive)
+  :  js1(joystick_1), m_shooter(shooter), m_spark_drive(spark_drive)
 {
-  //If a button is pressed, reset the counter, and signal that a turn is initiiated
-  //frc::SmartDashboard::PutBoolean("turn complete?", turn_complete);
+  p = 0.021;
+  i = 0.019;
+  d = 0.0;
+
+  frc::SmartDashboard::PutNumber("Turn P Value", p);
+  frc::SmartDashboard::PutNumber("Turn I Value", i);
+  frc::SmartDashboard::PutNumber("Turn D Value", d);
+  pid_controller = new frc2::PIDController(p, i, d, 20 * 1_ms);
+  pid_controller->SetSetpoint(0.0);
+
+  min_rotation_speed = 0;
+}
+
+void TeleopFunctions::TurnToAngle(double target_angle, double proportion)
+{
+  target_angle += frc::SmartDashboard::GetNumber("Turn Fudge Factor", 0.0);
+  min_rotation_speed = frc::SmartDashboard::GetNumber("Min Rot Speed", 0.15);
+
   //Find the difference between the current angle and the target angle, multiply by a set value, and use that to find the rate
-  double error = ((double) m_sparkDrive->GetGyroscope()->GetYaw()) - target_angle;
-  //std::cout << "Error: " << error;
+  double error = (double)m_spark_drive->GetGyroscope()->GetYaw() - target_angle;
+  current_rotation_rate = error * proportion; 
 
-  UpdatePIDController();
+  //Set the lower bound of the rotation speed so it is not less than the power necessary to turn the robot
+  if(current_rotation_rate > 0)
+  {
+    current_rotation_rate += min_rotation_speed;
+  }
+  else if(current_rotation_rate < 0)
+  {
+    current_rotation_rate -= min_rotation_speed;
+  }
 
-  current_rotation_rate = pid_controller->Calculate(error);
-    
   //Set the upper bound of the rotation rate
   current_rotation_rate = (current_rotation_rate > 1)? 1 : current_rotation_rate;
   current_rotation_rate = (current_rotation_rate < -1)? -1 : current_rotation_rate;
-  
+
+  //if we are not within the slop, then we are not done with the turn
+  if(fabs(error) > slop)
+  {
+    turn_complete = false;
+    turn_button_timeout = 0;
+  }
+    
+  //If the turn has made it within the allowable error constant, increment the count
+  if(fabs(error) < slop)
+  {
+    turn_button_timeout++;
+  }
+
   frc::SmartDashboard::PutNumber("Error", error);
   frc::SmartDashboard::PutNumber("Current Rotation Rate", current_rotation_rate);
   frc::SmartDashboard::PutNumber("Target Angle", target_angle);
-
+    
   //Drive the robot using the SparkDrive::TankDrive function, with the forward/backward axis still based on
   //controller input, but the rotation axis of the drive base based on the rotation rate found
-  m_sparkDrive->TankDrive(
-      js1->GetRawAxis(kPrimaryDriverJoystickID), 
-      -current_rotation_rate, 
-      js1->GetRawButton(right_bumper), 
-      js1->GetRawButton(left_bumper),
-      0.0
+  m_spark_drive->TankDrive(
+    js1->GetRawAxis(kPrimaryDriverJoystickID), 
+    -current_rotation_rate, 
+    js1->GetRawButton(right_bumper), 
+    js1->GetRawButton(left_bumper),
+    0.0
   );
 
   //If the difference between the current angle and the target angle is within an allowable constant, 
   //and enough time has elapsed in while within that bound to allow for the turning to settle, 
   //declare the turn finished and reset the gyro
-  if(fabs(error) < slop && TURN_BUTTON_TIMEOUT > timeToAdjust){
-      turn_complete = true;
-      //m_sparkDrive->GetGyroscope()->ZeroYaw();
-      m_sparkDrive->TankDrive(0,0,false,false);
+  if(fabs(error) < slop && turn_button_timeout > time_to_adjust)
+  {
+    turn_complete = true;
+    m_spark_drive->TankDrive(0,0,false,false);
   }
 }
 
-double TeleopFunctions::CalculateTurnToAngle(double target_angle)
+void TeleopFunctions::WPITurnToAngle(double target_angle)
 {
   //If a button is pressed, reset the counter, and signal that a turn is initiiated
-  //frc::SmartDashboard::PutBoolean("turn complete?", turn_complete);
   //Find the difference between the current angle and the target angle, multiply by a set value, and use that to find the rate
-  double error = ((double) m_sparkDrive->GetGyroscope()->GetYaw()) - target_angle;
-  //std::cout << "Error: " << error;
-
+  double error = ((double) m_spark_drive->GetGyroscope()->GetYaw()) - target_angle;
   UpdatePIDController();
 
   current_rotation_rate = pid_controller->Calculate(error);
@@ -136,17 +95,49 @@ double TeleopFunctions::CalculateTurnToAngle(double target_angle)
 
   //Drive the robot using the SparkDrive::TankDrive function, with the forward/backward axis still based on
   //controller input, but the rotation axis of the drive base based on the rotation rate found
-
+  m_spark_drive->TankDrive(
+    js1->GetRawAxis(kPrimaryDriverJoystickID), 
+    -current_rotation_rate, 
+    js1->GetRawButton(right_bumper), 
+    js1->GetRawButton(left_bumper),
+    0.0
+  );
 
   //If the difference between the current angle and the target angle is within an allowable constant, 
   //and enough time has elapsed in while within that bound to allow for the turning to settle, 
   //declare the turn finished and reset the gyro
-  if(fabs(error) < slop && TURN_BUTTON_TIMEOUT > timeToAdjust){
+  if(fabs(error) < slop && turn_button_timeout > time_to_adjust)
+  {
+    turn_complete = true;
+    m_spark_drive->TankDrive(0,0,false,false);
+  }
+}
+
+double TeleopFunctions::CalculateTurnToAngle(double target_angle)
+{
+  //Find the difference between the current angle and the target angle, multiply by a set value, and use that to find the rate
+  double error = ((double) m_spark_drive->GetGyroscope()->GetYaw()) - target_angle;
+
+  UpdatePIDController();
+
+  current_rotation_rate = pid_controller->Calculate(error);
+    
+  //Set the upper bound of the rotation rate
+  current_rotation_rate = (current_rotation_rate > 1)? 1 : current_rotation_rate;
+  current_rotation_rate = (current_rotation_rate < -1)? -1 : current_rotation_rate;
+  
+  frc::SmartDashboard::PutNumber("Error", error);
+  frc::SmartDashboard::PutNumber("Current Rotation Rate", current_rotation_rate);
+  frc::SmartDashboard::PutNumber("Target Angle", target_angle);
+
+  //If the difference between the current angle and the target angle is within an allowable constant, 
+  //and enough time has elapsed in while within that bound to allow for the turning to settle, 
+  //declare the turn finished and reset the gyro
+  if(fabs(error) < slop && turn_button_timeout > time_to_adjust)
+  {
       turn_complete = true;
-      //m_sparkDrive->GetGyroscope()->ZeroYaw();
       current_rotation_rate = 0;
   }
-
   return current_rotation_rate;
 }
 
@@ -162,21 +153,25 @@ void TeleopFunctions::UpdatePIDController()
 
 }
 
-bool TeleopFunctions::GetTurnStatus() {
+bool TeleopFunctions::GetTurnStatus() 
+{
     return turn_complete;
 }
-void TeleopFunctions::SetTurnStatus(bool turnStatus){
+
+void TeleopFunctions::SetTurnStatus(bool turnStatus)
+{
     turn_complete = turnStatus;
 }
 
-void TeleopFunctions::ShooterFunction(){
+void TeleopFunctions::ShooterFunction()
+{
        // printf("joystick_addr = %d \n",js1);
         if(js1->GetRawButton(shooterButton)){
          //Hard coding power rn
-         shooter->Shoot(1000);
+         m_shooter->Shoot(1000);
         }
         else{
-             shooter->Shoot(0);
+             m_shooter->Shoot(0);
          }
          
          

@@ -7,47 +7,47 @@
 
 class Manipulator
 {
-    public:
-        Manipulator(Intake *intake, Feeder *feeder, Shooter *shooter);
-        void PrepareShot(int rpm, double aimHeight);
-        int GetSelectedRPM(double inches);
-        double GetSelectedHoodPosition(double inches);
-        void ContinuousShoot(double aim_position, double geneva_speed, int shooting_rpm);
-        void ContinuousIntake();
-        void ResetManipulatorElements();
-        void GetState();
-        int GetNumPunches();
-        void SensorAdvanceGeneva(bool spin, bool forward);
-        void GenevaSetSpin(double power);
-        int GetSensorAdvanceGenevaState();
+  public:
+    Manipulator(Intake *intake, Feeder *feeder, Shooter *shooter);
+    void PrepareShot(int rpm, double aimHeight);
+    int GetSelectedRPM(double inches);
+    double GetSelectedHoodPosition(double inches);
+    void ContinuousShoot(double aim_position, double geneva_speed, int shooting_rpm);
+    void ResetManipulatorElements();
+    void GetState();
+    int GetNumPunches();
+    void SensorAdvanceGeneva(bool spin, bool forward);
+    void GenevaSetSpin(double power);
+    int GetSensorAdvanceGenevaState();
 
-        Intake* GetIntake();
-        Feeder* GetFeeder();
-        Shooter* GetShooter();
-    private:
-        //Member objects
-        Intake *m_intake;
-        Feeder *m_feeder; 
-        Shooter *m_shooter;
+    Intake* GetIntake();
+    Feeder* GetFeeder();
+    Shooter* GetShooter();
+
+  private:
+    //Member objects
+    Intake *m_intake;
+    Feeder *m_feeder; 
+    Shooter *m_shooter;
         
-        //Finite State Machine vars
-        enum shooterStates{
-            kRamping, kPunching, kRetracting, kAdvance, kAdvancing
-        };
-        int lastShooterState;
-        int shooterState;
-        int state_change_counter = 0;
-        const int kCountsToExtend = 5;
+    //Finite State Machine vars
+    enum ShooterStates{
+      kRamping, kPunching, kRetracting, kAdvance, kAdvancing
+    };
+    int last_shooter_state;
+    int shooter_state;
+    int state_change_counter = 0;
+    const int kCountsToExtend = 5;
 
-        enum genevaStates{
-            move, moving, stopped, kForward, kBackward
-        };
-        int genevaState = stopped;
-        int genevaDirection = kForward;
-        
-        int num_punches;
+    enum GenevaStates{
+      kMove, kMoving, kStopped, kForward, kBackward
+    };
+    int genevaState = kStopped;
+    int genevaDirection = kForward;
+       
+    int num_punches;
 
-        int ShootingSpeeds [5] = {2500, 3750, 3750, 4000, 4250};
-        double HoodPositions [5] = {0.1, .46, .505, .53, .55};
-        int distance;
+    const int ShootingSpeeds [5] = {2500, 3750, 3750, 4000, 4250};
+    const double HoodPositions [5] = {0.1, .46, .505, .53, .55};
+    int distance;
 };

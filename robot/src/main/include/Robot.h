@@ -34,7 +34,6 @@ class Robot : public frc::TimedRobot {
  public:
   void RobotInit() override;
   void RobotPeriodic() override;
-  void HoodCalibration();
   void AutonomousInit() override;
   void AutonomousPeriodic() override;
   void TeleopInit() override;
@@ -50,6 +49,7 @@ class Robot : public frc::TimedRobot {
   std::string m_autoSelected;
 
   void AddAutonomousLogic(AutonState auton_state_, double auxiliary_value_);
+  void HoodCalibration();
 
   std::vector<std::pair<AutonState, double>>* auton_tasklist;
 
@@ -74,19 +74,16 @@ class Robot : public frc::TimedRobot {
   // Teleoperated Object Container
   Teleoperated* teleoperated;
 
-  //Ultrasonic Objecttss
+  //Ultrasonic Objects
   Ultra *ultra;
 
   //Shooting Objects
   double position;
   double P, I, D;
+  double ContinuousShooterSpeed = 0.0;
 
   // Trajectory Testing Variables
   double const kIterationSecondsRatio = 0.02;
-
-   //BUTTONS
-  int const shooterButton = 1;
-  
   double iterative_clock = 0.0;
 
   //Rotate to angle variables
@@ -107,19 +104,17 @@ class Robot : public frc::TimedRobot {
   int enabled_subsystems;
 
   // Teleop Objects
-    //Manipulator Objects
-    rev::CANSparkMax *intake_motor;
-    rev::CANSparkMax *shooter_motor;
-    rev::CANSparkMax *aim_motor;
-    rev::CANSparkMax *geneva_motor;
-    frc::Solenoid *punch;
-    frc::Solenoid *intake_pin;
-    frc::Solenoid *intake_arms;
-    Intake *intake;
-    Feeder *feeder;
-    Shooter *shooter;
-    Manipulator *manipulator;
-    double ContinuousShooterSpeed = 0.0;
+  rev::CANSparkMax *intake_motor;
+  rev::CANSparkMax *shooter_motor;
+  rev::CANSparkMax *aim_motor;
+  rev::CANSparkMax *geneva_motor;
+  frc::Solenoid *punch;
+  frc::Solenoid *intake_pin;
+  frc::Solenoid *intake_arms;
+  Intake *intake;
+  Feeder *feeder;
+  Shooter *shooter;
+  Manipulator *manipulator;
   TeleopFunctions *teleop_functions;
   Climber *climber;
   rev::CANSparkMax *climb_winch;
@@ -128,7 +123,4 @@ class Robot : public frc::TimedRobot {
   rev::CANSparkMax *color_motor;
   frc::Solenoid *color_sol;
   Diagnostic* test;
-
-
-
 };
