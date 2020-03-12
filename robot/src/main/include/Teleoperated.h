@@ -9,12 +9,16 @@
 #include "SparkDrive.h"
 #include "TeleopFunctions.h"
 
+enum AimShootStates{
+  aiming,
+  shooting
+};
+
 class Teleoperated
 {
  public:
-  Teleoperated(
-    frc::Joystick* joystick_1_,
-    frc::Joystick* joystick_2_,
+  Teleoperated(frc::Joystick* primary_driver_joystick_,
+    frc::Joystick* secondary_driver_joystick_,
     Manipulator* manipulator_,
     SparkDrive* spark_drive_,
     Climber* climber_,
@@ -32,13 +36,20 @@ class Teleoperated
   void HandleRotateToAngleInputs();
   void HandleColorWheelInputs();
 
-  void AimingContinuousShoot(double distance, double pValue, double target_angle, double geneva_speed);
-  void AimingContinuousShoot(double rpm, double hoodPosition, double pValue, double target_angle, double geneva_speed);
+  void AimingContinuousShoot(double distance, 
+    double pValue, 
+    double target_angle, 
+    double geneva_speed);
+  void AimingContinuousShoot(double rpm, 
+    double hoodPosition, 
+    double pValue, 
+    double target_angle, 
+    double geneva_speed);
   void ResetAimCounts();
  
  private:
-  frc::Joystick* joystick_1;
-  frc::Joystick* joystick_2;
+  frc::Joystick* primary_driver_joystick;
+  frc::Joystick* secondary_driver_joystick;
 
   Manipulator* manipulator;
 
@@ -54,9 +65,6 @@ class Teleoperated
   int aim_shoot_state;
   int aim_counts;
   const int max_aim_counts = 150;
-  enum AimShootStates{
-    kAiming, kShooting
-  };
 
   //Rotate to angle variables
   double selectedAngle = 0;

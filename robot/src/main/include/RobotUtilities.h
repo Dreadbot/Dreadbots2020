@@ -17,15 +17,15 @@ enum JoystickInputs
   back_button = 9, start_button = 10, l_trigger = 11, r_trigger = 12
 };
 enum Joystick1Layout{
-    kForwardBackwardAxis = y_axis, kRotAxis = z_axis, kExtendClimbButton = start_button, 
-    kRetractClimbButton = back_button, kWinchButton = x_button, kTurtleButton = right_bumper, 
-    kTurboButton = right_trigger
+  kForwardBackwardAxis = y_axis, kRotAxis = z_axis, kExtendClimbButton = start_button, 
+  kRetractClimbButton = back_button, kWinchButton = x_button, kTurtleButton = right_bumper, 
+  kTurboButton = right_trigger
 }; 
 enum Joystick2Layout{
-    kAimShootButton = b_button, kIntakeButton = x_button, kOuttakeButton = a_button, kShootButton = y_button,
-    kRegressGenevaButton = left_bumper, kAdvanceGenevaButton = right_bumper, kRetractColorWheelButton = left_trigger,
-    kDeployColorWheelButton = right_trigger, kColorWheelColorControl = start_button, kColorWheelRotationControl = back_button, 
-    kIncreaseAimOffsetPOV = 270, kDecreaseAimOffsetPOV = 90, kCameraSwitchPOV = 0
+  kAimShootButton = b_button, kIntakeButton = x_button, kOuttakeButton = a_button, kShootButton = y_button,
+  kRegressGenevaButton = left_bumper, kAdvanceGenevaButton = right_bumper, kRetractColorWheelButton = left_trigger,
+  kDeployColorWheelButton = right_trigger, kColorWheelColorControl = start_button, kColorWheelRotationControl = back_button, 
+  kIncreaseAimOffsetPOV = 270, kDecreaseAimOffsetPOV = 90, kCameraSwitchPOV = 0
 };
 enum CameraView{
   kVisionCam, kGenevaCam, kIntakeCam, kDriveCam

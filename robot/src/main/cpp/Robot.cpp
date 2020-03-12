@@ -138,13 +138,9 @@ void Robot::RobotInit()
   if(kColorWheelEnabled)
   {
     ++enabled_subsystems;
-
-    // Define Internal Subsystems to Pass into ColorWheel Container Class
-    color_motor = new rev::CANSparkMax(kColorWheelMotorID, rev::CANSparkMax::MotorType::kBrushless);
-    color_sol = new frc::Solenoid(kColorWheelSolenoidID);
-
+    
     // Define ColorWheel Object
-    color_wheel = new ColorWheel(color_motor, joystick_2, color_sol);
+    color_wheel = new ColorWheel(joystick_2);
   }
 
   // Setup Climber System

@@ -2,10 +2,10 @@
 
 #include <vector>
 
-#include "SparkDrive.h"
 #include "Manipulator.h"
-#include "TeleopFunctions.h"
+#include "SparkDrive.h"
 #include "Teleoperated.h"
+#include "TeleopFunctions.h"
 
 enum AutonState
 {
@@ -19,22 +19,26 @@ enum AutonState
 class Autonomous
 {
  public:
-  Autonomous(Teleoperated* teleoperated_, TeleopFunctions* teleop_functions_, SparkDrive* spark_drive_, Manipulator* manipulator_);
+  Autonomous(Manipulator* manipulator_, 
+    SparkDrive* spark_drive_, 
+    Teleoperated* teleoperated_, 
+    TeleopFunctions* teleop_functions_);
 
-  void AutonomousInit(std::vector<std::pair<AutonState, double>>* state_by_index_);
+  void AutonomousInit(
+    std::vector<std::pair<AutonState, double>>* state_by_index_);
   void AutonomousPeriodic();
 
-  void AutonomousVisionAidedShooting(int num_shots);
-  void AutonomousBlindShooting(int num_shots);
-  void AutonomousDriving(double distance);
   void AutonomousAbsoluteRotate(double angle);
   void AutonomousRelativeRotate(double angle);
+  void AutonomousBlindShooting(int num_shots);
+  void AutonomousVisionAidedShooting(int num_shots);
+  void AutonomousDriving(double distance);
 
  private:
+  Manipulator* manipulator;
+  SparkDrive* spark_drive;
   Teleoperated* teleoperated;
   TeleopFunctions* teleop_functions;
-  SparkDrive* spark_drive;
-  Manipulator* manipulator;
 
   std::vector<std::pair<AutonState, double>>* state_by_index;
   unsigned int current_index;
@@ -42,11 +46,10 @@ class Autonomous
   double current_drive_value;
   double zero_drive_value;
   double drive_target;
+  bool started_driving;
 
   double current_angle_value;
   double zero_angle_value;
   double angle_target;
-
-  bool started_driving;
   bool started_rotating;
 };

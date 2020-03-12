@@ -15,7 +15,7 @@ class Intake
   void Stop();
  private:
   rev::CANSparkMax *m_intake_motor;
-  rev::CANPIDController* m_pidController;
+  rev::CANPIDController m_pidController;
   frc::Solenoid *m_intake_pin;
   frc::Solenoid *m_intake_arms;
   bool running;

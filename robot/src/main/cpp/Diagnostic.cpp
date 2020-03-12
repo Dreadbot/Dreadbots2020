@@ -1,28 +1,41 @@
-#include <Diagnostic.h>
+#include "Diagnostic.h"
 
-Diagnostic::Diagnostic(frc::Joystick *joystick_1){
-        this->js1 = joystick_1;
-        M1l = new rev::CANSparkMax(kUltraLeftFrontMotorID, rev::CANSparkMax::MotorType::kBrushless);
-        M2l = new rev::CANSparkMax(kUltraRightFrontMotorID, rev::CANSparkMax::MotorType::kBrushless);
-        M4r = new rev::CANSparkMax(kUltraLeftBackMotorID, rev::CANSparkMax::MotorType::kBrushless);
-        M5r = new rev::CANSparkMax(kUltraRightBackMotorID, rev::CANSparkMax::MotorType::kBrushless); 
-}
+Diagnostic::Diagnostic(frc::Joystick* primary_driver_joystick_)
+  : primary_driver_joystick( primary_driver_joystick_ ),
+    left_front_motor_controller( 
+      new rev::CANSparkMax(kUltraLeftFrontMotorID, 
+        rev::CANSparkMax::MotorType::kBrushless)),
+    right_front_motor_controller( 
+      new rev::CANSparkMax(kUltraRightFrontMotorID, 
+        rev::CANSparkMax::MotorType::kBrushless)),
+    left_back_motor_controller( 
+      new rev::CANSparkMax(kUltraLeftBackMotorID, 
+        rev::CANSparkMax::MotorType::kBrushless)),
+    right_back_motor_controller( 
+      new rev::CANSparkMax(kUltraRightBackMotorID, 
+        rev::CANSparkMax::MotorType::kBrushless))
+{}
 
-void Diagnostic::run(){
-    if(js1->GetRawButton(1)){
-     M1l->Set(0.1);
-     M2l->Set(0.1);
-    }
-    else{
-     M1l->Set(0.0);
-     M2l->Set(0.0);
-    }
-    if(js1->GetRawButton(2)){
-     M4r->Set(0.1);
-     M5r->Set(0.1);
-    }
-    else{
-     M4r->Set(0.0);
-     M5r->Set(0.0);
-    }
+void Diagnostic::RunDiagnostic()
+{
+  if(primary_driver_joystick->GetRawButton(1)){
+    left_front_motor_controller->Set(0.1);
+    right_front_motor_controller->Set(0.1);
+  }
+  else
+  {
+    left_front_motor_controller->Set(0.0);
+    right_front_motor_controller->Set(0.0);
+  }
+
+  if(primary_driver_joystick->GetRawButton(2))
+  {
+    left_back_motor_controller->Set(0.1);
+    right_back_motor_controller->Set(0.1);
+  }
+  else
+  {
+    left_back_motor_controller->Set(0.0);
+    right_back_motor_controller->Set(0.0);
+  }
 }

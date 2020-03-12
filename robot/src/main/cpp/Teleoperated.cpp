@@ -1,15 +1,14 @@
 #include "Teleoperated.h"
 
-Teleoperated::Teleoperated(
-  frc::Joystick* joystick_1_,
-  frc::Joystick* joystick_2_,
-  Manipulator* manipulator_,
-  SparkDrive* spark_drive_,
-  Climber* climber_,
-  TeleopFunctions* teleop_functions_,
-  ColorWheel* color_wheel_)
-    : joystick_1( joystick_1_ ),
-      joystick_2( joystick_2_ ),
+Teleoperated::Teleoperated(frc::Joystick* primary_driver_joystick_,
+    frc::Joystick* secondary_driver_joystick_,
+    Manipulator* manipulator_,
+    SparkDrive* spark_drive_,
+    Climber* climber_,
+    TeleopFunctions* teleop_functions_,
+    ColorWheel* color_wheel_)
+    : primary_driver_joystick( primary_driver_joystick_ ),
+      secondary_driver_joystick( secondary_driver_joystick_ ),
       manipulator( manipulator_ ),
       spark_drive( spark_drive_ ),
       climber( climber_ ),
@@ -17,7 +16,7 @@ Teleoperated::Teleoperated(
       color_wheel( color_wheel_ )
 {
   aim_counts = 0;
-  aim_shoot_state = kAiming;
+  aim_shoot_state = aiming;
 }
 
 void Teleoperated::HandleTeleopInitIntake()
@@ -34,13 +33,13 @@ void Teleoperated::HandleTeleopInitDrive()
 void Teleoperated::HandleIntakeInputs()
 {
   // X Button for Intake
-    if(joystick_2->GetRawButton(kIntakeButton))
+    if(secondary_driver_joystick->GetRawButton(kIntakeButton))
     {
       // Set Speed to -3750 RPM (Negative -> Intake)
       manipulator->GetIntake()->SetSpeed(-4000);
     }
     // A Button for Outtake
-    else if(joystick_2->GetRawButton(kOuttakeButton))
+    else if(secondary_driver_joystick->GetRawButton(kOuttakeButton))
     {
       // Set Speed to 3750 RPM (Positive -> Outtake)
       manipulator->GetIntake()->SetSpeed(4000);
@@ -51,85 +50,49 @@ void Teleoperated::HandleIntakeInputs()
       manipulator->GetIntake()->SetPercentOutput(0);
     }
 
-    if(joystick_2->GetRawButton(kDeployColorWheelButton)){
+    if(secondary_driver_joystick->GetRawButton(kDeployColorWheelButton)){
       manipulator->GetIntake()->SetIntakeArms(true);
     }
-    else if(joystick_2->GetRawButton(kRetractColorWheelButton)){
+    else if(secondary_driver_joystick->GetRawButton(kRetractColorWheelButton)){
       manipulator->GetIntake()->SetIntakeArms(false);
     }
 }
-
-// void Teleoperated::HandleShooterInputs()
-// {
-//   // Utility for Adjusting Hood or Aim Motor.
-//     //manipulator->GetShooter()->SetAdjusterPercentOutput(joystick_2->GetRawAxis(w_axis));
-
-//     // B Button for Shoot
-//     if(joystick_2->GetRawButton(kShootButton))
-//     {
-//       manipulator->GetShooter()->SetShootingPercentOutput(-0.8);
-//       // Continually Shoot
-//       manipulator->ContinuousShoot(0, 0.4, 5000);
-//     }
-//     else
-//     {
-//       // Default Shooting PercentOutput to Avoid Ramp-Up Time
-//       manipulator->GetShooter()->SetShootingPercentOutput(0);
-
-//       // If The Geneva State is Stoppped, Stop the Spin.
-//       if(manipulator->GetSensorAdvanceGenevaState() == 2)
-//       {
-//         // Set to 0 RPM
-//         manipulator->GenevaSetSpin(0);
-//       }
-//     }
-
-//     // Internal Check for Advancing Geneva without Shooting
-//     if(joystick_2->GetRawButton(kAdvanceGenevaButton)){
-//       manipulator->SensorAdvanceGeneva(joystick_2->GetRawButton(kAdvanceGenevaButton), true);
-//     }
-//     else if(joystick_2->GetRawButton(kRegressGenevaButton)){
-//       manipulator->SensorAdvanceGeneva(joystick_2->GetRawButton(kRegressGenevaButton), false);
-//     }
-    
-// }
 
 void Teleoperated::HandleDriveInputs()
 {
   // Call SparkDrive::TankDrive() using the drivetrain motors
   spark_drive->TankDrive
   (
-    joystick_1->GetRawAxis(kForwardBackwardAxis), 
-    (joystick_1->GetRawAxis(kRotAxis)-rotSpeed), 
-    joystick_1->GetRawButton(kTurboButton), 
-    joystick_1->GetRawButton(kTurtleButton),
+    primary_driver_joystick->GetRawAxis(kForwardBackwardAxis), 
+    (primary_driver_joystick->GetRawAxis(kRotAxis) - rotSpeed), 
+    primary_driver_joystick->GetRawButton(kTurboButton), 
+    primary_driver_joystick->GetRawButton(kTurtleButton),
     0.05
   );
 }
 
-void Teleoperated::
-HandleClimbInputs()
+void Teleoperated::HandleClimbInputs()
 {
-  if(joystick_1->GetRawButton(kExtendClimbButton))
+  if(primary_driver_joystick->GetRawButton(kExtendClimbButton))
   {
-    climber->SetTelescope(true);
+    climber->SetTelescopeSolenoidExtended(true);
   }
-  else if(joystick_1->GetRawButton(kRetractClimbButton))
+  else if(primary_driver_joystick->GetRawButton(kRetractClimbButton))
   {
-    climber->SetTelescope(false);
+    climber->SetTelescopeSolenoidExtended(false);
   }
 
-  if(joystick_1->GetRawButton(kWinchButton))
+  if(primary_driver_joystick->GetRawButton(kWinchButton))
   {
-    climber->SetWinch(0.4);
+    climber->SetWinchMotorControllerPercentOutput(0.4);
   }
-  else if(joystick_1->GetRawButton(b_button))
+  else if(primary_driver_joystick->GetRawButton(b_button))
   {
-    climber->SetWinch(-0.4);
+    climber->SetWinchMotorControllerPercentOutput(-0.4);
   }
   else
   {
-    climber->SetWinch(0.0);
+    climber->SetWinchMotorControllerPercentOutput(0.0);
   }
 }
 
@@ -153,7 +116,7 @@ void Teleoperated::HandleShooterInputs()
     staleCount = 0;
   }
 
-  if(aim_shoot_state == kAiming){
+  if(aim_shoot_state == aiming){
     distance = frc::SmartDashboard::GetNumber("selectedDistance", 120);
   }
   //update the latest count, for use on next loop iteration
@@ -166,7 +129,7 @@ void Teleoperated::HandleShooterInputs()
   }
   //Only turn and shoot when we hold the button, and we have seen the target recently
 
-  if(joystick_2->GetRawButton(kShootButton))
+  if(secondary_driver_joystick->GetRawButton(kShootButton))
   {
     // Continually Shoot
     double shooting_hood_position  = frc::SmartDashboard::GetNumber("Hood Position", 0.5);
@@ -174,19 +137,19 @@ void Teleoperated::HandleShooterInputs()
     manipulator->ContinuousShoot(shooting_hood_position, 0.4, frc::SmartDashboard::GetNumber("Target Speed", 0));
     frc::SmartDashboard::PutNumber("camNumber", 0);
   }
-  else if(joystick_2->GetRawButton(kAimShootButton) && staleCount < 5){
+  else if(secondary_driver_joystick->GetRawButton(kAimShootButton) && staleCount < 5){
     AimingContinuousShoot(distance, pValue, selectedAngle, 0.4);
     frc::SmartDashboard::PutNumber("camNumber", 0);
     staleCount = 0;
   }
-  else if(joystick_2->GetRawButton(kAimShootButton)){
+  else if(secondary_driver_joystick->GetRawButton(kAimShootButton)){
     manipulator->GetShooter()->SetVisionLight(true);
     frc::SmartDashboard::PutNumber("camNumber", 0);
   }
-  else if(joystick_2->GetRawButton(kAdvanceGenevaButton)){
+  else if(secondary_driver_joystick->GetRawButton(kAdvanceGenevaButton)){
     manipulator->SensorAdvanceGeneva(true, true);
   }
-  else if(joystick_2->GetRawButton(kRegressGenevaButton)){
+  else if(secondary_driver_joystick->GetRawButton(kRegressGenevaButton)){
     manipulator->SensorAdvanceGeneva(true, false);
   }
   else if(manipulator->GetSensorAdvanceGenevaState() == 2){
@@ -194,7 +157,7 @@ void Teleoperated::HandleShooterInputs()
     manipulator->ResetManipulatorElements();
     teleop_functions->SetTurnStatus(true);
     aim_counts = 0;
-    aim_shoot_state = kAiming;
+    aim_shoot_state = aiming;
     manipulator->SensorAdvanceGeneva(false, false);
     rotSpeed = 0;
   }
@@ -213,31 +176,31 @@ void Teleoperated::HandleColorWheelInputs()
   //To do: ColorWheel class is taking care of button presses, but we will need
   //To do: We also probably need to pass in the selenoid, we can consider passing all of these
   //into the colorwheel constructor which seems to be the pattern for the other classes
-  if(joystick_2->GetRawButton(kColorWheelRotationControl)){
+  if(secondary_driver_joystick->GetRawButton(kColorWheelRotationControl)){
     color_wheel->RotateToNumber();
   }
   else{
-    color_wheel->SetRotationState(0);
+    color_wheel->SetRotationState(not_spinning);
   }
   //To do: Get color target from smart dashboard, as this value will be given to us
   //from field during play
   frc::Color *targetcolor = new frc::Color(kGreenTarget);
-  if(joystick_2->GetRawButton(kColorWheelColorControl)){
+  if(secondary_driver_joystick->GetRawButton(kColorWheelColorControl)){
     color_wheel->RotateToColor(targetcolor);
   }
   
 
-  color_wheel->ControlSolenoid();
+  color_wheel->HandleColorWheelExtensionSolenoidInputs();
 
   //Old code left here for reference until we are sure we don't want any of it
   //color_wheel->GetCurrentColor();
-  // if(joystick_1->GetRawButton(kDeployColorWheelButton)){
+  // if(primary_driver_joystick->GetRawButton(kDeployColorWheelButton)){
   //   color_wheel->SetExtended(true);
   // }
-  // else if(joystick_1->GetRawButton(kRetractColorWheelButton)){
+  // else if(primary_driver_joystick->GetRawButton(kRetractColorWheelButton)){
   //   color_wheel->SetExtended(false);
   // }
-  // else if(joystick_1->GetRawButton(kColorWheelColorControl)){
+  // else if(primary_driver_joystick->GetRawButton(kColorWheelColorControl)){
   //   color_wheel->TurnToColor(kRedTarget);
   // }
 }
@@ -247,17 +210,17 @@ void Teleoperated::AimingContinuousShoot(double distance, double pValue, double 
     double hoodPosition = manipulator->GetSelectedHoodPosition(distance);
     //std::cout << "rpm: " << rpm << " HoodPostion: " << hoodPosition << std::endl;
     if(aim_counts < max_aim_counts){
-        aim_shoot_state = kAiming;
+        aim_shoot_state = aiming;
     }
     if(aim_counts >= max_aim_counts){
-        aim_shoot_state = kShooting;
+        aim_shoot_state = shooting;
     }
     switch(aim_shoot_state){
-        case(kAiming):
+        case(aiming):
             rotSpeed = teleop_functions->CalculateTurnToAngle(target_angle);
             manipulator->PrepareShot(rpm, hoodPosition);
             break;
-        case(kShooting):
+        case(shooting):
             spark_drive->TankDrive(0,0,false,false);
             manipulator->ContinuousShoot(hoodPosition, geneva_speed, rpm);
             break;
@@ -273,17 +236,17 @@ void Teleoperated::AimingContinuousShoot(double rpm, double hoodPosition, double
     // frc::SmartDashboard::PutNumber("hoodpos", hoodPosition);
 
     if(aim_counts < max_aim_counts){
-        aim_shoot_state = kAiming;
+        aim_shoot_state = aiming;
     }
     if(aim_counts >= max_aim_counts){
-        aim_shoot_state = kShooting;
+        aim_shoot_state = shooting;
     }
     switch(aim_shoot_state){
-        case(kAiming):
+        case(aiming):
             teleop_functions->WPITurnToAngle(target_angle);
             manipulator->PrepareShot(rpm, hoodPosition);
             break;
-        case(kShooting):
+        case(shooting):
             spark_drive->TankDrive(0,0,false,false);
             manipulator->ContinuousShoot(hoodPosition, geneva_speed, rpm);
             break;
